@@ -6,6 +6,27 @@ namespace Kinect
 {
     typedef std::shared_ptr<struct Device> DeviceRef;
 
+    struct Body
+    {
+        ci::uint64_t id;
+
+        enum JointType
+        {
+            LEFT_HAND,
+            RIGHT_HAND,
+            HEAD,
+            JOINT_COUNT,
+        };
+
+        struct Joint
+        {
+            ci::vec3 pos3d; // view coordinate, in meters
+            ci::vec2 pos2d; // depth image coordinate [0, 1] * [0, 1]
+        };
+
+        Joint joints[JOINT_COUNT];
+    };
+
     struct Device
     {
         struct Option
@@ -40,29 +61,6 @@ namespace Kinect
         ci::Channel16u depthChannel;
         ci::signals::signal<void()> signalDepthDirty;
 
-        struct Body
-        {
-            ci::uint64_t id;
-            ci::vec3 pos3d;
-            ci::vec2 pos2d;
-
-            enum JointType
-            {
-                LEFT_HAND,
-                RIGHT_HAND,
-                HEAD,
-                JOINT_COUNT,
-            };
-
-            struct Joint
-            {
-                ci::vec3 pos3d;
-                ci::vec2 pos2d;
-                float confidence;
-            };
-
-            Joint joints[JOINT_COUNT];
-        };
         std::vector<Body> bodies;
         ci::signals::signal<void()> signalBodyDirty;
     };

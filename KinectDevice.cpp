@@ -63,15 +63,12 @@ namespace Kinect
                     CI_LOG_E("Failed to call KCBGetICoordinateMapper()");
                 }
 
-                if (option.enableDepth)
+                hr = KCBGetDepthFrameDescription(sensor, &depthDesc);
+                if (SUCCEEDED(hr))
                 {
-                    hr = KCBGetDepthFrameDescription(sensor, &depthDesc);
-                    if (SUCCEEDED(hr))
-                    {
-                        hr = KCBCreateDepthFrame(depthDesc, &depthFrame);
-                        depthChannel = Channel16u(depthDesc.width, depthDesc.height,
-                            depthDesc.bytesPerPixel * depthDesc.width, 1, depthFrame->Buffer);
-                    }
+                    hr = KCBCreateDepthFrame(depthDesc, &depthFrame);
+                    depthChannel = Channel16u(depthDesc.width, depthDesc.height,
+                        depthDesc.bytesPerPixel * depthDesc.width, 1, depthFrame->Buffer);
                 }
             }
 
@@ -175,8 +172,11 @@ namespace Kinect
                             body.joints[mapping.first].pos3d = toCi(srcJoints[mapping.second].Position);
                             DepthSpacePoint depthPoint = { 0 };
                             coordMapper->MapCameraPointToDepthSpace(srcJoints[mapping.second].Position, &depthPoint);
+                            depthPoint.X /= getWidth();
+                            depthPoint.Y /= getHeight();
                             body.joints[mapping.first].pos2d = toCi(depthPoint);
                         }
+                        bodies.push_back(body);
                     }
                     for (auto& srcBody : srcBodies)
                     {
