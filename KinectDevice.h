@@ -8,10 +8,30 @@ namespace Kinect
 
     struct Device
     {
+        struct Option
+        {
+            Option()
+            {
+                enableColor = false;
+                enableDepth = true;
+                enableBody = false;
+                enableBodyIndex = false;
+                enableInfra = false;
+                enableAudio = false;
+            }
+            bool enableColor;
+            bool enableDepth;
+            bool enableBody;
+            bool enableBodyIndex;
+            bool enableInfra;
+            bool enableAudio;
+        };
+        Option option;
+
 #ifdef KINECT_V2
-        static DeviceRef createV2();
+        static DeviceRef createV2(Option option = Option());
 #else
-        static DeviceRef createV1();
+        static DeviceRef createV1(Option option = Option());
 #endif
 
         virtual int getWidth() const = 0;
@@ -20,27 +40,30 @@ namespace Kinect
         ci::Channel16u depthChannel;
         ci::signals::signal<void()> signalDepthDirty;
 
-        struct Skeleton
+        struct Body
         {
-            int id;
-            ci::vec2 pos;
+            ci::uint64_t id;
+            ci::vec3 pos3d;
+            ci::vec2 pos2d;
+
+            enum JointType
+            {
+                LEFT_HAND,
+                RIGHT_HAND,
+                HEAD,
+                JOINT_COUNT,
+            };
 
             struct Joint
             {
-                enum
-                {
-                    LEFT_HAND,
-                    RIGHT_HAND,
-                    HEAD,
-                    JOINT_COUNT,
-                };
-                ci::vec2 pos;
+                ci::vec3 pos3d;
+                ci::vec2 pos2d;
                 float confidence;
             };
 
-            Joint joints[Joint::JOINT_COUNT];
+            Joint joints[JOINT_COUNT];
         };
-        std::vector<Skeleton> skeletons;
-        ci::signals::signal<void()> signalSkeletonDirty;
+        std::vector<Body> bodies;
+        ci::signals::signal<void()> signalBodyDirty;
     };
 }
