@@ -12,9 +12,32 @@ namespace Kinect
 
         enum JointType
         {
-            LEFT_HAND,
-            RIGHT_HAND,
+            HIP_CENTER,
+            SPINE,
+            SHOULDER_CENTER,
+            NECK,               // V2 only
             HEAD,
+            SHOULDER_LEFT,
+            ELBOW_LEFT,
+            WRIST_LEFT,
+            HAND_LEFT,
+            SHOULDER_RIGHT,
+            ELBOW_RIGHT,
+            WRIST_RIGHT,
+            HAND_RIGHT,
+            HIP_LEFT,
+            KNEE_LEFT,
+            ANKLE_LEFT,
+            FOOT_LEFT,
+            HIP_RIGHT,
+            KNEE_RIGHT,
+            ANKLE_RIGHT,
+            FOOT_RIGHT,
+            HAND_TIP_LEFT,      // V2 only
+            HAND_THUMB_LEFT,    // V2 only
+            HAND_TIP_RIGHT,     // V2 only
+            HAND_THUMB_RIGHT,   // V2 only
+
             JOINT_COUNT,
         };
 

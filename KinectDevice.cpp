@@ -106,37 +106,6 @@ namespace Kinect
                 }
             }
 
-            /*
-            enum _JointType
-            {
-            JointType_SpineBase	= 0,
-            JointType_SpineMid	= 1,
-            JointType_Neck	= 2,
-            JointType_Head	= 3,
-            JointType_ShoulderLeft	= 4,
-            JointType_ElbowLeft	= 5,
-            JointType_WristLeft	= 6,
-            JointType_HandLeft	= 7,
-            JointType_ShoulderRight	= 8,
-            JointType_ElbowRight	= 9,
-            JointType_WristRight	= 10,
-            JointType_HandRight	= 11,
-            JointType_HipLeft	= 12,
-            JointType_KneeLeft	= 13,
-            JointType_AnkleLeft	= 14,
-            JointType_FootLeft	= 15,
-            JointType_HipRight	= 16,
-            JointType_KneeRight	= 17,
-            JointType_AnkleRight	= 18,
-            JointType_FootRight	= 19,
-            JointType_SpineShoulder	= 20,
-            JointType_HandTipLeft	= 21,
-            JointType_ThumbLeft	= 22,
-            JointType_HandTipRight	= 23,
-            JointType_ThumbRight	= 24,
-            JointType_Count	= ( JointType_ThumbRight + 1 )
-            } ;
-            */
             if (option.enableBody && KCBIsFrameReady(sensor, FrameSourceTypes_Body))
             {
                 int64_t timeStamp = 0L;
@@ -156,16 +125,38 @@ namespace Kinect
 
                         Body body;
                         srcBody->get_TrackingId(&body.id);
-                            
+
                         Joint srcJoints[JointType_Count] = {};
                         hr = srcBody->GetJoints(JointType_Count, srcJoints);
                         if (FAILED(hr)) continue;
 
                         static std::pair<int, int> mappingPairs[] =
                         {
-                            { Body::LEFT_HAND, JointType_HandLeft },
-                            { Body::RIGHT_HAND, JointType_HandRight },
+                            { Body::HIP_CENTER, JointType_SpineBase },
+                            { Body::SPINE, JointType_SpineMid },
+                            { Body::SHOULDER_CENTER, JointType_SpineShoulder },
+                            { Body::NECK, JointType_Neck },
                             { Body::HEAD, JointType_Head },
+                            { Body::SHOULDER_LEFT, JointType_ShoulderLeft },
+                            { Body::ELBOW_LEFT, JointType_ElbowLeft },
+                            { Body::WRIST_LEFT, JointType_WristLeft },
+                            { Body::HAND_LEFT, JointType_HandLeft },
+                            { Body::SHOULDER_RIGHT, JointType_ShoulderRight },
+                            { Body::ELBOW_RIGHT, JointType_ElbowRight },
+                            { Body::WRIST_RIGHT, JointType_WristRight },
+                            { Body::HAND_RIGHT, JointType_HandRight },
+                            { Body::HIP_LEFT, JointType_HipLeft },
+                            { Body::KNEE_LEFT, JointType_KneeLeft },
+                            { Body::ANKLE_LEFT, JointType_AnkleLeft },
+                            { Body::FOOT_LEFT, JointType_FootLeft },
+                            { Body::HIP_RIGHT, JointType_HipRight },
+                            { Body::KNEE_RIGHT, JointType_KneeRight },
+                            { Body::ANKLE_RIGHT, JointType_AnkleRight },
+                            { Body::FOOT_RIGHT, JointType_FootRight },
+                            { Body::HAND_TIP_LEFT, JointType_HandTipLeft },
+                            { Body::HAND_THUMB_LEFT, JointType_ThumbLeft },
+                            { Body::HAND_TIP_RIGHT, JointType_HandTipRight },
+                            { Body::HAND_THUMB_RIGHT, JointType_ThumbRight },
                         };
                         for (auto& mapping : mappingPairs)
                         {
@@ -258,19 +249,83 @@ namespace Kinect
             App::get()->getSignalUpdate().connect(std::bind(&DeviceV1::update, this));
         }
 
+        const vec3 toCi(const Vector4& pos)
+        {
+            return vec3(pos.x, pos.y, pos.z);
+        }
+
         void update()
         {
-            if (KinectIsDepthFrameReady(sensor))
+            if (option.enableDepth && KinectIsDepthFrameReady(sensor))
             {
                 if (SUCCEEDED(KinectGetDepthFrame(sensor, depthDesc.cbBufferSize, depthBuffer, nullptr)))
                 {
                     signalDepthDirty();
                 }
             }
+
+            if (option.enableBody && KinectIsSkeletonFrameReady(sensor))
+            {
+                if (SUCCEEDED(KinectGetSkeletonFrame(sensor, &skeletonFrame)))
+                {
+                    for (auto& data : skeletonFrame.SkeletonData)
+                    {
+                        if (data.eTrackingState != NUI_SKELETON_TRACKED) continue;
+                        Body body;
+                        body.id = data.dwTrackingID;
+
+                        static std::pair<int, int> mappingPairs[] =
+                        {
+                            { Body::HIP_CENTER, NUI_SKELETON_POSITION_HIP_CENTER },
+                            { Body::SPINE, NUI_SKELETON_POSITION_SPINE },
+                            { Body::SHOULDER_CENTER, NUI_SKELETON_POSITION_SHOULDER_CENTER },
+                            { Body::HEAD, NUI_SKELETON_POSITION_HEAD },
+                            { Body::SHOULDER_LEFT, NUI_SKELETON_POSITION_SHOULDER_LEFT },
+                            { Body::ELBOW_LEFT, NUI_SKELETON_POSITION_ELBOW_LEFT },
+                            { Body::WRIST_LEFT, NUI_SKELETON_POSITION_WRIST_LEFT },
+                            { Body::HAND_LEFT, NUI_SKELETON_POSITION_HAND_LEFT },
+                            { Body::SHOULDER_RIGHT, NUI_SKELETON_POSITION_SHOULDER_RIGHT },
+                            { Body::ELBOW_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT },
+                            { Body::WRIST_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT },
+                            { Body::HAND_RIGHT, NUI_SKELETON_POSITION_HAND_RIGHT },
+                            { Body::HIP_LEFT, NUI_SKELETON_POSITION_HIP_LEFT },
+                            { Body::KNEE_LEFT, NUI_SKELETON_POSITION_KNEE_LEFT },
+                            { Body::ANKLE_LEFT, NUI_SKELETON_POSITION_ANKLE_LEFT },
+                            { Body::FOOT_LEFT, NUI_SKELETON_POSITION_FOOT_LEFT },
+                            { Body::HIP_RIGHT, NUI_SKELETON_POSITION_HIP_RIGHT },
+                            { Body::KNEE_RIGHT, NUI_SKELETON_POSITION_KNEE_RIGHT },
+                            { Body::ANKLE_RIGHT, NUI_SKELETON_POSITION_ANKLE_RIGHT },
+                            { Body::FOOT_RIGHT, NUI_SKELETON_POSITION_FOOT_RIGHT },
+                        };
+                        for (auto& mapping : mappingPairs)
+                        {
+                            vec3 pos3d = toCi(data.SkeletonPositions[mapping.second]);
+                            vec2 pos2d;
+
+                            if (pos3d.z > FLT_EPSILON)
+                            {
+                                //
+                                // Center of depth sensor is at (0,0,0) in skeleton space, and
+                                // and (width/2,height/2) in depth image coordinates.  Note that positive Y
+                                // is up in skeleton space and down in image coordinates.
+                                //
+
+                                pos2d.x = 0.5f + pos3d.x * (depthDesc.dwWidth / 320.f) * NUI_CAMERA_SKELETON_TO_DEPTH_IMAGE_MULTIPLIER_320x240 / pos3d.z;
+                                pos2d.y = 0.5f - pos3d.y * (depthDesc.dwHeight / 240.f) * NUI_CAMERA_SKELETON_TO_DEPTH_IMAGE_MULTIPLIER_320x240 / pos3d.z;
+
+                            }
+                            body.joints[mapping.first].pos3d = pos3d;
+                            body.joints[mapping.first].pos2d = pos2d;
+                        }
+                        bodies.push_back(body);
+                    }
+                }
+            }
         }
 
         uint8_t *depthBuffer;
         KINECT_IMAGE_FRAME_FORMAT depthDesc;
+        NUI_SKELETON_FRAME skeletonFrame;
         int sensor;
     };
 
