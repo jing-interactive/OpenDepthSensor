@@ -1,6 +1,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/Channel.h"
 #include "cinder/Function.h"
+#include "cinder/Signals.h"
 
 namespace Kinect
 {
@@ -8,7 +9,7 @@ namespace Kinect
 
     struct Body
     {
-        ci::uint64_t id;
+        uint64_t id;
 
         enum JointType
         {
@@ -50,12 +51,23 @@ namespace Kinect
         Joint joints[JOINT_COUNT];
     };
 
+    enum DeviceType
+    {
+        Kinect1,
+        Kinect2,
+        Simulator,
+        OpenNI,
+        OpenNI2,
+        Count,
+    };
+
     struct Device
     {
         struct Option
         {
             Option()
             {
+                deviceId = 0;
                 enableColor = false;
                 enableDepth = true;
                 enableBody = false;
@@ -63,6 +75,7 @@ namespace Kinect
                 enableInfra = false;
                 enableAudio = false;
             }
+            int deviceId;
             bool enableColor;
             bool enableDepth;
             bool enableBody;
@@ -72,19 +85,17 @@ namespace Kinect
         };
         Option option;
 
-#ifdef KINECT_V2
-        static DeviceRef createV2(Option option = Option());
-#else
-        static DeviceRef createV1(Option option = Option());
-#endif
+        static int getDeviceCount(DeviceType type);
+        static DeviceRef create(DeviceType type, Option option = Option());
 
+        virtual bool isValid() const = 0;
         virtual int getWidth() const = 0;
         virtual int getHeight() const = 0;
 
         ci::Channel16u depthChannel;
-        ci::signals::signal<void()> signalDepthDirty;
+        ci::signals::Signal<void()> signalDepthDirty;
 
         std::vector<Body> bodies;
-        ci::signals::signal<void()> signalBodyDirty;
+        ci::signals::Signal<void()> signalBodyDirty;
     };
 }

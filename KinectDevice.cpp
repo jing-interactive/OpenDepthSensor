@@ -1,22 +1,23 @@
 #include "KinectDevice.h"
-#ifdef KINECT_V2
 #include "KCBv2Lib.h"
-#else
 #include "KinectCommonBridgeLib.h"
-#endif
 #include "cinder/app/app.h"
 #include "cinder/Log.h"
+#include "cinder/ImageIo.h"
 
 namespace Kinect
 {
     using namespace ci;
     using namespace ci::app;
 
-#ifdef KINECT_V2
-
-    struct DeviceV2 : public Device
+    struct DeviceKinect2 : public Device
     {
-        ~DeviceV2()
+        static int getDeviceCount()
+        {
+            return 1;
+        }
+
+        ~DeviceKinect2()
         {
             if (depthFrame != nullptr)
             {
@@ -42,7 +43,12 @@ namespace Kinect
             return depthDesc.height;
         }
 
-        DeviceV2(Option option)
+        bool isValid() const
+        {
+            return sensor != KCB_INVALID_HANDLE;
+        }
+
+        DeviceKinect2(Option option)
         {
             this->option = option;
             depthFrame = nullptr;
@@ -75,10 +81,9 @@ namespace Kinect
             if (FAILED(hr))
             {
                 CI_LOG_E("Failed to connect to Kinect");
-                App::get()->quit();
             }
 
-            App::get()->getSignalUpdate().connect(std::bind(&DeviceV2::update, this));
+            App::get()->getSignalUpdate().connect(std::bind(&DeviceKinect2::update, this));
         }
 
         const vec3 toCi(const CameraSpacePoint& pos)
@@ -102,7 +107,7 @@ namespace Kinect
             {
                 if (SUCCEEDED(KCBGetDepthFrame(sensor, depthFrame)))
                 {
-                    signalDepthDirty();
+                    signalDepthDirty.emit();
                 }
             }
 
@@ -174,7 +179,7 @@ namespace Kinect
                         if (srcBody == nullptr) continue;
                         srcBody->Release();
                     }
-                    signalBodyDirty();
+                    signalBodyDirty.emit();
                 }
             }
         }
@@ -186,16 +191,14 @@ namespace Kinect
         int sensor;
     };
 
-    DeviceRef Device::createV2(Option option)
+    struct DeviceKinect1 : public Device
     {
-        return DeviceRef(new DeviceV2(option));
-    }
+        static int getDeviceCount()
+        {
+            return KinectGetPortIDCount();
+        }
 
-#else
-
-    struct DeviceV1 : public Device
-    {
-        ~DeviceV1()
+        ~DeviceKinect1()
         {
             if (depthBuffer != nullptr)
             {
@@ -217,14 +220,28 @@ namespace Kinect
             return depthDesc.dwHeight;
         }
 
-        DeviceV1(Option option)
+        bool isValid() const
+        {
+            return sensor != KCB_INVALID_HANDLE;
+        }
+
+        DeviceKinect1(Option option)
         {
             this->option = option;
             depthBuffer = nullptr;
 
             HRESULT hr = S_OK;
 
-            sensor = KinectOpenDefaultSensor();
+            WCHAR portName[100];
+            if (KinectGetPortIDByIndex(option.deviceId, 100, portName))
+            {
+                sensor = KinectOpenSensor(portName);
+            }
+            else
+            {
+                sensor = KinectOpenDefaultSensor();
+            }
+
             if (KCB_INVALID_HANDLE == sensor)
             {
                 hr = E_UNEXPECTED;
@@ -243,10 +260,9 @@ namespace Kinect
             if (FAILED(hr))
             {
                 CI_LOG_E("Failed to connect to Kinect");
-                App::get()->quit();
             }
 
-            App::get()->getSignalUpdate().connect(std::bind(&DeviceV1::update, this));
+            App::get()->getSignalUpdate().connect(std::bind(&DeviceKinect1::update, this));
         }
 
         const vec3 toCi(const Vector4& pos)
@@ -260,7 +276,7 @@ namespace Kinect
             {
                 if (SUCCEEDED(KinectGetDepthFrame(sensor, depthDesc.cbBufferSize, depthBuffer, nullptr)))
                 {
-                    signalDepthDirty();
+                    signalDepthDirty.emit();
                 }
             }
 
@@ -329,10 +345,58 @@ namespace Kinect
         int sensor;
     };
 
-    DeviceRef Device::createV1(Option option/* = Option()*/)
+    struct DeviceSimulator : public Device
     {
-        return DeviceRef(new DeviceV1(option));
+        virtual bool isValid() const
+        {
+            return true;
+        }
+        virtual int getWidth() const
+        {
+            return depthChannel.getWidth();
+        }
+        virtual int getHeight() const
+        {
+            return depthChannel.getHeight();
+        }
+
+        DeviceSimulator(Option option)
+        {
+            this->option = option;
+            depthChannel = loadImage(getAssetPath("KinectSnapshot-update.png"));
+
+            App::get()->getSignalUpdate().connect(std::bind(&DeviceSimulator::update, this));
+        }
+
+        void update()
+        {
+            if (option.enableDepth)
+            {
+                // TODO: update depthChannel
+                signalDepthDirty.emit();
+            }
+        }
+
+        int width, height;
+    };
+
+    int Device::getDeviceCount(DeviceType type)
+    {
+        if (type == Kinect1)
+            return DeviceKinect1::getDeviceCount();
+        else if (type == Kinect2)
+            return DeviceKinect2::getDeviceCount();
+        else
+            return 1;
     }
 
-#endif
+    DeviceRef Device::create(DeviceType type, Option option/* = Option()*/)
+    {
+        if (type == Kinect1)
+            return DeviceRef(new DeviceKinect1(option));
+        else if (type == Kinect2)
+            return DeviceRef(new DeviceKinect2(option));
+        else
+            return DeviceRef(new DeviceSimulator(option));
+    }
 }
