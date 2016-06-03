@@ -1,4 +1,5 @@
 #include "cinder/Cinder.h"
+#include "cinder/Quaternion.h"
 #include "cinder/Channel.h"
 #include "cinder/Function.h"
 #include "cinder/Signals.h"
@@ -51,6 +52,13 @@ namespace Kinect
         Joint joints[JOINT_COUNT];
     };
 
+    struct Face
+    {
+        uint64_t id;
+        ci::vec3 pos;
+        ci::quat orientation;
+    };
+
     enum DeviceType
     {
         Kinect1,
@@ -65,37 +73,30 @@ namespace Kinect
     {
         struct Option
         {
-            Option()
-            {
-                deviceId = 0;
-                enableColor = false;
-                enableDepth = true;
-                enableBody = false;
-                enableBodyIndex = false;
-                enableInfra = false;
-                enableAudio = false;
-            }
-            int deviceId;
-            bool enableColor;
-            bool enableDepth;
-            bool enableBody;
-            bool enableBodyIndex;
-            bool enableInfra;
-            bool enableAudio;
+            int deviceId = 0;
+            bool enableColor = false;
+            bool enableDepth = true;
+            bool enableBody = false;
+            bool enableBodyIndex = false;
+            bool enableInfra = false;
+            bool enableAudio = false;
+            bool enableFace = false;
         };
         Option option;
 
-        static int getDeviceCount(DeviceType type);
+        static uint32_t getDeviceCount(DeviceType type);
         static DeviceRef create(DeviceType type, Option option = Option());
 
         virtual bool isValid() const = 0;
-        virtual int getWidth() const = 0;
-        virtual int getHeight() const = 0;
+        virtual ci::ivec2 getDepthSize() const = 0;
 
         ci::Channel16u depthChannel;
         ci::signals::Signal<void()> signalDepthDirty;
 
         std::vector<Body> bodies;
         ci::signals::Signal<void()> signalBodyDirty;
+
+        std::vector<Face> faces;
+        ci::signals::Signal<void()> signalFaceDirty;
     };
 }

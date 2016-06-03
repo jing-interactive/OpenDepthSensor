@@ -1,9 +1,16 @@
 #include "KinectDevice.h"
 #include "KCBv2Lib.h"
+#include "Kinect.Face.h"
 #include "KinectCommonBridgeLib.h"
 #include "cinder/app/app.h"
 #include "cinder/Log.h"
 #include "cinder/ImageIo.h"
+
+#include <vector>
+
+using std::vector;
+
+#pragma comment (lib, "Kinect20.Face.lib")
 
 namespace Kinect
 {
@@ -12,7 +19,29 @@ namespace Kinect
 
     struct DeviceKinect2 : public Device
     {
-        static int getDeviceCount()
+        KCBDepthFrame *depthFrame = nullptr;
+        KCBFrameDescription depthDesc;
+
+        ICoordinateMapper* coordMapper = nullptr;
+        int sensor;
+        IKinectSensor*  rawSensor = nullptr;
+
+        struct HDFaceDetail
+        {
+            // https://github.com/UnaNancyOwen/Kinect2Sample/blob/master/Sample/Face/Face.cpp
+            IHighDefinitionFaceFrameSource* frameSource = nullptr;
+            IHighDefinitionFaceFrameReader* frameReader = nullptr;
+            IFaceModelBuilder* modelBuilder = nullptr;
+            bool produce = false;
+            IFaceAlignment* faceAlignment = nullptr;
+            IFaceModel* faceModel = nullptr;
+            float deformations[FaceShapeDeformations::FaceShapeDeformations_Count] = {};
+        };
+        HDFaceDetail hdFaces[BODY_COUNT];
+        uint32_t faceVertexCount = 0;
+        uint32_t faceIndexCount = 0;
+
+        static uint32_t getDeviceCount()
         {
             return 1;
         }
@@ -27,20 +56,24 @@ namespace Kinect
             {
                 coordMapper->Release();
             }
+            if (option.enableFace)
+            {
+                for (int i = 0; i < BODY_COUNT; i++)
+                {
+                    hdFaces[i].frameSource->Release();
+                    hdFaces[i].frameSource->Release();
+                    hdFaces[i].modelBuilder->Release();
+                }
+            }
             if (sensor != KCB_INVALID_HANDLE)
             {
                 KCBCloseSensor(&sensor);
             }
         }
 
-        int getWidth() const override
+        ivec2 getDepthSize() const
         {
-            return depthDesc.width;
-        }
-
-        int getHeight() const override
-        {
-            return depthDesc.height;
+            return { depthDesc.width, depthDesc.height };
         }
 
         bool isValid() const
@@ -51,7 +84,11 @@ namespace Kinect
         DeviceKinect2(Option option)
         {
             this->option = option;
-            depthFrame = nullptr;
+            if (this->option.enableFace)
+            {
+                // face is dependent on body
+                this->option.enableBody = true;
+            }
 
             HRESULT hr = S_OK;
 
@@ -61,26 +98,55 @@ namespace Kinect
                 hr = E_UNEXPECTED;
             }
 
-            if (SUCCEEDED(hr))
-            {
-                hr = KCBGetICoordinateMapper(sensor, &coordMapper);
-                if (FAILED(hr))
-                {
-                    CI_LOG_E("Failed to call KCBGetICoordinateMapper()");
-                }
-
-                hr = KCBGetDepthFrameDescription(sensor, &depthDesc);
-                if (SUCCEEDED(hr))
-                {
-                    hr = KCBCreateDepthFrame(depthDesc, &depthFrame);
-                    depthChannel = Channel16u(depthDesc.width, depthDesc.height,
-                        depthDesc.bytesPerPixel * depthDesc.width, 1, depthFrame->Buffer);
-                }
-            }
+            GetDefaultKinectSensor(&rawSensor);
 
             if (FAILED(hr))
             {
                 CI_LOG_E("Failed to connect to Kinect");
+                return;
+            }
+
+            hr = KCBGetICoordinateMapper(sensor, &coordMapper);
+            if (FAILED(hr)) CI_LOG_E("Failed to call KCBGetICoordinateMapper()");
+
+            hr = KCBGetDepthFrameDescription(sensor, &depthDesc);
+            if (SUCCEEDED(hr))
+            {
+                hr = KCBCreateDepthFrame(depthDesc, &depthFrame);
+                depthChannel = Channel16u(depthDesc.width, depthDesc.height,
+                    depthDesc.bytesPerPixel * depthDesc.width, 1, depthFrame->Buffer);
+            }
+            if (FAILED(hr)) CI_LOG_E("Failed to KCBCreateDepthFrame");
+
+            if (option.enableFace)
+            {
+                for (int i = 0; i < BODY_COUNT; i++)
+                {
+                    auto& hdFace = hdFaces[i];
+                    hr = CreateHighDefinitionFaceFrameSource(rawSensor, &hdFace.frameSource);
+                    if (FAILED(hr)) break;
+                    
+                    hr = hdFace.frameSource->OpenReader(&hdFace.frameReader);
+                    if (FAILED(hr)) break;
+
+                    hr = hdFace.frameSource->OpenModelBuilder( FaceModelBuilderAttributes::FaceModelBuilderAttributes_None,
+                        &hdFace.modelBuilder);
+                    if (FAILED(hr)) break;
+
+                    hr = hdFace.modelBuilder->BeginFaceDataCollection();
+                    if (FAILED(hr)) break;
+
+                    hr = CreateFaceAlignment( &hdFace.faceAlignment);
+                    if (FAILED(hr)) break;
+
+                    hr = CreateFaceModel(1.0f, FaceShapeDeformations::FaceShapeDeformations_Count, hdFace.deformations, &hdFace.faceModel);
+                    if (FAILED(hr)) break;
+                }
+                if (FAILED(hr)) CI_LOG_E("Failed to setup HD Face");
+
+                hr = GetFaceModelVertexCount(&faceVertexCount); // 1347
+                hr = GetFaceModelTriangleCount(&faceIndexCount);
+                faceIndexCount *= 3;
             }
 
             App::get()->getSignalUpdate().connect(std::bind(&DeviceKinect2::update, this));
@@ -120,80 +186,208 @@ namespace Kinect
                 {
                     HRESULT hr = S_OK;
                     bodies.clear();
-                    for (auto& srcBody : srcBodies)
+                    for (int i = 0; i < BODY_COUNT;i++)
                     {
-                        if (srcBody == nullptr) continue;
-
-                        BOOLEAN bTracked = false;
-                        hr = srcBody->get_IsTracked(&bTracked);
-                        if (FAILED(hr) || !bTracked) continue;
-
                         Body body;
-                        srcBody->get_TrackingId(&body.id);
-
-                        Joint srcJoints[JointType_Count] = {};
-                        hr = srcBody->GetJoints(JointType_Count, srcJoints);
-                        if (FAILED(hr)) continue;
-
-                        static std::pair<int, int> mappingPairs[] =
-                        {
-                            { Body::HIP_CENTER, JointType_SpineBase },
-                            { Body::SPINE, JointType_SpineMid },
-                            { Body::SHOULDER_CENTER, JointType_SpineShoulder },
-                            { Body::NECK, JointType_Neck },
-                            { Body::HEAD, JointType_Head },
-                            { Body::SHOULDER_LEFT, JointType_ShoulderLeft },
-                            { Body::ELBOW_LEFT, JointType_ElbowLeft },
-                            { Body::WRIST_LEFT, JointType_WristLeft },
-                            { Body::HAND_LEFT, JointType_HandLeft },
-                            { Body::SHOULDER_RIGHT, JointType_ShoulderRight },
-                            { Body::ELBOW_RIGHT, JointType_ElbowRight },
-                            { Body::WRIST_RIGHT, JointType_WristRight },
-                            { Body::HAND_RIGHT, JointType_HandRight },
-                            { Body::HIP_LEFT, JointType_HipLeft },
-                            { Body::KNEE_LEFT, JointType_KneeLeft },
-                            { Body::ANKLE_LEFT, JointType_AnkleLeft },
-                            { Body::FOOT_LEFT, JointType_FootLeft },
-                            { Body::HIP_RIGHT, JointType_HipRight },
-                            { Body::KNEE_RIGHT, JointType_KneeRight },
-                            { Body::ANKLE_RIGHT, JointType_AnkleRight },
-                            { Body::FOOT_RIGHT, JointType_FootRight },
-                            { Body::HAND_TIP_LEFT, JointType_HandTipLeft },
-                            { Body::HAND_THUMB_LEFT, JointType_ThumbLeft },
-                            { Body::HAND_TIP_RIGHT, JointType_HandTipRight },
-                            { Body::HAND_THUMB_RIGHT, JointType_ThumbRight },
-                        };
-                        for (auto& mapping : mappingPairs)
-                        {
-                            body.joints[mapping.first].pos3d = toCi(srcJoints[mapping.second].Position);
-                            DepthSpacePoint depthPoint = { 0 };
-                            coordMapper->MapCameraPointToDepthSpace(srcJoints[mapping.second].Position, &depthPoint);
-                            depthPoint.X /= getWidth();
-                            depthPoint.Y /= getHeight();
-                            body.joints[mapping.first].pos2d = toCi(depthPoint);
-                        }
+                        if (!updateBody(srcBodies[i], body)) continue;
                         bodies.push_back(body);
+
+                        if (!option.enableFace) continue;
+
+                        Face face;
+                        if (!updateFace(body, hdFaces[i], face)) continue;
+                        faces.push_back(face);
                     }
-                    for (auto& srcBody : srcBodies)
+
+                    // garbage collection
+                    for (auto& src : srcBodies)
                     {
-                        if (srcBody == nullptr) continue;
-                        srcBody->Release();
+                        if (src == nullptr) continue;
+                        src->Release();
                     }
+
                     signalBodyDirty.emit();
                 }
             }
         }
 
-        KCBDepthFrame *depthFrame;
-        KCBFrameDescription depthDesc;
+        bool updateFace(const Body& body, HDFaceDetail& hdFace, Face& face)
+        {
+            HRESULT hr = S_OK;
 
-        ICoordinateMapper* coordMapper;
-        int sensor;
+            IHighDefinitionFaceFrameSource* source = hdFace.frameSource;
+            IHighDefinitionFaceFrameReader* reader = hdFace.frameReader;
+
+            IHighDefinitionFaceFrame* frame = nullptr;
+            hr = reader->AcquireLatestFrame(&frame);
+            if (FAILED(hr) || frame == nullptr) return false;
+
+            BOOLEAN isTracked = false;
+            hr = frame->get_IsTrackingIdValid(&isTracked);
+            if (FAILED(hr))
+            {
+                frame->Release();
+                return false;
+            }
+
+            face.id = body.id;
+
+            if (!isTracked)
+            {
+                source->put_TrackingId(body.id);
+            }
+            else
+            {
+                hr = frame->GetAndRefreshFaceAlignmentResult(hdFace.faceAlignment);
+                if (SUCCEEDED(hr) && hdFace.faceAlignment != nullptr){
+                    // Face Model Building
+                    if (!hdFace.produce){
+                        std::system("cls");
+                        FaceModelBuilderCollectionStatus collection;
+                        hr = hdFace.modelBuilder->get_CollectionStatus(&collection);
+                        if (collection == FaceModelBuilderCollectionStatus::FaceModelBuilderCollectionStatus_Complete){
+                            std::cout << "Status : Complete" << std::endl;
+                            //cv::putText(bufferMat, "Status : Complete", cv::Point(50, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                            IFaceModelData* pFaceModelData = nullptr;
+                            hr = hdFace.modelBuilder->GetFaceData(&pFaceModelData);
+                            if (SUCCEEDED(hr) && pFaceModelData != nullptr){
+                                hr = pFaceModelData->ProduceFaceModel(&hdFace.faceModel);
+                                if (SUCCEEDED(hr) && hdFace.faceModel != nullptr){
+                                    hdFace.produce = true;
+                                }
+                            }
+                            pFaceModelData->Release();
+                        }
+                        else{
+                            std::cout << "Status : " << collection << std::endl;
+                            //cv::putText(bufferMat, "Status : " + std::to_string(collection), cv::Point(50, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+
+                            // Collection Status
+                            if (collection >= FaceModelBuilderCollectionStatus::FaceModelBuilderCollectionStatus_TiltedUpViewsNeeded){
+                                std::cout << "Need : Tilted Up Views" << std::endl;
+                                //cv::putText(bufferMat, "Need : Tilted Up Views", cv::Point(50, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                            }
+                            else if (collection >= FaceModelBuilderCollectionStatus::FaceModelBuilderCollectionStatus_RightViewsNeeded){
+                                std::cout << "Need : Right Views" << std::endl;
+                                //cv::putText(bufferMat, "Need : Right Views", cv::Point(50, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                            }
+                            else if (collection >= FaceModelBuilderCollectionStatus::FaceModelBuilderCollectionStatus_LeftViewsNeeded){
+                                std::cout << "Need : Left Views" << std::endl;
+                                //cv::putText(bufferMat, "Need : Left Views", cv::Point(50, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                            }
+                            else if (collection >= FaceModelBuilderCollectionStatus::FaceModelBuilderCollectionStatus_FrontViewFramesNeeded){
+                                std::cout << "Need : Front ViewFrames" << std::endl;
+                                //cv::putText(bufferMat, "Need : Front ViewFrames", cv::Point(50, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                            }
+
+                            // Capture Status
+                            FaceModelBuilderCaptureStatus capture;
+                            hr = hdFace.modelBuilder->get_CaptureStatus(&capture);
+                            switch (capture){
+                            case FaceModelBuilderCaptureStatus::FaceModelBuilderCaptureStatus_FaceTooFar:
+                                std::cout << "Error : Face Too Far from Camera" << std::endl;
+                                //cv::putText(bufferMat, "Error : Face Too Far from Camera", cv::Point(50, 150), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                                break;
+                            case FaceModelBuilderCaptureStatus::FaceModelBuilderCaptureStatus_FaceTooNear:
+                                std::cout << "Error : Face Too Near to Camera" << std::endl;
+                                //cv::putText(bufferMat, "Error : Face Too Near to Camera", cv::Point(50, 150), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                                break;
+                            case FaceModelBuilderCaptureStatus_MovingTooFast:
+                                std::cout << "Error : Moving Too Fast" << std::endl;
+                                //cv::putText(bufferMat, "Error : Moving Too Fast", cv::Point(50, 150), cv::FONT_HERSHEY_SIMPLEX, 1.0f, static_cast<cv::Scalar>(color[count]), 2, CV_AA);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+
+                    // HD Face Points
+                    vector<CameraSpacePoint> facePoints(faceVertexCount);
+                    hr = hdFace.faceModel->CalculateVerticesForAlignment(hdFace.faceAlignment, faceVertexCount, facePoints.data());
+                    if (SUCCEEDED(hr)){
+                        for (int point = 0; point < faceVertexCount; point++){
+                            ColorSpacePoint colorSpacePoint;
+                            //hr = pCoordinateMapper->MapCameraPointToColorSpace(facePoints[point], &colorSpacePoint);
+                            //if (FAILED(hr)){
+                            //    int x = static_cast<int>(colorSpacePoint.X);
+                            //    int y = static_cast<int>(colorSpacePoint.Y);
+                            //    if ((x >= 0) && (x < width) && (y >= 0) && (y < height)){
+                            //        //cv::circle(bufferMat, cv::Point(static_cast<int>(colorSpacePoint.X), static_cast<int>(colorSpacePoint.Y)), 5, static_cast<cv::Scalar>(color[count]), -1, CV_AA);
+                            //    }
+                            //}
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        bool updateBody(IBody* src, Body& dst)
+        {
+            HRESULT hr = S_OK;
+
+            if (src == nullptr) return false;
+
+            BOOLEAN isTracked = false;
+            hr = src->get_IsTracked(&isTracked);
+            if (FAILED(hr) || !isTracked) return false;
+
+            src->get_TrackingId(&dst.id);
+
+            Joint srcJoints[JointType_Count] = {};
+            if (FAILED(src->GetJoints(JointType_Count, srcJoints)))
+            {
+                return false;
+            }
+
+            static std::pair<int, int> mappingPairs[] =
+            {
+                { Body::HIP_CENTER, JointType_SpineBase },
+                { Body::SPINE, JointType_SpineMid },
+                { Body::SHOULDER_CENTER, JointType_SpineShoulder },
+                { Body::NECK, JointType_Neck },
+                { Body::HEAD, JointType_Head },
+                { Body::SHOULDER_LEFT, JointType_ShoulderLeft },
+                { Body::ELBOW_LEFT, JointType_ElbowLeft },
+                { Body::WRIST_LEFT, JointType_WristLeft },
+                { Body::HAND_LEFT, JointType_HandLeft },
+                { Body::SHOULDER_RIGHT, JointType_ShoulderRight },
+                { Body::ELBOW_RIGHT, JointType_ElbowRight },
+                { Body::WRIST_RIGHT, JointType_WristRight },
+                { Body::HAND_RIGHT, JointType_HandRight },
+                { Body::HIP_LEFT, JointType_HipLeft },
+                { Body::KNEE_LEFT, JointType_KneeLeft },
+                { Body::ANKLE_LEFT, JointType_AnkleLeft },
+                { Body::FOOT_LEFT, JointType_FootLeft },
+                { Body::HIP_RIGHT, JointType_HipRight },
+                { Body::KNEE_RIGHT, JointType_KneeRight },
+                { Body::ANKLE_RIGHT, JointType_AnkleRight },
+                { Body::FOOT_RIGHT, JointType_FootRight },
+                { Body::HAND_TIP_LEFT, JointType_HandTipLeft },
+                { Body::HAND_THUMB_LEFT, JointType_ThumbLeft },
+                { Body::HAND_TIP_RIGHT, JointType_HandTipRight },
+                { Body::HAND_THUMB_RIGHT, JointType_ThumbRight },
+            };
+
+            for (auto& mapping : mappingPairs)
+            {
+                dst.joints[mapping.first].pos3d = toCi(srcJoints[mapping.second].Position);
+                DepthSpacePoint depthPoint = { 0 };
+                coordMapper->MapCameraPointToDepthSpace(srcJoints[mapping.second].Position, &depthPoint);
+                depthPoint.X /= depthDesc.width;
+                depthPoint.Y /= depthDesc.height;
+                dst.joints[mapping.first].pos2d = toCi(depthPoint);
+            }
+            
+            return true;
+        }
     };
 
     struct DeviceKinect1 : public Device
     {
-        static int getDeviceCount()
+        static uint32_t getDeviceCount()
         {
             return KinectGetPortIDCount();
         }
@@ -204,20 +398,16 @@ namespace Kinect
             {
                 delete[] depthBuffer;
             }
+
             if (sensor != KCB_INVALID_HANDLE)
             {
                 KinectCloseSensor(sensor);
             }
         }
 
-        int getWidth() const override
+        ivec2 getDepthSize() const
         {
-            return depthDesc.dwWidth;
-        }
-
-        int getHeight() const override
-        {
-            return depthDesc.dwHeight;
+            return{ depthDesc.dwWidth, depthDesc.dwHeight };
         }
 
         bool isValid() const
@@ -335,6 +525,7 @@ namespace Kinect
                         }
                         bodies.push_back(body);
                     }
+                    signalBodyDirty.emit();
                 }
             }
         }
@@ -351,13 +542,10 @@ namespace Kinect
         {
             return true;
         }
-        virtual int getWidth() const
+
+        ivec2 getDepthSize() const
         {
-            return depthChannel.getWidth();
-        }
-        virtual int getHeight() const
-        {
-            return depthChannel.getHeight();
+            return depthChannel.getSize();
         }
 
         DeviceSimulator(Option option)
@@ -380,7 +568,7 @@ namespace Kinect
         int width, height;
     };
 
-    int Device::getDeviceCount(DeviceType type)
+    uint32_t Device::getDeviceCount(DeviceType type)
     {
         if (type == Kinect1)
             return DeviceKinect1::getDeviceCount();
