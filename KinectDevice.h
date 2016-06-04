@@ -4,6 +4,8 @@
 #include "cinder/Function.h"
 #include "cinder/Signals.h"
 
+#include <vector>
+
 namespace Kinect
 {
     typedef std::shared_ptr<struct Device> DeviceRef;
@@ -57,6 +59,8 @@ namespace Kinect
         uint64_t id;
         ci::vec3 pos;
         ci::quat orientation;
+        std::vector<ci::vec3> vertices;
+        static std::vector<uint32_t> indices; // shared by each face
     };
 
     enum DeviceType
