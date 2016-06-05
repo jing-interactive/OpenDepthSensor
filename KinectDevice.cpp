@@ -52,17 +52,16 @@ struct DeviceKinect2 : public Device
         {
             KCBReleaseDepthFrame(&depthFrame);
         }
-        if (coordMapper != nullptr)
-        {
-            coordMapper->Release();
-        }
+        msw::ComDelete(coordMapper);
         if (option.enableFace)
         {
             for (int i = 0; i < BODY_COUNT; i++)
             {
-                hdFaces[i].frameSource->Release();
-                hdFaces[i].frameSource->Release();
-                hdFaces[i].modelBuilder->Release();
+                msw::ComDelete(hdFaces[i].frameSource);
+                msw::ComDelete(hdFaces[i].frameReader);
+                msw::ComDelete(hdFaces[i].modelBuilder);
+                msw::ComDelete(hdFaces[i].faceAlignment);
+                msw::ComDelete(hdFaces[i].faceModel);
             }
         }
         if (sensor != KCB_INVALID_HANDLE)
