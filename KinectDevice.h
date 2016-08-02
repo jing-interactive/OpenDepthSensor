@@ -67,6 +67,7 @@ namespace Kinect
     {
         Kinect1,
         Kinect2,
+        RealSense,
         Simulator,
         OpenNI,
         OpenNI2,
