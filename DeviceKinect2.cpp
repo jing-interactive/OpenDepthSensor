@@ -53,6 +53,7 @@ struct DeviceKinect2 : public Device
         msw::ComDelete(coordMapper);
         if (option.enableFace)
         {
+            // TODO: apply SCOPED_COM_OBJECT
             for (int i = 0; i < BODY_COUNT; i++)
             {
                 msw::ComDelete(hdFaces[i].frameSource);

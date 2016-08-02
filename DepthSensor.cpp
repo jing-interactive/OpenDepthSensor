@@ -25,13 +25,13 @@ DeviceRef createKinect2(Device::Option option);
 DeviceRef createRealSense(Device::Option option);
 DeviceRef createSimulator(Device::Option option);
 
-DeviceRef Device::create(DeviceType type, Option option/* = Option()*/)
+DeviceRef Device::create(DeviceType type, Option option)
 {
     if (type == Kinect1)
         return createKinect1(option);
     if (type == Kinect2)
         return createKinect2(option);
-    if (type == Kinect2)
+    if (type == RealSense)
         return createRealSense(option);
     return createSimulator(option);
 }
