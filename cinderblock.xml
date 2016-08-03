@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="vnm"
+	id="org.vnm.utils"
+	author="Vinjn Zhang"
+	license="MIT"
+	summary="Implements the utils"
+	core="false"
+	>
+	<sourcePattern>src/*.*</sourcePattern>
+	<headerPattern>include/*.*</headerPattern>
+	<includePath>include</includePath>
+</block>
+<template>templates/Basic VNM/template.xml</template>
+<template>templates/Minimalist VNM/template.xml</template>
+</cinder>
