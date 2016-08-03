@@ -41,28 +41,32 @@ struct DeviceRealSense : public Device
             CI_LOG_E("Failed to connect to RealSense devices.");
         }
 
-        dev = ctx.get_device(0);
-        printf("\nUsing device 0, an %s\n", dev->get_name());
+        dev = ctx.get_device(option.deviceId);
+        printf("\nUsing device %s, an %s\n", option.deviceId, dev->get_name());
         printf("    Serial number: %s\n", dev->get_serial());
         printf("    Firmware version: %s\n", dev->get_firmware_version());
 
         if (option.enableDepth)
         {
-            // Configure depth to run at VGA resolution at 30 frames per second
-            dev->enable_stream(rs::stream::depth, kWidth, kHeight, rs::format::z16, 30);
-            dev->start();
-
+            dev->enable_stream(rs::stream::depth, kWidth, kHeight, rs::format::z16, 60);
             // Determine depth value corresponding to one meter
             one_meter = static_cast<uint16_t>(1.0f / dev->get_depth_scale());
         }
 
+        if (option.enableColor)
+        {
+            dev->enable_stream(rs::stream::color, kWidth, kHeight, rs::format::rgb8, 60);
+        }
+
+        if (option.enableInfrared)
+        {
+            dev->enable_stream(rs::stream::infrared, kWidth, kHeight, rs::format::y8, 60);
+        }
+
+        dev->start();
+
         App::get()->getSignalUpdate().connect(std::bind(&DeviceRealSense::update, this));
     }
-
-    //const vec3 toCi(const Vector4& pos)
-    //{
-    //    return vec3(pos.x, pos.y, pos.z);
-    //}
 
     void update()
     {
@@ -70,11 +74,25 @@ struct DeviceRealSense : public Device
         {
             dev->wait_for_frames();
 
-            // Retrieve depth data, which was previously configured as a 640 x 480 image of 16-bit depth values
-            uint16_t* data = (uint16_t*)dev->get_frame_data(rs::stream::depth);
-            depthChannel = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
+            if (option.enableDepth)
+            {
+                uint16_t* data = (uint16_t*)dev->get_frame_data(rs::stream::depth);
+                depthChannel = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
+                signalDepthDirty.emit();
+            }
 
-            signalDepthDirty.emit();
+            if (option.enableInfrared)
+            {
+                uint8_t* data = (uint8_t*)dev->get_frame_data(rs::stream::infrared);
+                infraredChannel.is16bit = false;
+                infraredChannel.u8 = Channel8u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
+            }
+
+            if (option.enableColor)
+            {
+                uint8_t* data = (uint8_t*)dev->get_frame_data(rs::stream::color);
+                colorSurface = Surface8u(data, kWidth, kHeight, sizeof(uint8_t) * 3 * kWidth, SurfaceChannelOrder::RGB);
+            }
         }
     }
 

@@ -98,7 +98,12 @@ namespace Kinect
         ci::Channel16u depthChannel;
         ci::signals::Signal<void()> signalDepthDirty;
 
-        ci::Channel16u infraredChannel;
+        struct
+        {
+            bool is16bit = true;
+            ci::Channel16u u16;
+            ci::Channel8u u8;
+        } infraredChannel;
         ci::signals::Signal<void()> signalInfraredDirty;
 
         ci::Surface8u colorSurface;
