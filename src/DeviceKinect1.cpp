@@ -12,8 +12,41 @@ using namespace Kinect;
 
 #define SCOPED_COM_OBJECT(objName) auto scoped##__LINE__## = msw::makeComUnique(objName);
 
+static std::pair<int, int> mappingPairs[] =
+{
+    { Body::HIP_CENTER, NUI_SKELETON_POSITION_HIP_CENTER },
+    { Body::SPINE, NUI_SKELETON_POSITION_SPINE },
+    { Body::SHOULDER_CENTER, NUI_SKELETON_POSITION_SHOULDER_CENTER },
+    { Body::HEAD, NUI_SKELETON_POSITION_HEAD },
+    { Body::SHOULDER_LEFT, NUI_SKELETON_POSITION_SHOULDER_LEFT },
+    { Body::ELBOW_LEFT, NUI_SKELETON_POSITION_ELBOW_LEFT },
+    { Body::WRIST_LEFT, NUI_SKELETON_POSITION_WRIST_LEFT },
+    { Body::HAND_LEFT, NUI_SKELETON_POSITION_HAND_LEFT },
+    { Body::SHOULDER_RIGHT, NUI_SKELETON_POSITION_SHOULDER_RIGHT },
+    { Body::ELBOW_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT },
+    { Body::WRIST_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT },
+    { Body::HAND_RIGHT, NUI_SKELETON_POSITION_HAND_RIGHT },
+    { Body::HIP_LEFT, NUI_SKELETON_POSITION_HIP_LEFT },
+    { Body::KNEE_LEFT, NUI_SKELETON_POSITION_KNEE_LEFT },
+    { Body::ANKLE_LEFT, NUI_SKELETON_POSITION_ANKLE_LEFT },
+    { Body::FOOT_LEFT, NUI_SKELETON_POSITION_FOOT_LEFT },
+    { Body::HIP_RIGHT, NUI_SKELETON_POSITION_HIP_RIGHT },
+    { Body::KNEE_RIGHT, NUI_SKELETON_POSITION_KNEE_RIGHT },
+    { Body::ANKLE_RIGHT, NUI_SKELETON_POSITION_ANKLE_RIGHT },
+    { Body::FOOT_RIGHT, NUI_SKELETON_POSITION_FOOT_RIGHT },
+};
+
 struct DeviceKinect1 : public Device
 {
+    unique_ptr<uint8_t[]> depthBuffer;
+    KINECT_IMAGE_FRAME_FORMAT depthDesc;
+
+    unique_ptr<uint8_t[]> colorBuffer;
+    KINECT_IMAGE_FRAME_FORMAT colorDesc;
+
+    NUI_SKELETON_FRAME skeletonFrame;
+    int sensor;
+
     static uint32_t getDeviceCount()
     {
         return KinectGetPortIDCount();
@@ -58,19 +91,35 @@ struct DeviceKinect1 : public Device
             hr = E_UNEXPECTED;
         }
 
-        if (SUCCEEDED(hr))
+        if (FAILED(hr))
         {
-            KinectStopColorStream(sensor);
+            CI_LOG_E("Failed to connect to Kinect V1");
+        }
+
+        if (option.enableDepth)
+        {
             depthDesc = { sizeof(KINECT_IMAGE_FRAME_FORMAT) };
             KinectGetDepthFrameFormat(sensor, &depthDesc);
             depthBuffer.reset(new uint8_t[depthDesc.cbBufferSize]);
             depthChannel = Channel16u(depthDesc.dwWidth, depthDesc.dwHeight,
-                depthDesc.cbBytesPerPixel * depthDesc.dwWidth, 1, (uint16_t *)depthBuffer.get());
+                depthDesc.cbBytesPerPixel * depthDesc.dwWidth, 1, (uint16_t*)depthBuffer.get());
+        }
+        else
+        {
+            KinectStopDepthStream(sensor);
         }
 
-        if (FAILED(hr))
+        if (option.enableColor)
         {
-            CI_LOG_E("Failed to connect to Kinect V1");
+            colorDesc = { sizeof(KINECT_IMAGE_FRAME_FORMAT) };
+            KinectGetColorFrameFormat(sensor, &colorDesc);
+            colorBuffer.reset(new uint8_t[colorDesc.cbBufferSize]);
+            colorSurface = Surface8u(colorBuffer.get(), colorDesc.dwWidth, colorDesc.dwHeight,
+                colorDesc.cbBytesPerPixel * colorDesc.dwWidth, SurfaceChannelOrder::BGRX);
+        }
+        else
+        {
+            KinectStopColorStream(sensor);
         }
 
         App::get()->getSignalUpdate().connect(std::bind(&DeviceKinect1::update, this));
@@ -91,6 +140,14 @@ struct DeviceKinect1 : public Device
             }
         }
 
+        if (option.enableColor && KinectIsColorFrameReady(sensor))
+        {
+            if (SUCCEEDED(KinectGetColorFrame(sensor, colorDesc.cbBufferSize, colorBuffer.get(), nullptr)))
+            {
+                signalColorDirty.emit();
+            }
+        }
+
         if (option.enableBody && KinectIsSkeletonFrameReady(sensor))
         {
             if (SUCCEEDED(KinectGetSkeletonFrame(sensor, &skeletonFrame)))
@@ -101,29 +158,6 @@ struct DeviceKinect1 : public Device
                     Body body;
                     body.id = data.dwTrackingID;
 
-                    static std::pair<int, int> mappingPairs[] =
-                    {
-                        { Body::HIP_CENTER, NUI_SKELETON_POSITION_HIP_CENTER },
-                        { Body::SPINE, NUI_SKELETON_POSITION_SPINE },
-                        { Body::SHOULDER_CENTER, NUI_SKELETON_POSITION_SHOULDER_CENTER },
-                        { Body::HEAD, NUI_SKELETON_POSITION_HEAD },
-                        { Body::SHOULDER_LEFT, NUI_SKELETON_POSITION_SHOULDER_LEFT },
-                        { Body::ELBOW_LEFT, NUI_SKELETON_POSITION_ELBOW_LEFT },
-                        { Body::WRIST_LEFT, NUI_SKELETON_POSITION_WRIST_LEFT },
-                        { Body::HAND_LEFT, NUI_SKELETON_POSITION_HAND_LEFT },
-                        { Body::SHOULDER_RIGHT, NUI_SKELETON_POSITION_SHOULDER_RIGHT },
-                        { Body::ELBOW_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT },
-                        { Body::WRIST_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT },
-                        { Body::HAND_RIGHT, NUI_SKELETON_POSITION_HAND_RIGHT },
-                        { Body::HIP_LEFT, NUI_SKELETON_POSITION_HIP_LEFT },
-                        { Body::KNEE_LEFT, NUI_SKELETON_POSITION_KNEE_LEFT },
-                        { Body::ANKLE_LEFT, NUI_SKELETON_POSITION_ANKLE_LEFT },
-                        { Body::FOOT_LEFT, NUI_SKELETON_POSITION_FOOT_LEFT },
-                        { Body::HIP_RIGHT, NUI_SKELETON_POSITION_HIP_RIGHT },
-                        { Body::KNEE_RIGHT, NUI_SKELETON_POSITION_KNEE_RIGHT },
-                        { Body::ANKLE_RIGHT, NUI_SKELETON_POSITION_ANKLE_RIGHT },
-                        { Body::FOOT_RIGHT, NUI_SKELETON_POSITION_FOOT_RIGHT },
-                    };
                     for (auto& mapping : mappingPairs)
                     {
                         vec3 pos3d = toCi(data.SkeletonPositions[mapping.second]);
@@ -131,12 +165,9 @@ struct DeviceKinect1 : public Device
 
                         if (pos3d.z > FLT_EPSILON)
                         {
-                            //
                             // Center of depth sensor is at (0,0,0) in skeleton space, and
                             // and (width/2,height/2) in depth image coordinates.  Note that positive Y
                             // is up in skeleton space and down in image coordinates.
-                            //
-
                             pos2d.x = 0.5f + pos3d.x * (depthDesc.dwWidth / 320.f) * NUI_CAMERA_SKELETON_TO_DEPTH_IMAGE_MULTIPLIER_320x240 / pos3d.z;
                             pos2d.y = 0.5f - pos3d.y * (depthDesc.dwHeight / 240.f) * NUI_CAMERA_SKELETON_TO_DEPTH_IMAGE_MULTIPLIER_320x240 / pos3d.z;
 
@@ -150,11 +181,6 @@ struct DeviceKinect1 : public Device
             }
         }
     }
-
-    unique_ptr<uint8_t[]> depthBuffer;
-    KINECT_IMAGE_FRAME_FORMAT depthDesc;
-    NUI_SKELETON_FRAME skeletonFrame;
-    int sensor;
 };
 
 uint32_t getKinect1Count()

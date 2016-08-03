@@ -1,6 +1,6 @@
 #include "cinder/Cinder.h"
 #include "cinder/Quaternion.h"
-#include "cinder/Channel.h"
+#include "cinder/Surface.h"
 #include "cinder/Function.h"
 #include "cinder/Signals.h"
 
@@ -83,7 +83,7 @@ namespace Kinect
             bool enableDepth = true;
             bool enableBody = false;
             bool enableBodyIndex = false;
-            bool enableInfra = false;
+            bool enableInfrared = false;
             bool enableAudio = false;
             bool enableFace = false;
         };
@@ -97,6 +97,12 @@ namespace Kinect
 
         ci::Channel16u depthChannel;
         ci::signals::Signal<void()> signalDepthDirty;
+
+        ci::Channel16u infraredChannel;
+        ci::signals::Signal<void()> signalInfraredDirty;
+
+        ci::Surface8u colorSurface;
+        ci::signals::Signal<void()> signalColorDirty;
 
         std::vector<Body> bodies;
         ci::signals::Signal<void()> signalBodyDirty;

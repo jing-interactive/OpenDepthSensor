@@ -17,10 +17,45 @@ using namespace Kinect;
 
 vector<uint32_t> Face::indices;
 
+static std::pair<int, int> mappingPairs[] =
+{
+    { Body::HIP_CENTER, JointType_SpineBase },
+    { Body::SPINE, JointType_SpineMid },
+    { Body::SHOULDER_CENTER, JointType_SpineShoulder },
+    { Body::NECK, JointType_Neck },
+    { Body::HEAD, JointType_Head },
+    { Body::SHOULDER_LEFT, JointType_ShoulderLeft },
+    { Body::ELBOW_LEFT, JointType_ElbowLeft },
+    { Body::WRIST_LEFT, JointType_WristLeft },
+    { Body::HAND_LEFT, JointType_HandLeft },
+    { Body::SHOULDER_RIGHT, JointType_ShoulderRight },
+    { Body::ELBOW_RIGHT, JointType_ElbowRight },
+    { Body::WRIST_RIGHT, JointType_WristRight },
+    { Body::HAND_RIGHT, JointType_HandRight },
+    { Body::HIP_LEFT, JointType_HipLeft },
+    { Body::KNEE_LEFT, JointType_KneeLeft },
+    { Body::ANKLE_LEFT, JointType_AnkleLeft },
+    { Body::FOOT_LEFT, JointType_FootLeft },
+    { Body::HIP_RIGHT, JointType_HipRight },
+    { Body::KNEE_RIGHT, JointType_KneeRight },
+    { Body::ANKLE_RIGHT, JointType_AnkleRight },
+    { Body::FOOT_RIGHT, JointType_FootRight },
+    { Body::HAND_TIP_LEFT, JointType_HandTipLeft },
+    { Body::HAND_THUMB_LEFT, JointType_ThumbLeft },
+    { Body::HAND_TIP_RIGHT, JointType_HandTipRight },
+    { Body::HAND_THUMB_RIGHT, JointType_ThumbRight },
+};
+
 struct DeviceKinect2 : public Device
 {
-    KCBDepthFrame *depthFrame = nullptr;
+    KCBDepthFrame* depthFrame = nullptr;
     KCBFrameDescription depthDesc;
+
+    KCBInfraredFrame* infraredFrame = nullptr;
+    KCBFrameDescription infraredDesc;
+
+    KCBColorFrame* colorFrame = nullptr;
+    KCBFrameDescription colorDesc;
 
     ICoordinateMapper* coordMapper = nullptr;
     int sensor;
@@ -50,6 +85,17 @@ struct DeviceKinect2 : public Device
         {
             KCBReleaseDepthFrame(&depthFrame);
         }
+
+        if (infraredFrame != nullptr)
+        {
+            KCBReleaseDepthFrame(&infraredFrame);
+        }
+
+        if (colorFrame != nullptr)
+        {
+            KCBReleaseColorFrame(&colorFrame);
+        }
+
         msw::ComDelete(coordMapper);
         if (option.enableFace)
         {
@@ -105,16 +151,43 @@ struct DeviceKinect2 : public Device
         }
 
         hr = KCBGetICoordinateMapper(sensor, &coordMapper);
-        if (FAILED(hr)) CI_LOG_E("Failed to call KCBGetICoordinateMapper()");
+        if (FAILED(hr)) CI_LOG_E("KCBGetICoordinateMapper() fails.");
 
-        hr = KCBGetDepthFrameDescription(sensor, &depthDesc);
-        if (SUCCEEDED(hr))
+        if (option.enableDepth)
         {
-            hr = KCBCreateDepthFrame(depthDesc, &depthFrame);
-            depthChannel = Channel16u(depthDesc.width, depthDesc.height,
-                depthDesc.bytesPerPixel * depthDesc.width, 1, depthFrame->Buffer);
+            hr = KCBGetDepthFrameDescription(sensor, &depthDesc);
+            if (SUCCEEDED(hr))
+            {
+                hr = KCBCreateDepthFrame(depthDesc, &depthFrame);
+                depthChannel = Channel16u(depthDesc.width, depthDesc.height,
+                    depthDesc.bytesPerPixel * depthDesc.width, 1, depthFrame->Buffer);
+            }
+            if (FAILED(hr)) CI_LOG_E("KCBCreateDepthFrame() fails.");
         }
-        if (FAILED(hr)) CI_LOG_E("Failed to KCBCreateDepthFrame");
+
+        if (option.enableInfrared)
+        {
+            hr = KCBGetInfraredFrameDescription(sensor, &infraredDesc);
+            if (SUCCEEDED(hr))
+            {
+                hr = KCBCreateInfraredFrame(infraredDesc, &infraredFrame);
+                infraredChannel = Channel16u(infraredDesc.width, infraredDesc.height,
+                    infraredDesc.bytesPerPixel * infraredDesc.width, 1, infraredFrame->Buffer);
+            }
+            if (FAILED(hr)) CI_LOG_E("KCBCreateInfraredFrame() fails.");
+        }
+
+        if (option.enableColor)
+        {
+            hr = KCBGetColorFrameDescription(sensor, ColorImageFormat_Bgra, &colorDesc);
+            if (SUCCEEDED(hr))
+            {
+                hr = KCBCreateColorFrame(ColorImageFormat_Bgra, colorDesc, &colorFrame);
+                colorSurface = Surface8u(colorFrame->Buffer, colorDesc.width, colorDesc.height,
+                    infraredDesc.bytesPerPixel * infraredDesc.width, SurfaceChannelOrder::BGRX);
+            }
+            if (FAILED(hr)) CI_LOG_E("KCBCreateColorFrame() fails.");
+        }
 
         if (option.enableFace)
         {
@@ -140,7 +213,7 @@ struct DeviceKinect2 : public Device
                 hr = ::CreateFaceModel(1.0f, FaceShapeDeformations::FaceShapeDeformations_Count, hdFace.deformations, &hdFace.faceModel);
                 if (FAILED(hr) || hdFace.faceModel == nullptr) break;
             }
-            if (FAILED(hr)) CI_LOG_E("Failed to setup HD Face");
+            if (FAILED(hr)) CI_LOG_E("Failed to setup HD Face.");
 
             // mesh related
             {
@@ -185,6 +258,22 @@ struct DeviceKinect2 : public Device
             if (SUCCEEDED(KCBGetDepthFrame(sensor, depthFrame)))
             {
                 signalDepthDirty.emit();
+            }
+        }
+
+        if (option.enableInfrared && KCBIsFrameReady(sensor, FrameSourceTypes_Infrared))
+        {
+            if (SUCCEEDED(KCBGetInfraredFrame(sensor, infraredFrame)))
+            {
+                signalInfraredDirty.emit();
+            }
+        }
+
+        if (option.enableColor && KCBIsFrameReady(sensor, FrameSourceTypes_Color))
+        {
+            if (SUCCEEDED(KCBGetColorFrame(sensor, colorFrame)))
+            {
+                signalColorDirty.emit();
             }
         }
 
@@ -327,35 +416,6 @@ struct DeviceKinect2 : public Device
         {
             return false;
         }
-
-        static std::pair<int, int> mappingPairs[] =
-        {
-            { Body::HIP_CENTER, JointType_SpineBase },
-            { Body::SPINE, JointType_SpineMid },
-            { Body::SHOULDER_CENTER, JointType_SpineShoulder },
-            { Body::NECK, JointType_Neck },
-            { Body::HEAD, JointType_Head },
-            { Body::SHOULDER_LEFT, JointType_ShoulderLeft },
-            { Body::ELBOW_LEFT, JointType_ElbowLeft },
-            { Body::WRIST_LEFT, JointType_WristLeft },
-            { Body::HAND_LEFT, JointType_HandLeft },
-            { Body::SHOULDER_RIGHT, JointType_ShoulderRight },
-            { Body::ELBOW_RIGHT, JointType_ElbowRight },
-            { Body::WRIST_RIGHT, JointType_WristRight },
-            { Body::HAND_RIGHT, JointType_HandRight },
-            { Body::HIP_LEFT, JointType_HipLeft },
-            { Body::KNEE_LEFT, JointType_KneeLeft },
-            { Body::ANKLE_LEFT, JointType_AnkleLeft },
-            { Body::FOOT_LEFT, JointType_FootLeft },
-            { Body::HIP_RIGHT, JointType_HipRight },
-            { Body::KNEE_RIGHT, JointType_KneeRight },
-            { Body::ANKLE_RIGHT, JointType_AnkleRight },
-            { Body::FOOT_RIGHT, JointType_FootRight },
-            { Body::HAND_TIP_LEFT, JointType_HandTipLeft },
-            { Body::HAND_THUMB_LEFT, JointType_ThumbLeft },
-            { Body::HAND_TIP_RIGHT, JointType_HandTipRight },
-            { Body::HAND_THUMB_RIGHT, JointType_ThumbRight },
-        };
 
         for (auto& mapping : mappingPairs)
         {
