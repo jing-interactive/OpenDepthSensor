@@ -49,7 +49,10 @@ struct DeviceKinect1 : public Device
 
     static uint32_t getDeviceCount()
     {
-        return KinectGetPortIDCount();
+        int count = 0;
+        NuiGetSensorCount(&count);
+
+        return count;
     }
 
     ~DeviceKinect1()
@@ -73,6 +76,14 @@ struct DeviceKinect1 : public Device
     DeviceKinect1(Option option)
     {
         this->option = option;
+        depthDesc.dwWidth = 320;
+        depthDesc.dwHeight = 240;
+
+        if (getDeviceCount() == 0)
+        {
+            CI_LOG_E("There is no Kinect V1 devices.");
+            return;
+        }
 
         HRESULT hr = S_OK;
 
@@ -94,6 +105,7 @@ struct DeviceKinect1 : public Device
         if (FAILED(hr))
         {
             CI_LOG_E("Failed to connect to Kinect V1");
+            return;
         }
 
         if (option.enableDepth)

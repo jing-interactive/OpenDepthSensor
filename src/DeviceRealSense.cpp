@@ -39,6 +39,7 @@ struct DeviceRealSense : public Device
         if (ctx.get_device_count() == 0)
         {
             CI_LOG_E("Failed to connect to RealSense devices.");
+            return;
         }
 
         dev = ctx.get_device(option.deviceId);

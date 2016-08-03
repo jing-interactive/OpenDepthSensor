@@ -128,6 +128,9 @@ struct DeviceKinect2 : public Device
     DeviceKinect2(Option option)
     {
         this->option = option;
+        depthDesc.width = 512;
+        depthDesc.height = 424;
+
         if (this->option.enableFace)
         {
             // face is dependent on body
