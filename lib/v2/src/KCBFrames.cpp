@@ -113,6 +113,8 @@ See the Apache 2 License for the specific language governing permissions and lim
     pFrame->Size = frameDescription.lengthInPixels * frameDescription.bytesPerPixel;
     pFrame->Buffer = new (std::nothrow) BYTE[pFrame->Size];
 
+    *ppColorFrame = pFrame;
+
     return S_OK;
 }
 
