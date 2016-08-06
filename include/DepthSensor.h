@@ -94,6 +94,10 @@ namespace Kinect
 
         virtual bool isValid() const = 0;
         virtual ci::ivec2 getDepthSize() const = 0;
+        virtual float getDepthToMmScale()
+        {
+            return 1.0f;
+        }
 
         ci::Channel16u depthChannel;
         ci::signals::Signal<void()> signalDepthDirty;

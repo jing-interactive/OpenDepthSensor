@@ -58,7 +58,7 @@ struct DeviceKinect2 : public Device
     KCBFrameDescription colorDesc;
 
     ICoordinateMapper* coordMapper = nullptr;
-    int sensor;
+    int sensor = KCB_INVALID_HANDLE;
     IKinectSensor*  rawSensor = nullptr;
 
     struct HDFaceInternal

@@ -45,7 +45,7 @@ struct DeviceKinect1 : public Device
     KINECT_IMAGE_FRAME_FORMAT colorDesc;
 
     NUI_SKELETON_FRAME skeletonFrame;
-    int sensor;
+    int sensor = KCB_INVALID_HANDLE;
 
     static uint32_t getDeviceCount()
     {

@@ -11,10 +11,22 @@ using namespace Kinect;
 
 struct DeviceRealSense : public Device
 {
+    rs::context ctx;
+    rs::device* dev = nullptr;
+    float depthScale;
+
+    const int32_t kWidth = 640;
+    const int32_t kHeight = 480;
+
     static uint32_t getDeviceCount()
     {
         // TODO:
         return 1;
+    }
+
+    virtual float getDepthToMmScale()
+    {
+        return depthScale;
     }
 
     ~DeviceRealSense()
@@ -29,7 +41,7 @@ struct DeviceRealSense : public Device
 
     bool isValid() const
     {
-        return true;
+        return dev != nullptr;;
     }
 
     DeviceRealSense(Option option)
@@ -50,8 +62,7 @@ struct DeviceRealSense : public Device
         if (option.enableDepth)
         {
             dev->enable_stream(rs::stream::depth, kWidth, kHeight, rs::format::z16, 60);
-            // Determine depth value corresponding to one meter
-            one_meter = static_cast<uint16_t>(1.0f / dev->get_depth_scale());
+            depthScale = dev->get_depth_scale() * 1000;
         }
 
         if (option.enableColor)
@@ -96,13 +107,6 @@ struct DeviceRealSense : public Device
             }
         }
     }
-
-    rs::context ctx;
-    rs::device* dev = nullptr;
-    uint16_t one_meter = 0;
-
-    const int32_t kWidth = 640;
-    const int32_t kHeight = 480;
 };
 
 uint32_t getRealSenseCount()
