@@ -72,7 +72,7 @@ struct DeviceRealSense : public Device
 
         if (option.enableInfrared)
         {
-            dev->enable_stream(rs::stream::infrared, kWidth, kHeight, rs::format::y8, 60);
+            dev->enable_stream(rs::stream::infrared, kWidth, kHeight, rs::format::y16, 60);
         }
 
         dev->start();
@@ -82,29 +82,28 @@ struct DeviceRealSense : public Device
 
     void update()
     {
+        dev->wait_for_frames();
+
         if (option.enableDepth)
         {
-            dev->wait_for_frames();
+            auto data = (uint16_t*)dev->get_frame_data(rs::stream::depth);
+            depthChannel = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
+            signalDepthDirty.emit();
+        }
 
-            if (option.enableDepth)
-            {
-                uint16_t* data = (uint16_t*)dev->get_frame_data(rs::stream::depth);
-                depthChannel = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
-                signalDepthDirty.emit();
-            }
+        if (option.enableInfrared)
+        {
+            auto data = (uint16_t*)dev->get_frame_data(rs::stream::infrared);
+            infraredChannel.is16bit = true;
+            infraredChannel.u16 = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
+            signalInfraredDirty.emit();
+        }
 
-            if (option.enableInfrared)
-            {
-                uint8_t* data = (uint8_t*)dev->get_frame_data(rs::stream::infrared);
-                infraredChannel.is16bit = false;
-                infraredChannel.u8 = Channel8u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
-            }
-
-            if (option.enableColor)
-            {
-                uint8_t* data = (uint8_t*)dev->get_frame_data(rs::stream::color);
-                colorSurface = Surface8u(data, kWidth, kHeight, sizeof(uint8_t) * 3 * kWidth, SurfaceChannelOrder::RGB);
-            }
+        if (option.enableColor)
+        {
+            uint8_t* data = (uint8_t*)dev->get_frame_data(rs::stream::color);
+            colorSurface = Surface8u(data, kWidth, kHeight, sizeof(uint8_t) * 3 * kWidth, SurfaceChannelOrder::RGB);
+            signalColorDirty.emit();
         }
     }
 };
