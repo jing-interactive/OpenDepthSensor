@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\librealsense">
+      <UniqueIdentifier>{D575FC95-C16E-1BE8-EAA0-006DD6F8FAF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\librealsense\include">
+      <UniqueIdentifier>{48A2B897-34C7-0718-5D12-EDA749960636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\librealsense\include\librealsense">
+      <UniqueIdentifier>{D0E0EB6D-3CA5-EA5D-050B-1B28718E8693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\librealsense\src">
+      <UniqueIdentifier>{6C165988-58A5-E251-01C4-F64CED31F3F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v1">
+      <UniqueIdentifier>{634F661C-4FF1-90F2-38AC-A44624ED1743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v1\sdk">
+      <UniqueIdentifier>{3405117C-20BD-52C9-89C4-2B25759BEDB9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v1\sdk\inc">
+      <UniqueIdentifier>{3D12D47A-29E0-C780-1274-38A7FEE0A3E5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v1\sdk\lib">
+      <UniqueIdentifier>{5A1ED47A-46EC-C780-2F80-38A71BEDA3E5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v1\sdk\lib\x64">
+      <UniqueIdentifier>{CB862BEA-B76A-EC3F-20CB-E6920CCED6C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v1\sdk\lib\x86">
+      <UniqueIdentifier>{0F872BEA-FB6A-EC3F-64CB-E69250CED6C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v1\src">
+      <UniqueIdentifier>{FA06117C-E6BE-52C9-4FC6-2B253B9DEDB9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v2">
+      <UniqueIdentifier>{644F661C-50F1-90F2-39AC-A44625ED1743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v2\sdk">
+      <UniqueIdentifier>{B51D237C-A1D5-64C9-0ADD-3D25F6B3FFB9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v2\sdk\Lib">
+      <UniqueIdentifier>{3B0750EF-27D5-43F5-1069-B41BFCD51F5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v2\sdk\Lib\x64">
+      <UniqueIdentifier>{2CF8429A-18DC-03F0-813C-FE426D3FEE71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v2\sdk\Lib\x86">
+      <UniqueIdentifier>{70F8429A-5CDC-03F0-C53C-FE42B13FEE71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v2\sdk\inc">
+      <UniqueIdentifier>{3E8350EF-2A51-44F5-13E5-B41BFF51205A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\v2\src">
+      <UniqueIdentifier>{7B1F237C-67D7-64C9-D0DE-3D25BCB5FFB9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\DepthSensor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\include\librealsense\rs.h">
+      <Filter>src\librealsense\include\librealsense</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\include\librealsense\rs.hpp">
+      <Filter>src\librealsense\include\librealsense</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\include\librealsense\rsutil.h">
+      <Filter>src\librealsense\include\librealsense</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\context.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\device.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\f200-private.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\f200.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\image.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\r200-private.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\r200.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\stream.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\sync.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\types.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\librealsense\src\uvc.h">
+      <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\sdk\inc\NuiApi.h">
+      <Filter>src\v1\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\sdk\inc\NuiImageCamera.h">
+      <Filter>src\v1\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\sdk\inc\NuiSensor.h">
+      <Filter>src\v1\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\sdk\inc\NuiSkeleton.h">
+      <Filter>src\v1\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\AutoLock.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\ComSmartPtr.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\CoordinateMapper.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\CriticalSection.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\DataStream.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\DataStreamAudio.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\DataStreamColor.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\DataStreamDepth.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\DataStreamSkeleton.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\FaceTracker.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\KinectAudioStream.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\KinectCommonBridgeLib.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\KinectSensor.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\MediaBuffer.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\SensorManager.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\stdafx.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v1\src\targetver.h">
+      <Filter>src\v1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.Face.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.INPC.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.VisualGestureBuilder.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionApi.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionBase.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionCameraPoseFinder.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionColorVolume.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionDepthProcessor.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionVolume.h">
+      <Filter>src\v2\sdk\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\src\AutoLock.h">
+      <Filter>src\v2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\src\KCBSensor.h">
+      <Filter>src\v2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\src\KCBv2Lib.h">
+      <Filter>src\v2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\src\KinectList.h">
+      <Filter>src\v2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v2\src\stdafx.h">
+      <Filter>src\v2\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\DepthSensor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceKinect1.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceKinect2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceRealSense.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceSimulator.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\context.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\device.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\f200-private.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\f200.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\image.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\log.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\r200-private.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\r200.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\rs.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\stream.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\sync.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\types.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\uvc-libuvc.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\uvc-v4l2.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\uvc-wmf.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\uvc.cpp">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\librealsense\src\verify.c">
+      <Filter>src\librealsense\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\CoordinateMapper.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\DataStream.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\DataStreamAudio.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\DataStreamColor.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\DataStreamDepth.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\DataStreamSkeleton.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\FaceTracker.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\KinectAudioStream.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\KinectCommonBridgeLib.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\KinectSensor.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\MediaBuffer.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\SensorManager.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v1\src\stdafx.cpp">
+      <Filter>src\v1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v2\src\KCBFrames.cpp">
+      <Filter>src\v2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v2\src\KCBSensor.cpp">
+      <Filter>src\v2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v2\src\KCBv2Lib.cpp">
+      <Filter>src\v2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v2\src\KinectList.cpp">
+      <Filter>src\v2\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\v1\sdk\lib\x64\Kinect10.lib">
+      <Filter>src\v1\sdk\lib\x64</Filter>
+    </None>
+    <None Include="..\src\v1\sdk\lib\x86\Kinect10.lib">
+      <Filter>src\v1\sdk\lib\x86</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Face.lib">
+      <Filter>src\v2\sdk\Lib\x64</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Fusion.lib">
+      <Filter>src\v2\sdk\Lib\x64</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.VisualGestureBuilder.lib">
+      <Filter>src\v2\sdk\Lib\x64</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.lib">
+      <Filter>src\v2\sdk\Lib\x64</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Face.lib">
+      <Filter>src\v2\sdk\Lib\x86</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Fusion.lib">
+      <Filter>src\v2\sdk\Lib\x86</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.VisualGestureBuilder.lib">
+      <Filter>src\v2\sdk\Lib\x86</Filter>
+    </None>
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.lib">
+      <Filter>src\v2\sdk\Lib\x86</Filter>
+    </None>
+  </ItemGroup>
+</Project>

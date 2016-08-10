@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{369AB55B-227E-76B1-8BDE-700477E16033}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Cinder-DepthSensor</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\lib\msw\x64\</OutDir>
+    <IntDir>obj\x64\Debug\</IntDir>
+    <TargetName>Cinder-DepthSensor-d</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\lib\msw\x86\</OutDir>
+    <IntDir>obj\x86\Debug\</IntDir>
+    <TargetName>Cinder-DepthSensor-d</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\lib\msw\x64\</OutDir>
+    <IntDir>obj\x64\Release\</IntDir>
+    <TargetName>Cinder-DepthSensor</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\lib\msw\x86\</OutDir>
+    <IntDir>obj\x86\Release\</IntDir>
+    <TargetName>Cinder-DepthSensor</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\DepthSensor.h" />
+    <ClInclude Include="..\src\librealsense\include\librealsense\rs.h" />
+    <ClInclude Include="..\src\librealsense\include\librealsense\rs.hpp" />
+    <ClInclude Include="..\src\librealsense\include\librealsense\rsutil.h" />
+    <ClInclude Include="..\src\librealsense\src\context.h" />
+    <ClInclude Include="..\src\librealsense\src\device.h" />
+    <ClInclude Include="..\src\librealsense\src\f200-private.h" />
+    <ClInclude Include="..\src\librealsense\src\f200.h" />
+    <ClInclude Include="..\src\librealsense\src\image.h" />
+    <ClInclude Include="..\src\librealsense\src\r200-private.h" />
+    <ClInclude Include="..\src\librealsense\src\r200.h" />
+    <ClInclude Include="..\src\librealsense\src\stream.h" />
+    <ClInclude Include="..\src\librealsense\src\sync.h" />
+    <ClInclude Include="..\src\librealsense\src\types.h" />
+    <ClInclude Include="..\src\librealsense\src\uvc.h" />
+    <ClInclude Include="..\src\v1\sdk\inc\NuiApi.h" />
+    <ClInclude Include="..\src\v1\sdk\inc\NuiImageCamera.h" />
+    <ClInclude Include="..\src\v1\sdk\inc\NuiSensor.h" />
+    <ClInclude Include="..\src\v1\sdk\inc\NuiSkeleton.h" />
+    <ClInclude Include="..\src\v1\src\AutoLock.h" />
+    <ClInclude Include="..\src\v1\src\ComSmartPtr.h" />
+    <ClInclude Include="..\src\v1\src\CoordinateMapper.h" />
+    <ClInclude Include="..\src\v1\src\CriticalSection.h" />
+    <ClInclude Include="..\src\v1\src\DataStream.h" />
+    <ClInclude Include="..\src\v1\src\DataStreamAudio.h" />
+    <ClInclude Include="..\src\v1\src\DataStreamColor.h" />
+    <ClInclude Include="..\src\v1\src\DataStreamDepth.h" />
+    <ClInclude Include="..\src\v1\src\DataStreamSkeleton.h" />
+    <ClInclude Include="..\src\v1\src\FaceTracker.h" />
+    <ClInclude Include="..\src\v1\src\KinectAudioStream.h" />
+    <ClInclude Include="..\src\v1\src\KinectCommonBridgeLib.h" />
+    <ClInclude Include="..\src\v1\src\KinectSensor.h" />
+    <ClInclude Include="..\src\v1\src\MediaBuffer.h" />
+    <ClInclude Include="..\src\v1\src\SensorManager.h" />
+    <ClInclude Include="..\src\v1\src\stdafx.h" />
+    <ClInclude Include="..\src\v1\src\targetver.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.Face.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.INPC.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.VisualGestureBuilder.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\Kinect.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionApi.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionBase.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionCameraPoseFinder.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionColorVolume.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionDepthProcessor.h" />
+    <ClInclude Include="..\src\v2\sdk\inc\NuiKinectFusionVolume.h" />
+    <ClInclude Include="..\src\v2\src\AutoLock.h" />
+    <ClInclude Include="..\src\v2\src\KCBSensor.h" />
+    <ClInclude Include="..\src\v2\src\KCBv2Lib.h" />
+    <ClInclude Include="..\src\v2\src\KinectList.h" />
+    <ClInclude Include="..\src\v2\src\stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\DepthSensor.cpp" />
+    <ClCompile Include="..\src\DeviceKinect1.cpp" />
+    <ClCompile Include="..\src\DeviceKinect2.cpp" />
+    <ClCompile Include="..\src\DeviceRealSense.cpp" />
+    <ClCompile Include="..\src\DeviceSimulator.cpp" />
+    <ClCompile Include="..\src\librealsense\src\context.cpp" />
+    <ClCompile Include="..\src\librealsense\src\device.cpp" />
+    <ClCompile Include="..\src\librealsense\src\f200-private.cpp" />
+    <ClCompile Include="..\src\librealsense\src\f200.cpp" />
+    <ClCompile Include="..\src\librealsense\src\image.cpp" />
+    <ClCompile Include="..\src\librealsense\src\log.cpp" />
+    <ClCompile Include="..\src\librealsense\src\r200-private.cpp" />
+    <ClCompile Include="..\src\librealsense\src\r200.cpp" />
+    <ClCompile Include="..\src\librealsense\src\rs.cpp" />
+    <ClCompile Include="..\src\librealsense\src\stream.cpp" />
+    <ClCompile Include="..\src\librealsense\src\sync.cpp" />
+    <ClCompile Include="..\src\librealsense\src\types.cpp" />
+    <ClCompile Include="..\src\librealsense\src\uvc-libuvc.cpp" />
+    <ClCompile Include="..\src\librealsense\src\uvc-v4l2.cpp" />
+    <ClCompile Include="..\src\librealsense\src\uvc-wmf.cpp" />
+    <ClCompile Include="..\src\librealsense\src\uvc.cpp" />
+    <ClCompile Include="..\src\librealsense\src\verify.c" />
+    <ClCompile Include="..\src\v1\src\CoordinateMapper.cpp" />
+    <ClCompile Include="..\src\v1\src\DataStream.cpp" />
+    <ClCompile Include="..\src\v1\src\DataStreamAudio.cpp" />
+    <ClCompile Include="..\src\v1\src\DataStreamColor.cpp" />
+    <ClCompile Include="..\src\v1\src\DataStreamDepth.cpp" />
+    <ClCompile Include="..\src\v1\src\DataStreamSkeleton.cpp" />
+    <ClCompile Include="..\src\v1\src\FaceTracker.cpp" />
+    <ClCompile Include="..\src\v1\src\KinectAudioStream.cpp" />
+    <ClCompile Include="..\src\v1\src\KinectCommonBridgeLib.cpp" />
+    <ClCompile Include="..\src\v1\src\KinectSensor.cpp" />
+    <ClCompile Include="..\src\v1\src\MediaBuffer.cpp" />
+    <ClCompile Include="..\src\v1\src\SensorManager.cpp" />
+    <ClCompile Include="..\src\v1\src\stdafx.cpp" />
+    <ClCompile Include="..\src\v2\src\KCBFrames.cpp" />
+    <ClCompile Include="..\src\v2\src\KCBSensor.cpp" />
+    <ClCompile Include="..\src\v2\src\KCBv2Lib.cpp" />
+    <ClCompile Include="..\src\v2\src\KinectList.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\v1\sdk\lib\x64\Kinect10.lib" />
+    <None Include="..\src\v1\sdk\lib\x86\Kinect10.lib" />
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Face.lib" />
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Fusion.lib" />
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.VisualGestureBuilder.lib" />
+    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.lib" />
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Face.lib" />
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Fusion.lib" />
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.VisualGestureBuilder.lib" />
+    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.lib" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
