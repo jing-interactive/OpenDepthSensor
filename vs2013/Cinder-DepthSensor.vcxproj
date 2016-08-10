@@ -257,18 +257,6 @@
     <ClCompile Include="..\src\v2\src\KCBv2Lib.cpp" />
     <ClCompile Include="..\src\v2\src\KinectList.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\src\v1\sdk\lib\x64\Kinect10.lib" />
-    <None Include="..\src\v1\sdk\lib\x86\Kinect10.lib" />
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Face.lib" />
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Fusion.lib" />
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.VisualGestureBuilder.lib" />
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.lib" />
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Face.lib" />
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Fusion.lib" />
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.VisualGestureBuilder.lib" />
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.lib" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

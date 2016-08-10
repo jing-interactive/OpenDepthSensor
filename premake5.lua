@@ -26,15 +26,13 @@ solution "Cinder-DepthSensor"
 
         configuration "x86"
             libdirs {
-                "src/v1/sdk/lib/x86",
-                "src/v2/sdk/lib/x86",
+                "lib/msw/x86",
             }
             targetdir ("lib/msw/x86")
 
         configuration "x64"
             libdirs {
-                "src/v1/sdk/lib/x86",
-                "src/v2/sdk/lib/x86",
+                "lib/msw/x64",
             }
             targetdir ("lib/msw/x64")
 

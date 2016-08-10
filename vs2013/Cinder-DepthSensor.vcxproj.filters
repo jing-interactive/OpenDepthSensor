@@ -28,15 +28,6 @@
     <Filter Include="src\v1\sdk\inc">
       <UniqueIdentifier>{3D12D47A-29E0-C780-1274-38A7FEE0A3E5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\v1\sdk\lib">
-      <UniqueIdentifier>{5A1ED47A-46EC-C780-2F80-38A71BEDA3E5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\v1\sdk\lib\x64">
-      <UniqueIdentifier>{CB862BEA-B76A-EC3F-20CB-E6920CCED6C1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\v1\sdk\lib\x86">
-      <UniqueIdentifier>{0F872BEA-FB6A-EC3F-64CB-E69250CED6C1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\v1\src">
       <UniqueIdentifier>{FA06117C-E6BE-52C9-4FC6-2B253B9DEDB9}</UniqueIdentifier>
     </Filter>
@@ -45,15 +36,6 @@
     </Filter>
     <Filter Include="src\v2\sdk">
       <UniqueIdentifier>{B51D237C-A1D5-64C9-0ADD-3D25F6B3FFB9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\v2\sdk\Lib">
-      <UniqueIdentifier>{3B0750EF-27D5-43F5-1069-B41BFCD51F5A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\v2\sdk\Lib\x64">
-      <UniqueIdentifier>{2CF8429A-18DC-03F0-813C-FE426D3FEE71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\v2\sdk\Lib\x86">
-      <UniqueIdentifier>{70F8429A-5CDC-03F0-C53C-FE42B13FEE71}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\v2\sdk\inc">
       <UniqueIdentifier>{3E8350EF-2A51-44F5-13E5-B41BFF51205A}</UniqueIdentifier>
@@ -335,37 +317,5 @@
     <ClCompile Include="..\src\v2\src\KinectList.cpp">
       <Filter>src\v2\src</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\src\v1\sdk\lib\x64\Kinect10.lib">
-      <Filter>src\v1\sdk\lib\x64</Filter>
-    </None>
-    <None Include="..\src\v1\sdk\lib\x86\Kinect10.lib">
-      <Filter>src\v1\sdk\lib\x86</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Face.lib">
-      <Filter>src\v2\sdk\Lib\x64</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.Fusion.lib">
-      <Filter>src\v2\sdk\Lib\x64</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.VisualGestureBuilder.lib">
-      <Filter>src\v2\sdk\Lib\x64</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x64\Kinect20.lib">
-      <Filter>src\v2\sdk\Lib\x64</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Face.lib">
-      <Filter>src\v2\sdk\Lib\x86</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.Fusion.lib">
-      <Filter>src\v2\sdk\Lib\x86</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.VisualGestureBuilder.lib">
-      <Filter>src\v2\sdk\Lib\x86</Filter>
-    </None>
-    <None Include="..\src\v2\sdk\Lib\x86\Kinect20.lib">
-      <Filter>src\v2\sdk\Lib\x86</Filter>
-    </None>
   </ItemGroup>
 </Project>
