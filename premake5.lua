@@ -63,6 +63,7 @@ solution "Cinder-DepthSensor"
 
         includedirs {
 			"include",
+            "../../include",
             "src/librealsense/include",
             "src/v1/sdk/inc",
             "src/v2/sdk/inc",
@@ -71,6 +72,10 @@ solution "Cinder-DepthSensor"
         files {
 			"include/*",
             "src/**",
+        }
+
+        defines {
+            "RS_USE_WMF_BACKEND",
         }
 
         removefiles {

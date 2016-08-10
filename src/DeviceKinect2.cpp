@@ -1,5 +1,5 @@
 #include "DepthSensor.h"
-#include "KCBv2Lib.h"
+#include "v2/src/KCBv2Lib.h"
 #include "Kinect.Face.h"
 
 #include "cinder/app/app.h"

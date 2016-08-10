@@ -1,5 +1,5 @@
 #include "DepthSensor.h"
-#include "KinectCommonBridgeLib.h"
+#include "v1/src/KinectCommonBridgeLib.h"
 
 #include "cinder/app/app.h"
 #include "cinder/Log.h"

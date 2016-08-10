@@ -373,7 +373,7 @@ void KinectAudioStream::ReadOneBuffer(BYTE **ppbData, ULONG* pcbData)
         DWORD dwDataLength = 0;
         m_CurrentReadBuffer->GetBufferAndLength(&pData, &dwDataLength);
 
-        ULONG cbToCopy = std::min(dwDataLength - m_CurrentReadBufferIndex, *pcbData);
+        ULONG cbToCopy = min(dwDataLength - m_CurrentReadBufferIndex, *pcbData);
         memcpy(*ppbData, pData + m_CurrentReadBufferIndex, cbToCopy);
         *ppbData = (*ppbData)+cbToCopy;
         *pcbData = (*pcbData)-cbToCopy;
