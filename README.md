@@ -1,6 +1,8 @@
 # Cinder-DepthSensor
 
-Uses Kinect SDK and KinectCommonBridge source codes to support Kinect V1 and Kinect V2.
+Supported sensor list:
 
-Uses librealsense source code to support Intel RealSense devices.
-
+* Kinect V1 via KinectCommonBridge (Windows 7+)
+* Kinect V2 via KinectCommonBridge-V2 (Windows 8+)
+* Intel RealSense sensors (R200, F200, SR300) via librealsense SDK (Windows, macOS, Linux)
+* OpenNI-compatible sensors via OpenNI2 SDK (Windows, macOS, Linux, Android)
