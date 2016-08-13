@@ -1,0 +1,707 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0174762201B1004FC8085C62 /* verify.c in Sources */ = {isa = PBXBuildFile; fileRef = FF3A3D8ADF32791785B01BCA /* verify.c */; };
+		0E9A2F7E1021F8EBC9C0A5BE /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B70C1C2676016EF3B2728A66 /* image.cpp */; };
+		203A39DE5C977E0B2452A01E /* KinectAudioStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA4E0066D35DB5F363385EA6 /* KinectAudioStream.cpp */; };
+		27C10B02D1B9C2EF61B8A142 /* context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8658836A922474B78FCC11AA /* context.cpp */; };
+		34576D5AD1F719C79C8BA39A /* stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C20F3D22765912EF060B6B62 /* stdafx.cpp */; };
+		35C36BA2374B350FF0E9E1E2 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0507000AC3FC52D7006D6E4A /* types.cpp */; };
+		3691A752381970BFF1B81D92 /* DataStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8EE1979A4DD6EA678A4805DA /* DataStream.cpp */; };
+		3F26807D15C16ECA31644EBD /* DeviceRealSense.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30E86545B524E0F277032B85 /* DeviceRealSense.cpp */; };
+		3FA1991CC4EBB4097786EF5C /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B4AD8E458F4CD31B2342724 /* log.cpp */; };
+		3FA8C756A8B8FD03B5080D96 /* DataStreamAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B581C5E6DD9136B5B4D5A9E /* DataStreamAudio.cpp */; };
+		4457D29080B516BD487038D0 /* r200-private.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26D5418BB7D09A54B57B258 /* r200-private.cpp */; };
+		4C5E1597542BE564E56EC3D7 /* DeviceKinect1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 624171BF41411EECB77317FF /* DeviceKinect1.cpp */; };
+		4C8338BCCF2311696B203EFC /* FaceTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC43A64AF597471CC7F38A4 /* FaceTracker.cpp */; };
+		4FF81650D297EEFD6E951C90 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1DAD31D86F426BE58C683018 /* stream.cpp */; };
+		50A7A2392742908642E57079 /* DeviceSimulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 717AB541F5B730EEB7957B81 /* DeviceSimulator.cpp */; };
+		539D3D1C1C5C4089BF68335C /* DataStreamSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D5AFBC4E92E4891DA55EA04 /* DataStreamSkeleton.cpp */; };
+		55EAD7D8D88AB0857487DE18 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37686E0150BC0ED32318520 /* device.cpp */; };
+		603AD50360775F3026CEBB43 /* KCBFrames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F58DF4B3F511AD8E5CEBD8B /* KCBFrames.cpp */; };
+		69F7011C3B382249BA31A75C /* KinectCommonBridgeLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44169EC4F0959151D79B3D04 /* KinectCommonBridgeLib.cpp */; };
+		722AF438DB3B29E5E78A3A78 /* uvc-libuvc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6609A940988AA04D85FEE780 /* uvc-libuvc.cpp */; };
+		82F3FFD98AC1CFA61C04AE19 /* DeviceKinect2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EEE26E1EDEDD40E641FCD21 /* DeviceKinect2.cpp */; };
+		8F3652E88F72DD1555CA3928 /* f200.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6AB0EAF04AA9267DF126C930 /* f200.cpp */; };
+		950D5E78D16AA2A59925C4B8 /* f200-private.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF02ED80A812A30D37ED4BC0 /* f200-private.cpp */; };
+		9ECD069BA054D00859F37CDB /* KinectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8A6DC63A79C2F30E40D4AA3 /* KinectList.cpp */; };
+		B8F33172B92FBB9F7F8717B2 /* sync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C1A79BDAA19FD767481D7A1A /* sync.cpp */; };
+		B9E4D13BBA215B688078B77B /* KCBSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13A25403F39A8F909A183243 /* KCBSensor.cpp */; };
+		C144C0F4468EDBE1F92A1734 /* uvc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 63A1AF3C314BA3898A8AFD7C /* uvc.cpp */; };
+		C322422BF1AFBAB8F7B2606B /* DeviceOpenNI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91B5DC13149E5A0095C8F253 /* DeviceOpenNI.cpp */; };
+		C45B89BECF61F0EB5A91AFFE /* uvc-v4l2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10EAD660F9C25F3159ECBA6 /* uvc-v4l2.cpp */; };
+		C5AFC90249EC44AF0BCA8F42 /* rs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18D6C86A06ED45774C9786AA /* rs.cpp */; };
+		C7A85BF7D3744D44D11BEA37 /* DepthSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 698E7C1F1A749ACC1567025F /* DepthSensor.cpp */; };
+		CCEDF5855238107204D34BC5 /* KCBv2Lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D908B1ADA6B2A5FAFFF1FFED /* KCBv2Lib.cpp */; };
+		CD02DC20BAF7310D174CB260 /* CoordinateMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0001688C69B04D5E23DE4C8 /* CoordinateMapper.cpp */; };
+		D203709A54A34947F0A076DA /* MediaBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F8F626DA4C96F8ACA8DA2 /* MediaBuffer.cpp */; };
+		D5530FB0E05976DD6B8935F0 /* SensorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2FAC61811883EA5178AE458 /* SensorManager.cpp */; };
+		DB6D6300DBA9ED2DA2014940 /* r200.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E272ED88C26B291568E8CBC8 /* r200.cpp */; };
+		EDFC887697F5406327F41EB6 /* KinectSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CA81A7E98740BCB961BA8BE /* KinectSensor.cpp */; };
+		F3AB753C5CBBAAE9690ABB7C /* DataStreamDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA5602E42CD6F9F11A4B4124 /* DataStreamDepth.cpp */; };
+		F81C3042A214E82F3213C682 /* uvc-wmf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E14F4AAA9E0E5F7A78882EA /* uvc-wmf.cpp */; };
+		F992765062A2ABFD6EF1BC90 /* DataStreamColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A874B8F6296BC5E39DB2F8 /* DataStreamColor.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0507000AC3FC52D7006D6E4A /* types.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = ../src/librealsense/src/types.cpp; sourceTree = "<group>"; };
+		0EEE26E1EDEDD40E641FCD21 /* DeviceKinect2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceKinect2.cpp; path = ../src/DeviceKinect2.cpp; sourceTree = "<group>"; };
+		13A25403F39A8F909A183243 /* KCBSensor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = KCBSensor.cpp; path = ../src/v2/src/KCBSensor.cpp; sourceTree = "<group>"; };
+		18D6C86A06ED45774C9786AA /* rs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rs.cpp; path = ../src/librealsense/src/rs.cpp; sourceTree = "<group>"; };
+		193FA5CEC71959DBA0AF240E /* KinectCommonBridgeLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KinectCommonBridgeLib.h; path = ../src/v1/src/KinectCommonBridgeLib.h; sourceTree = "<group>"; };
+		19C3840D07DA011A4D84424D /* KCBSensor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KCBSensor.h; path = ../src/v2/src/KCBSensor.h; sourceTree = "<group>"; };
+		1BCF75326D64AF3F8A8A7372 /* Kinect.Face.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Kinect.Face.h; path = ../src/v2/sdk/inc/Kinect.Face.h; sourceTree = "<group>"; };
+		1C0F8F626DA4C96F8ACA8DA2 /* MediaBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MediaBuffer.cpp; path = ../src/v1/src/MediaBuffer.cpp; sourceTree = "<group>"; };
+		1CF74706165C8DD37486B546 /* NuiKinectFusionColorVolume.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiKinectFusionColorVolume.h; path = ../src/v2/sdk/inc/NuiKinectFusionColorVolume.h; sourceTree = "<group>"; };
+		1DAD31D86F426BE58C683018 /* stream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = stream.cpp; path = ../src/librealsense/src/stream.cpp; sourceTree = "<group>"; };
+		1DBE86B15B43161EE1407CF1 /* libCinder-DepthSensor-d.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libCinder-DepthSensor-d.a"; path = "libCinder-DepthSensor-d.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		21B1D082503F490F5641EEC2 /* DataStreamColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataStreamColor.h; path = ../src/v1/src/DataStreamColor.h; sourceTree = "<group>"; };
+		2992A7F4E887FAC124F91634 /* context.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = context.h; path = ../src/librealsense/src/context.h; sourceTree = "<group>"; };
+		30E86545B524E0F277032B85 /* DeviceRealSense.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceRealSense.cpp; path = ../src/DeviceRealSense.cpp; sourceTree = "<group>"; };
+		3337CF5A214E4C6766F88D9A /* f200.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = f200.h; path = ../src/librealsense/src/f200.h; sourceTree = "<group>"; };
+		34414764D1E0F3D19C757DA4 /* OniEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniEnums.h; path = ../src/openni2/Include/OniEnums.h; sourceTree = "<group>"; };
+		36A823EEE481D7FBBE17A22E /* NuiKinectFusionBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiKinectFusionBase.h; path = ../src/v2/sdk/inc/NuiKinectFusionBase.h; sourceTree = "<group>"; };
+		38B47C2819266735BC12BA68 /* NuiKinectFusionCameraPoseFinder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiKinectFusionCameraPoseFinder.h; path = ../src/v2/sdk/inc/NuiKinectFusionCameraPoseFinder.h; sourceTree = "<group>"; };
+		3B581C5E6DD9136B5B4D5A9E /* DataStreamAudio.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DataStreamAudio.cpp; path = ../src/v1/src/DataStreamAudio.cpp; sourceTree = "<group>"; };
+		44169EC4F0959151D79B3D04 /* KinectCommonBridgeLib.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = KinectCommonBridgeLib.cpp; path = ../src/v1/src/KinectCommonBridgeLib.cpp; sourceTree = "<group>"; };
+		45D23311D0E91E5E671A4151 /* OniDriverTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniDriverTypes.h; path = ../src/openni2/Include/Driver/OniDriverTypes.h; sourceTree = "<group>"; };
+		464930EA78CA27F7663E6F2A /* f200-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "f200-private.h"; path = "../src/librealsense/src/f200-private.h"; sourceTree = "<group>"; };
+		46D836A0CC22518D7EBD8CE0 /* OniVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniVersion.h; path = ../src/openni2/Include/OniVersion.h; sourceTree = "<group>"; };
+		4A5918F2386F95FF7E19D732 /* r200.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = r200.h; path = ../src/librealsense/src/r200.h; sourceTree = "<group>"; };
+		4B721C822B6A580FD1E7FAC2 /* stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stream.h; path = ../src/librealsense/src/stream.h; sourceTree = "<group>"; };
+		4D3ED38B550CA358E64F81CB /* NuiImageCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiImageCamera.h; path = ../src/v1/sdk/inc/NuiImageCamera.h; sourceTree = "<group>"; };
+		4FF454EE268F433B4232232E /* DataStreamSkeleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataStreamSkeleton.h; path = ../src/v1/src/DataStreamSkeleton.h; sourceTree = "<group>"; };
+		5DC43A64AF597471CC7F38A4 /* FaceTracker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FaceTracker.cpp; path = ../src/v1/src/FaceTracker.cpp; sourceTree = "<group>"; };
+		5F26A2B7DA50E024349618F7 /* OniPlatformAndroid-Arm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "OniPlatformAndroid-Arm.h"; path = "../src/openni2/Include/Android-Arm/OniPlatformAndroid-Arm.h"; sourceTree = "<group>"; };
+		5F58DF4B3F511AD8E5CEBD8B /* KCBFrames.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = KCBFrames.cpp; path = ../src/v2/src/KCBFrames.cpp; sourceTree = "<group>"; };
+		5FD8774847AAA555D8FC7588 /* Kinect.VisualGestureBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Kinect.VisualGestureBuilder.h; path = ../src/v2/sdk/inc/Kinect.VisualGestureBuilder.h; sourceTree = "<group>"; };
+		624171BF41411EECB77317FF /* DeviceKinect1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceKinect1.cpp; path = ../src/DeviceKinect1.cpp; sourceTree = "<group>"; };
+		63A1AF3C314BA3898A8AFD7C /* uvc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = uvc.cpp; path = ../src/librealsense/src/uvc.cpp; sourceTree = "<group>"; };
+		6601F82516E816D211DA7E65 /* DepthSensor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DepthSensor.h; path = ../include/DepthSensor.h; sourceTree = "<group>"; };
+		6609A940988AA04D85FEE780 /* uvc-libuvc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "uvc-libuvc.cpp"; path = "../src/librealsense/src/uvc-libuvc.cpp"; sourceTree = "<group>"; };
+		698E7C1F1A749ACC1567025F /* DepthSensor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DepthSensor.cpp; path = ../src/DepthSensor.cpp; sourceTree = "<group>"; };
+		6AB0EAF04AA9267DF126C930 /* f200.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = f200.cpp; path = ../src/librealsense/src/f200.cpp; sourceTree = "<group>"; };
+		6D3FF87E6D7C82AB33D3DEBE /* OniPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniPlatform.h; path = ../src/openni2/Include/OniPlatform.h; sourceTree = "<group>"; };
+		6EFCD1AE4DFC7EDBC42E77EE /* OniCAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniCAPI.h; path = ../src/openni2/Include/OniCAPI.h; sourceTree = "<group>"; };
+		700F6430A2905B3D9004A270 /* KinectAudioStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KinectAudioStream.h; path = ../src/v1/src/KinectAudioStream.h; sourceTree = "<group>"; };
+		717AB541F5B730EEB7957B81 /* DeviceSimulator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceSimulator.cpp; path = ../src/DeviceSimulator.cpp; sourceTree = "<group>"; };
+		75159884632C1591A8D656C4 /* sync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sync.h; path = ../src/librealsense/src/sync.h; sourceTree = "<group>"; };
+		75A0486E563FB97B5ACA06AE /* OniPlatformMacOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniPlatformMacOSX.h; path = ../src/openni2/Include/MacOSX/OniPlatformMacOSX.h; sourceTree = "<group>"; };
+		77E6D6E82465C9750B6B7528 /* NuiKinectFusionVolume.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiKinectFusionVolume.h; path = ../src/v2/sdk/inc/NuiKinectFusionVolume.h; sourceTree = "<group>"; };
+		7C062E8A5BFE6A17027C0CCA /* device.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = device.h; path = ../src/librealsense/src/device.h; sourceTree = "<group>"; };
+		7D5AFBC4E92E4891DA55EA04 /* DataStreamSkeleton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DataStreamSkeleton.cpp; path = ../src/v1/src/DataStreamSkeleton.cpp; sourceTree = "<group>"; };
+		7DF90B844BA2FFD1A4E259C4 /* DataStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataStream.h; path = ../src/v1/src/DataStream.h; sourceTree = "<group>"; };
+		82224036643A2FE31FC60676 /* OniPlatformLinux-x86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "OniPlatformLinux-x86.h"; path = "../src/openni2/Include/Linux-x86/OniPlatformLinux-x86.h"; sourceTree = "<group>"; };
+		82E58E27372F63F4C6E1BC67 /* NuiApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiApi.h; path = ../src/v1/sdk/inc/NuiApi.h; sourceTree = "<group>"; };
+		83B20CB837FBE285C7AE3AF8 /* Kinect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Kinect.h; path = ../src/v2/sdk/inc/Kinect.h; sourceTree = "<group>"; };
+		8658836A922474B78FCC11AA /* context.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = context.cpp; path = ../src/librealsense/src/context.cpp; sourceTree = "<group>"; };
+		88BAFD2CF48E49F9E5B5EB6C /* NuiKinectFusionApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiKinectFusionApi.h; path = ../src/v2/sdk/inc/NuiKinectFusionApi.h; sourceTree = "<group>"; };
+		8B4AD8E458F4CD31B2342724 /* log.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../src/librealsense/src/log.cpp; sourceTree = "<group>"; };
+		8CA81A7E98740BCB961BA8BE /* KinectSensor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = KinectSensor.cpp; path = ../src/v1/src/KinectSensor.cpp; sourceTree = "<group>"; };
+		8EE1979A4DD6EA678A4805DA /* DataStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DataStream.cpp; path = ../src/v1/src/DataStream.cpp; sourceTree = "<group>"; };
+		91015DE8BF8ED675C5917C28 /* DataStreamAudio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataStreamAudio.h; path = ../src/v1/src/DataStreamAudio.h; sourceTree = "<group>"; };
+		9155F5207F6C722DC516B360 /* targetver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = targetver.h; path = ../src/v1/src/targetver.h; sourceTree = "<group>"; };
+		91B5DC13149E5A0095C8F253 /* DeviceOpenNI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceOpenNI.cpp; path = ../src/DeviceOpenNI.cpp; sourceTree = "<group>"; };
+		99FDB93079F5F4BD20739770 /* ComSmartPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ComSmartPtr.h; path = ../src/v1/src/ComSmartPtr.h; sourceTree = "<group>"; };
+		9A1000A2EBA53AAF08CAFEE2 /* SensorManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SensorManager.h; path = ../src/v1/src/SensorManager.h; sourceTree = "<group>"; };
+		9E14F4AAA9E0E5F7A78882EA /* uvc-wmf.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "uvc-wmf.cpp"; path = "../src/librealsense/src/uvc-wmf.cpp"; sourceTree = "<group>"; };
+		A0405004247CCBB1E65B1644 /* OniCTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniCTypes.h; path = ../src/openni2/Include/OniCTypes.h; sourceTree = "<group>"; };
+		A125ECEC811E2879279BCB2C /* MediaBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MediaBuffer.h; path = ../src/v1/src/MediaBuffer.h; sourceTree = "<group>"; };
+		A3F6D62ED2844EBBD886F46E /* DataStreamDepth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataStreamDepth.h; path = ../src/v1/src/DataStreamDepth.h; sourceTree = "<group>"; };
+		A971022A2C598017AD84186A /* PSLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PSLink.h; path = ../src/openni2/Include/PSLink.h; sourceTree = "<group>"; };
+		AA33BB78AA7045A570C7A1B8 /* rs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rs.h; path = ../src/librealsense/include/librealsense/rs.h; sourceTree = "<group>"; };
+		B186EB547F30DFA1D8703994 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = types.h; path = ../src/librealsense/src/types.h; sourceTree = "<group>"; };
+		B1E8C3DD037DFDEA20A3C21D /* NuiSkeleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiSkeleton.h; path = ../src/v1/sdk/inc/NuiSkeleton.h; sourceTree = "<group>"; };
+		B5B416DD69FDECAAF9B0451D /* AutoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AutoLock.h; path = ../src/v2/src/AutoLock.h; sourceTree = "<group>"; };
+		B5E8A3A6F245E7D3BA0109E6 /* OniPlatformWin32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniPlatformWin32.h; path = ../src/openni2/Include/Win32/OniPlatformWin32.h; sourceTree = "<group>"; };
+		B70C1C2676016EF3B2728A66 /* image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = image.cpp; path = ../src/librealsense/src/image.cpp; sourceTree = "<group>"; };
+		B71276B4610B2EA1F10A0CF4 /* OniCProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniCProperties.h; path = ../src/openni2/Include/OniCProperties.h; sourceTree = "<group>"; };
+		B81B35AD77502CFAC2BA43ED /* stdafx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = ../src/v2/src/stdafx.h; sourceTree = "<group>"; };
+		BA00EEE03CE96CCDBE140520 /* PS1080.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PS1080.h; path = ../src/openni2/Include/PS1080.h; sourceTree = "<group>"; };
+		BAF10F227D157BAF066A2D62 /* NuiKinectFusionDepthProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiKinectFusionDepthProcessor.h; path = ../src/v2/sdk/inc/NuiKinectFusionDepthProcessor.h; sourceTree = "<group>"; };
+		BF02ED80A812A30D37ED4BC0 /* f200-private.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "f200-private.cpp"; path = "../src/librealsense/src/f200-private.cpp"; sourceTree = "<group>"; };
+		BF5DD73E44A7F22BF7432D7E /* PrimeSense.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrimeSense.h; path = ../src/openni2/Include/PrimeSense.h; sourceTree = "<group>"; };
+		C1A79BDAA19FD767481D7A1A /* sync.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sync.cpp; path = ../src/librealsense/src/sync.cpp; sourceTree = "<group>"; };
+		C1FF6A78F08CE305F68F88B8 /* CriticalSection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CriticalSection.h; path = ../src/v1/src/CriticalSection.h; sourceTree = "<group>"; };
+		C20F3D22765912EF060B6B62 /* stdafx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = stdafx.cpp; path = ../src/v1/src/stdafx.cpp; sourceTree = "<group>"; };
+		C37686E0150BC0ED32318520 /* device.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = device.cpp; path = ../src/librealsense/src/device.cpp; sourceTree = "<group>"; };
+		C3A874B8F6296BC5E39DB2F8 /* DataStreamColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DataStreamColor.cpp; path = ../src/v1/src/DataStreamColor.cpp; sourceTree = "<group>"; };
+		C4640E8678ADE45308603CC6 /* uvc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = uvc.h; path = ../src/librealsense/src/uvc.h; sourceTree = "<group>"; };
+		C5A3DE82F824D58FE5991CC2 /* r200-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "r200-private.h"; path = "../src/librealsense/src/r200-private.h"; sourceTree = "<group>"; };
+		C9003EF4D406A6215F366534 /* rsutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rsutil.h; path = ../src/librealsense/include/librealsense/rsutil.h; sourceTree = "<group>"; };
+		C904E4F096AED93DEFEE3330 /* image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = image.h; path = ../src/librealsense/src/image.h; sourceTree = "<group>"; };
+		CA05138C893A0AD9D4A421CC /* stdafx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = ../src/v1/src/stdafx.h; sourceTree = "<group>"; };
+		D1CC332EB1C46EBB5842116E /* FaceTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FaceTracker.h; path = ../src/v1/src/FaceTracker.h; sourceTree = "<group>"; };
+		D26D5418BB7D09A54B57B258 /* r200-private.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "r200-private.cpp"; path = "../src/librealsense/src/r200-private.cpp"; sourceTree = "<group>"; };
+		D31490F2DAE260BF6C253F32 /* CoordinateMapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CoordinateMapper.h; path = ../src/v1/src/CoordinateMapper.h; sourceTree = "<group>"; };
+		D3A310CA57DF8C7719BDD70A /* OniCEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniCEnums.h; path = ../src/openni2/Include/OniCEnums.h; sourceTree = "<group>"; };
+		D908B1ADA6B2A5FAFFF1FFED /* KCBv2Lib.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = KCBv2Lib.cpp; path = ../src/v2/src/KCBv2Lib.cpp; sourceTree = "<group>"; };
+		DAFC1EBB46CF6B8837F70CFB /* OniDriverAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniDriverAPI.h; path = ../src/openni2/Include/Driver/OniDriverAPI.h; sourceTree = "<group>"; };
+		E10EAD660F9C25F3159ECBA6 /* uvc-v4l2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "uvc-v4l2.cpp"; path = "../src/librealsense/src/uvc-v4l2.cpp"; sourceTree = "<group>"; };
+		E1FFF407C1F82F946875D247 /* NuiSensor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NuiSensor.h; path = ../src/v1/sdk/inc/NuiSensor.h; sourceTree = "<group>"; };
+		E272ED88C26B291568E8CBC8 /* r200.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = r200.cpp; path = ../src/librealsense/src/r200.cpp; sourceTree = "<group>"; };
+		E2FAC61811883EA5178AE458 /* SensorManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SensorManager.cpp; path = ../src/v1/src/SensorManager.cpp; sourceTree = "<group>"; };
+		E3DA35F8667A0EA502773C38 /* rs.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = rs.hpp; path = ../src/librealsense/include/librealsense/rs.hpp; sourceTree = "<group>"; };
+		E6A94628A59E98F5E20FB468 /* KinectSensor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KinectSensor.h; path = ../src/v1/src/KinectSensor.h; sourceTree = "<group>"; };
+		E8A6DC63A79C2F30E40D4AA3 /* KinectList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = KinectList.cpp; path = ../src/v2/src/KinectList.cpp; sourceTree = "<group>"; };
+		E98CE87C9DD6BE492D8916BC /* AutoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AutoLock.h; path = ../src/v1/src/AutoLock.h; sourceTree = "<group>"; };
+		EA4E0066D35DB5F363385EA6 /* KinectAudioStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = KinectAudioStream.cpp; path = ../src/v1/src/KinectAudioStream.cpp; sourceTree = "<group>"; };
+		ECF63957A1400F2430F26797 /* KCBv2Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KCBv2Lib.h; path = ../src/v2/src/KCBv2Lib.h; sourceTree = "<group>"; };
+		F0001688C69B04D5E23DE4C8 /* CoordinateMapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CoordinateMapper.cpp; path = ../src/v1/src/CoordinateMapper.cpp; sourceTree = "<group>"; };
+		F0A69F1A738F1D07F4B9B55A /* OpenNI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenNI.h; path = ../src/openni2/Include/OpenNI.h; sourceTree = "<group>"; };
+		F4898528461EBF3563448368 /* Kinect.INPC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Kinect.INPC.h; path = ../src/v2/sdk/inc/Kinect.INPC.h; sourceTree = "<group>"; };
+		F5AAAF0E784A87BB1447B54E /* OniProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OniProperties.h; path = ../src/openni2/Include/OniProperties.h; sourceTree = "<group>"; };
+		F6DD0224D8F4F1D19480C864 /* OniPlatformLinux-Arm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "OniPlatformLinux-Arm.h"; path = "../src/openni2/Include/Linux-Arm/OniPlatformLinux-Arm.h"; sourceTree = "<group>"; };
+		F82EED0DC5D8E15A1F183B4D /* KinectList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KinectList.h; path = ../src/v2/src/KinectList.h; sourceTree = "<group>"; };
+		FA5602E42CD6F9F11A4B4124 /* DataStreamDepth.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DataStreamDepth.cpp; path = ../src/v1/src/DataStreamDepth.cpp; sourceTree = "<group>"; };
+		FF3A3D8ADF32791785B01BCA /* verify.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = verify.c; path = ../src/librealsense/src/verify.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FFFECBA1A5D2AC8E5E7FA1E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		175E8E6FCBA8643C5B5ABCAF /* include */ = {
+			isa = PBXGroup;
+			children = (
+				68F5252C9B761C3988EA636C /* librealsense */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		1762610F6963997C824D974F /* v2 */ = {
+			isa = PBXGroup;
+			children = (
+				5D6E69FAB734EE87DF15883A /* sdk */,
+				20D736067A9DBA93A27E5446 /* src */,
+			);
+			name = v2;
+			sourceTree = "<group>";
+		};
+		204C9778A489132566675DB8 /* Android-Arm */ = {
+			isa = PBXGroup;
+			children = (
+				5F26A2B7DA50E024349618F7 /* OniPlatformAndroid-Arm.h */,
+			);
+			name = "Android-Arm";
+			sourceTree = "<group>";
+		};
+		20D736067A9DBA93A27E5446 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B5B416DD69FDECAAF9B0451D /* AutoLock.h */,
+				5F58DF4B3F511AD8E5CEBD8B /* KCBFrames.cpp */,
+				13A25403F39A8F909A183243 /* KCBSensor.cpp */,
+				19C3840D07DA011A4D84424D /* KCBSensor.h */,
+				D908B1ADA6B2A5FAFFF1FFED /* KCBv2Lib.cpp */,
+				ECF63957A1400F2430F26797 /* KCBv2Lib.h */,
+				E8A6DC63A79C2F30E40D4AA3 /* KinectList.cpp */,
+				F82EED0DC5D8E15A1F183B4D /* KinectList.h */,
+				B81B35AD77502CFAC2BA43ED /* stdafx.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		2E41633B59A166484ECDA17B /* inc */ = {
+			isa = PBXGroup;
+			children = (
+				1BCF75326D64AF3F8A8A7372 /* Kinect.Face.h */,
+				F4898528461EBF3563448368 /* Kinect.INPC.h */,
+				5FD8774847AAA555D8FC7588 /* Kinect.VisualGestureBuilder.h */,
+				83B20CB837FBE285C7AE3AF8 /* Kinect.h */,
+				88BAFD2CF48E49F9E5B5EB6C /* NuiKinectFusionApi.h */,
+				36A823EEE481D7FBBE17A22E /* NuiKinectFusionBase.h */,
+				38B47C2819266735BC12BA68 /* NuiKinectFusionCameraPoseFinder.h */,
+				1CF74706165C8DD37486B546 /* NuiKinectFusionColorVolume.h */,
+				BAF10F227D157BAF066A2D62 /* NuiKinectFusionDepthProcessor.h */,
+				77E6D6E82465C9750B6B7528 /* NuiKinectFusionVolume.h */,
+			);
+			name = inc;
+			sourceTree = "<group>";
+		};
+		5775D4180D040D45959E7A58 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				698E7C1F1A749ACC1567025F /* DepthSensor.cpp */,
+				624171BF41411EECB77317FF /* DeviceKinect1.cpp */,
+				0EEE26E1EDEDD40E641FCD21 /* DeviceKinect2.cpp */,
+				91B5DC13149E5A0095C8F253 /* DeviceOpenNI.cpp */,
+				30E86545B524E0F277032B85 /* DeviceRealSense.cpp */,
+				717AB541F5B730EEB7957B81 /* DeviceSimulator.cpp */,
+				DE565C31842A3D1E3CD73271 /* librealsense */,
+				BCCB6BF5542BD0A2EEDF7235 /* openni2 */,
+				7408DACDC60A133ADEF4110D /* v1 */,
+				1762610F6963997C824D974F /* v2 */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		57F4C03636F46D63AD266676 /* Linux-Arm */ = {
+			isa = PBXGroup;
+			children = (
+				F6DD0224D8F4F1D19480C864 /* OniPlatformLinux-Arm.h */,
+			);
+			name = "Linux-Arm";
+			sourceTree = "<group>";
+		};
+		5D6E69FAB734EE87DF15883A /* sdk */ = {
+			isa = PBXGroup;
+			children = (
+				2E41633B59A166484ECDA17B /* inc */,
+			);
+			name = sdk;
+			sourceTree = "<group>";
+		};
+		5E8C7250F123887D15175890 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				6601F82516E816D211DA7E65 /* DepthSensor.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		68F5252C9B761C3988EA636C /* librealsense */ = {
+			isa = PBXGroup;
+			children = (
+				AA33BB78AA7045A570C7A1B8 /* rs.h */,
+				E3DA35F8667A0EA502773C38 /* rs.hpp */,
+				C9003EF4D406A6215F366534 /* rsutil.h */,
+			);
+			name = librealsense;
+			sourceTree = "<group>";
+		};
+		6C69F53777354E049F3BE377 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				8658836A922474B78FCC11AA /* context.cpp */,
+				2992A7F4E887FAC124F91634 /* context.h */,
+				C37686E0150BC0ED32318520 /* device.cpp */,
+				7C062E8A5BFE6A17027C0CCA /* device.h */,
+				BF02ED80A812A30D37ED4BC0 /* f200-private.cpp */,
+				464930EA78CA27F7663E6F2A /* f200-private.h */,
+				6AB0EAF04AA9267DF126C930 /* f200.cpp */,
+				3337CF5A214E4C6766F88D9A /* f200.h */,
+				B70C1C2676016EF3B2728A66 /* image.cpp */,
+				C904E4F096AED93DEFEE3330 /* image.h */,
+				8B4AD8E458F4CD31B2342724 /* log.cpp */,
+				D26D5418BB7D09A54B57B258 /* r200-private.cpp */,
+				C5A3DE82F824D58FE5991CC2 /* r200-private.h */,
+				E272ED88C26B291568E8CBC8 /* r200.cpp */,
+				4A5918F2386F95FF7E19D732 /* r200.h */,
+				18D6C86A06ED45774C9786AA /* rs.cpp */,
+				1DAD31D86F426BE58C683018 /* stream.cpp */,
+				4B721C822B6A580FD1E7FAC2 /* stream.h */,
+				C1A79BDAA19FD767481D7A1A /* sync.cpp */,
+				75159884632C1591A8D656C4 /* sync.h */,
+				0507000AC3FC52D7006D6E4A /* types.cpp */,
+				B186EB547F30DFA1D8703994 /* types.h */,
+				6609A940988AA04D85FEE780 /* uvc-libuvc.cpp */,
+				E10EAD660F9C25F3159ECBA6 /* uvc-v4l2.cpp */,
+				9E14F4AAA9E0E5F7A78882EA /* uvc-wmf.cpp */,
+				63A1AF3C314BA3898A8AFD7C /* uvc.cpp */,
+				C4640E8678ADE45308603CC6 /* uvc.h */,
+				FF3A3D8ADF32791785B01BCA /* verify.c */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		7408DACDC60A133ADEF4110D /* v1 */ = {
+			isa = PBXGroup;
+			children = (
+				E8F1F8F942B87D866A991739 /* sdk */,
+				AC5AC505062149922E01E345 /* src */,
+			);
+			name = v1;
+			sourceTree = "<group>";
+		};
+		A6C936B4B32D40A1EA134CF4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1DBE86B15B43161EE1407CF1 /* libCinder-DepthSensor-d.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AC5AC505062149922E01E345 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E98CE87C9DD6BE492D8916BC /* AutoLock.h */,
+				99FDB93079F5F4BD20739770 /* ComSmartPtr.h */,
+				F0001688C69B04D5E23DE4C8 /* CoordinateMapper.cpp */,
+				D31490F2DAE260BF6C253F32 /* CoordinateMapper.h */,
+				C1FF6A78F08CE305F68F88B8 /* CriticalSection.h */,
+				8EE1979A4DD6EA678A4805DA /* DataStream.cpp */,
+				7DF90B844BA2FFD1A4E259C4 /* DataStream.h */,
+				3B581C5E6DD9136B5B4D5A9E /* DataStreamAudio.cpp */,
+				91015DE8BF8ED675C5917C28 /* DataStreamAudio.h */,
+				C3A874B8F6296BC5E39DB2F8 /* DataStreamColor.cpp */,
+				21B1D082503F490F5641EEC2 /* DataStreamColor.h */,
+				FA5602E42CD6F9F11A4B4124 /* DataStreamDepth.cpp */,
+				A3F6D62ED2844EBBD886F46E /* DataStreamDepth.h */,
+				7D5AFBC4E92E4891DA55EA04 /* DataStreamSkeleton.cpp */,
+				4FF454EE268F433B4232232E /* DataStreamSkeleton.h */,
+				5DC43A64AF597471CC7F38A4 /* FaceTracker.cpp */,
+				D1CC332EB1C46EBB5842116E /* FaceTracker.h */,
+				EA4E0066D35DB5F363385EA6 /* KinectAudioStream.cpp */,
+				700F6430A2905B3D9004A270 /* KinectAudioStream.h */,
+				44169EC4F0959151D79B3D04 /* KinectCommonBridgeLib.cpp */,
+				193FA5CEC71959DBA0AF240E /* KinectCommonBridgeLib.h */,
+				8CA81A7E98740BCB961BA8BE /* KinectSensor.cpp */,
+				E6A94628A59E98F5E20FB468 /* KinectSensor.h */,
+				1C0F8F626DA4C96F8ACA8DA2 /* MediaBuffer.cpp */,
+				A125ECEC811E2879279BCB2C /* MediaBuffer.h */,
+				E2FAC61811883EA5178AE458 /* SensorManager.cpp */,
+				9A1000A2EBA53AAF08CAFEE2 /* SensorManager.h */,
+				C20F3D22765912EF060B6B62 /* stdafx.cpp */,
+				CA05138C893A0AD9D4A421CC /* stdafx.h */,
+				9155F5207F6C722DC516B360 /* targetver.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		B4BE66B2F242F61F78405CF2 /* MacOSX */ = {
+			isa = PBXGroup;
+			children = (
+				75A0486E563FB97B5ACA06AE /* OniPlatformMacOSX.h */,
+			);
+			name = MacOSX;
+			sourceTree = "<group>";
+		};
+		BCCB6BF5542BD0A2EEDF7235 /* openni2 */ = {
+			isa = PBXGroup;
+			children = (
+				EA18DDD135B59F7EF9EF2411 /* Include */,
+			);
+			name = openni2;
+			sourceTree = "<group>";
+		};
+		C42131A22E7101CFC63097E2 /* Win32 */ = {
+			isa = PBXGroup;
+			children = (
+				B5E8A3A6F245E7D3BA0109E6 /* OniPlatformWin32.h */,
+			);
+			name = Win32;
+			sourceTree = "<group>";
+		};
+		CE27B2740BAC41E191A9A8B4 /* Driver */ = {
+			isa = PBXGroup;
+			children = (
+				DAFC1EBB46CF6B8837F70CFB /* OniDriverAPI.h */,
+				45D23311D0E91E5E671A4151 /* OniDriverTypes.h */,
+			);
+			name = Driver;
+			sourceTree = "<group>";
+		};
+		DE565C31842A3D1E3CD73271 /* librealsense */ = {
+			isa = PBXGroup;
+			children = (
+				175E8E6FCBA8643C5B5ABCAF /* include */,
+				6C69F53777354E049F3BE377 /* src */,
+			);
+			name = librealsense;
+			sourceTree = "<group>";
+		};
+		DEE259BA0A425CC7FF6E97FA /* inc */ = {
+			isa = PBXGroup;
+			children = (
+				82E58E27372F63F4C6E1BC67 /* NuiApi.h */,
+				4D3ED38B550CA358E64F81CB /* NuiImageCamera.h */,
+				E1FFF407C1F82F946875D247 /* NuiSensor.h */,
+				B1E8C3DD037DFDEA20A3C21D /* NuiSkeleton.h */,
+			);
+			name = inc;
+			sourceTree = "<group>";
+		};
+		E48247D177195DFE9B0D2E11 /* Cinder-DepthSensor */ = {
+			isa = PBXGroup;
+			children = (
+				5E8C7250F123887D15175890 /* include */,
+				5775D4180D040D45959E7A58 /* src */,
+				A6C936B4B32D40A1EA134CF4 /* Products */,
+			);
+			name = "Cinder-DepthSensor";
+			sourceTree = "<group>";
+		};
+		E8F1F8F942B87D866A991739 /* sdk */ = {
+			isa = PBXGroup;
+			children = (
+				DEE259BA0A425CC7FF6E97FA /* inc */,
+			);
+			name = sdk;
+			sourceTree = "<group>";
+		};
+		EA18DDD135B59F7EF9EF2411 /* Include */ = {
+			isa = PBXGroup;
+			children = (
+				204C9778A489132566675DB8 /* Android-Arm */,
+				CE27B2740BAC41E191A9A8B4 /* Driver */,
+				57F4C03636F46D63AD266676 /* Linux-Arm */,
+				EC772B82CB76D8AF41A8D1C2 /* Linux-x86 */,
+				B4BE66B2F242F61F78405CF2 /* MacOSX */,
+				6EFCD1AE4DFC7EDBC42E77EE /* OniCAPI.h */,
+				D3A310CA57DF8C7719BDD70A /* OniCEnums.h */,
+				B71276B4610B2EA1F10A0CF4 /* OniCProperties.h */,
+				A0405004247CCBB1E65B1644 /* OniCTypes.h */,
+				34414764D1E0F3D19C757DA4 /* OniEnums.h */,
+				6D3FF87E6D7C82AB33D3DEBE /* OniPlatform.h */,
+				F5AAAF0E784A87BB1447B54E /* OniProperties.h */,
+				46D836A0CC22518D7EBD8CE0 /* OniVersion.h */,
+				F0A69F1A738F1D07F4B9B55A /* OpenNI.h */,
+				BA00EEE03CE96CCDBE140520 /* PS1080.h */,
+				A971022A2C598017AD84186A /* PSLink.h */,
+				BF5DD73E44A7F22BF7432D7E /* PrimeSense.h */,
+				C42131A22E7101CFC63097E2 /* Win32 */,
+			);
+			name = Include;
+			sourceTree = "<group>";
+		};
+		EC772B82CB76D8AF41A8D1C2 /* Linux-x86 */ = {
+			isa = PBXGroup;
+			children = (
+				82224036643A2FE31FC60676 /* OniPlatformLinux-x86.h */,
+			);
+			name = "Linux-x86";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1287CC77C6D1A2445683FAB7 /* Cinder-DepthSensor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE3A1400940DF4ED4CBAEA40 /* Build configuration list for PBXNativeTarget "Cinder-DepthSensor" */;
+			buildPhases = (
+				6FE64C4115BA2D2ECE672281 /* Resources */,
+				D99365987F67468538143BD8 /* Sources */,
+				FFFECBA1A5D2AC8E5E7FA1E1 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Cinder-DepthSensor";
+			productName = "Cinder-DepthSensor";
+			productReference = 1DBE86B15B43161EE1407CF1 /* libCinder-DepthSensor-d.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "Cinder-DepthSensor" */;
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 1;
+			mainGroup = E48247D177195DFE9B0D2E11 /* Cinder-DepthSensor */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1287CC77C6D1A2445683FAB7 /* libCinder-DepthSensor-d.a */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6FE64C4115BA2D2ECE672281 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D99365987F67468538143BD8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7A85BF7D3744D44D11BEA37 /* DepthSensor.cpp in Sources */,
+				4C5E1597542BE564E56EC3D7 /* DeviceKinect1.cpp in Sources */,
+				82F3FFD98AC1CFA61C04AE19 /* DeviceKinect2.cpp in Sources */,
+				C322422BF1AFBAB8F7B2606B /* DeviceOpenNI.cpp in Sources */,
+				3F26807D15C16ECA31644EBD /* DeviceRealSense.cpp in Sources */,
+				50A7A2392742908642E57079 /* DeviceSimulator.cpp in Sources */,
+				27C10B02D1B9C2EF61B8A142 /* context.cpp in Sources */,
+				55EAD7D8D88AB0857487DE18 /* device.cpp in Sources */,
+				950D5E78D16AA2A59925C4B8 /* f200-private.cpp in Sources */,
+				8F3652E88F72DD1555CA3928 /* f200.cpp in Sources */,
+				0E9A2F7E1021F8EBC9C0A5BE /* image.cpp in Sources */,
+				3FA1991CC4EBB4097786EF5C /* log.cpp in Sources */,
+				4457D29080B516BD487038D0 /* r200-private.cpp in Sources */,
+				DB6D6300DBA9ED2DA2014940 /* r200.cpp in Sources */,
+				C5AFC90249EC44AF0BCA8F42 /* rs.cpp in Sources */,
+				4FF81650D297EEFD6E951C90 /* stream.cpp in Sources */,
+				B8F33172B92FBB9F7F8717B2 /* sync.cpp in Sources */,
+				35C36BA2374B350FF0E9E1E2 /* types.cpp in Sources */,
+				722AF438DB3B29E5E78A3A78 /* uvc-libuvc.cpp in Sources */,
+				C45B89BECF61F0EB5A91AFFE /* uvc-v4l2.cpp in Sources */,
+				F81C3042A214E82F3213C682 /* uvc-wmf.cpp in Sources */,
+				C144C0F4468EDBE1F92A1734 /* uvc.cpp in Sources */,
+				0174762201B1004FC8085C62 /* verify.c in Sources */,
+				CD02DC20BAF7310D174CB260 /* CoordinateMapper.cpp in Sources */,
+				3691A752381970BFF1B81D92 /* DataStream.cpp in Sources */,
+				3FA8C756A8B8FD03B5080D96 /* DataStreamAudio.cpp in Sources */,
+				F992765062A2ABFD6EF1BC90 /* DataStreamColor.cpp in Sources */,
+				F3AB753C5CBBAAE9690ABB7C /* DataStreamDepth.cpp in Sources */,
+				539D3D1C1C5C4089BF68335C /* DataStreamSkeleton.cpp in Sources */,
+				4C8338BCCF2311696B203EFC /* FaceTracker.cpp in Sources */,
+				203A39DE5C977E0B2452A01E /* KinectAudioStream.cpp in Sources */,
+				69F7011C3B382249BA31A75C /* KinectCommonBridgeLib.cpp in Sources */,
+				EDFC887697F5406327F41EB6 /* KinectSensor.cpp in Sources */,
+				D203709A54A34947F0A076DA /* MediaBuffer.cpp in Sources */,
+				D5530FB0E05976DD6B8935F0 /* SensorManager.cpp in Sources */,
+				34576D5AD1F719C79C8BA39A /* stdafx.cpp in Sources */,
+				603AD50360775F3026CEBB43 /* KCBFrames.cpp in Sources */,
+				B9E4D13BBA215B688078B77B /* KCBSensor.cpp in Sources */,
+				CCEDF5855238107204D34BC5 /* KCBv2Lib.cpp in Sources */,
+				9ECD069BA054D00859F37CDB /* KinectList.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		08C01380138B6C4D3B9201C0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = i386;
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					RS_USE_WMF_BACKEND,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					../lib/msw/x86,
+				);
+				OBJROOT = obj/x86/Debug;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lOpenNI2.lib",
+					"-lKinect10.lib",
+					"-lKinect20.lib",
+					"-lKinect20.Face.lib",
+				);
+				SYMROOT = ../lib/msw/x86;
+				USER_HEADER_SEARCH_PATHS = (
+					../include,
+					../../../include,
+					../src/librealsense/include,
+					../src/v1/sdk/inc,
+					../src/v2/sdk/inc,
+				);
+			};
+			name = Debug;
+		};
+		2D7ACDBA187F8DC75C814BFA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = i386;
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					RS_USE_WMF_BACKEND,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					../lib/msw/x86,
+				);
+				OBJROOT = obj/x86/Release;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-lOpenNI2.lib",
+					"-lKinect10.lib",
+					"-lKinect20.lib",
+					"-lKinect20.Face.lib",
+				);
+				SYMROOT = ../lib/msw/x86;
+				USER_HEADER_SEARCH_PATHS = (
+					../include,
+					../../../include,
+					../src/librealsense/include,
+					../src/v1/sdk/inc,
+					../src/v2/sdk/inc,
+				);
+			};
+			name = Release;
+		};
+		702C8D40F46908EDB6475380 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = ../lib/msw/x86;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = "Cinder-DepthSensor";
+			};
+			name = Release;
+		};
+		C9BC28C6675BD53331F05F06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = ../lib/msw/x86;
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = "Cinder-DepthSensor-d";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "Cinder-DepthSensor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08C01380138B6C4D3B9201C0 /* Debug */,
+				08C01380138B6C4D3B9201C0 /* Debug */,
+				2D7ACDBA187F8DC75C814BFA /* Release */,
+				2D7ACDBA187F8DC75C814BFA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EE3A1400940DF4ED4CBAEA40 /* Build configuration list for PBXNativeTarget "libCinder-DepthSensor-d.a" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9BC28C6675BD53331F05F06 /* Debug */,
+				C9BC28C6675BD53331F05F06 /* Debug */,
+				702C8D40F46908EDB6475380 /* Release */,
+				702C8D40F46908EDB6475380 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+};
+rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

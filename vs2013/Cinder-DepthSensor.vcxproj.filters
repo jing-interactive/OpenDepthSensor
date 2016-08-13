@@ -19,6 +19,30 @@
     <Filter Include="src\librealsense\src">
       <UniqueIdentifier>{6C165988-58A5-E251-01C4-F64CED31F3F7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\openni2">
+      <UniqueIdentifier>{D7991D7A-434F-966F-CC43-904638F88C73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openni2\Include">
+      <UniqueIdentifier>{2A106FD6-9671-4CE4-1FDF-92968B3F83A3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openni2\Include\Android-Arm">
+      <UniqueIdentifier>{077B6793-735E-76D3-7C61-A40FE8C33C24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openni2\Include\Driver">
+      <UniqueIdentifier>{C56F840C-B17F-30DD-1A39-95FB06681F76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openni2\Include\Linux-Arm">
+      <UniqueIdentifier>{F647A200-6260-892A-2B0D-19C497E41DC4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openni2\Include\Linux-x86">
+      <UniqueIdentifier>{3C2AA300-A842-8A2A-71EF-19C4DDC61EC4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openni2\Include\MacOSX">
+      <UniqueIdentifier>{444A4B20-305A-F7F0-9913-5C0F8542E689}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openni2\Include\Win32">
+      <UniqueIdentifier>{8C3F8D66-F801-C1F0-41B2-4F7DADB399CE}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\v1">
       <UniqueIdentifier>{634F661C-4FF1-90F2-38AC-A44624ED1743}</UniqueIdentifier>
     </Filter>
@@ -89,6 +113,63 @@
     </ClInclude>
     <ClInclude Include="..\src\librealsense\src\uvc.h">
       <Filter>src\librealsense\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\Android-Arm\OniPlatformAndroid-Arm.h">
+      <Filter>src\openni2\Include\Android-Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\Driver\OniDriverAPI.h">
+      <Filter>src\openni2\Include\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\Driver\OniDriverTypes.h">
+      <Filter>src\openni2\Include\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\Linux-Arm\OniPlatformLinux-Arm.h">
+      <Filter>src\openni2\Include\Linux-Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\Linux-x86\OniPlatformLinux-x86.h">
+      <Filter>src\openni2\Include\Linux-x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\MacOSX\OniPlatformMacOSX.h">
+      <Filter>src\openni2\Include\MacOSX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniCAPI.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniCEnums.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniCProperties.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniCTypes.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniEnums.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniPlatform.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniProperties.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OniVersion.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\OpenNI.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\PS1080.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\PSLink.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\PrimeSense.h">
+      <Filter>src\openni2\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\openni2\Include\Win32\OniPlatformWin32.h">
+      <Filter>src\openni2\Include\Win32</Filter>
     </ClInclude>
     <ClInclude Include="..\src\v1\sdk\inc\NuiApi.h">
       <Filter>src\v1\sdk\inc</Filter>
@@ -207,6 +288,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\DeviceKinect2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceOpenNI.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\DeviceRealSense.cpp">

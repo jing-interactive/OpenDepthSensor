@@ -70,7 +70,6 @@ namespace Kinect
         RealSense,
         Simulator,
         OpenNI,
-        OpenNI2,
         Count,
     };
 

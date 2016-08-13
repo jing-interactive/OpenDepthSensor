@@ -3,7 +3,7 @@
 local action = _ACTION or ""
 
 solution "Cinder-DepthSensor"
-    location ("vs2013")
+    location (action)
     configurations { "Debug", "Release" }
     platforms {"x64", "x86"}
     language "C++"
@@ -65,6 +65,7 @@ solution "Cinder-DepthSensor"
             "src/librealsense/include",
             "src/v1/sdk/inc",
             "src/v2/sdk/inc",
+            "src/openni2/include",
         }
 
         files {
@@ -81,6 +82,7 @@ solution "Cinder-DepthSensor"
         }
 
         links {
+            "OpenNI2.lib",
             "Kinect10.lib",
             "Kinect20.lib",
             "Kinect20.Face.lib",

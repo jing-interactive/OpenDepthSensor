@@ -95,7 +95,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;DEBUG;RS_USE_WMF_BACKEND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;..\src\openni2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -111,7 +111,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;DEBUG;RS_USE_WMF_BACKEND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;..\src\openni2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -127,7 +127,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;NDEBUG;RS_USE_WMF_BACKEND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;..\src\openni2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -148,7 +148,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4244;4305;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;NDEBUG;RS_USE_WMF_BACKEND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\include;..\src\librealsense\include;..\src\v1\sdk\inc;..\src\v2\sdk\inc;..\src\openni2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -179,6 +179,25 @@
     <ClInclude Include="..\src\librealsense\src\sync.h" />
     <ClInclude Include="..\src\librealsense\src\types.h" />
     <ClInclude Include="..\src\librealsense\src\uvc.h" />
+    <ClInclude Include="..\src\openni2\Include\Android-Arm\OniPlatformAndroid-Arm.h" />
+    <ClInclude Include="..\src\openni2\Include\Driver\OniDriverAPI.h" />
+    <ClInclude Include="..\src\openni2\Include\Driver\OniDriverTypes.h" />
+    <ClInclude Include="..\src\openni2\Include\Linux-Arm\OniPlatformLinux-Arm.h" />
+    <ClInclude Include="..\src\openni2\Include\Linux-x86\OniPlatformLinux-x86.h" />
+    <ClInclude Include="..\src\openni2\Include\MacOSX\OniPlatformMacOSX.h" />
+    <ClInclude Include="..\src\openni2\Include\OniCAPI.h" />
+    <ClInclude Include="..\src\openni2\Include\OniCEnums.h" />
+    <ClInclude Include="..\src\openni2\Include\OniCProperties.h" />
+    <ClInclude Include="..\src\openni2\Include\OniCTypes.h" />
+    <ClInclude Include="..\src\openni2\Include\OniEnums.h" />
+    <ClInclude Include="..\src\openni2\Include\OniPlatform.h" />
+    <ClInclude Include="..\src\openni2\Include\OniProperties.h" />
+    <ClInclude Include="..\src\openni2\Include\OniVersion.h" />
+    <ClInclude Include="..\src\openni2\Include\OpenNI.h" />
+    <ClInclude Include="..\src\openni2\Include\PS1080.h" />
+    <ClInclude Include="..\src\openni2\Include\PSLink.h" />
+    <ClInclude Include="..\src\openni2\Include\PrimeSense.h" />
+    <ClInclude Include="..\src\openni2\Include\Win32\OniPlatformWin32.h" />
     <ClInclude Include="..\src\v1\sdk\inc\NuiApi.h" />
     <ClInclude Include="..\src\v1\sdk\inc\NuiImageCamera.h" />
     <ClInclude Include="..\src\v1\sdk\inc\NuiSensor.h" />
@@ -220,6 +239,7 @@
     <ClCompile Include="..\src\DepthSensor.cpp" />
     <ClCompile Include="..\src\DeviceKinect1.cpp" />
     <ClCompile Include="..\src\DeviceKinect2.cpp" />
+    <ClCompile Include="..\src\DeviceOpenNI.cpp" />
     <ClCompile Include="..\src\DeviceRealSense.cpp" />
     <ClCompile Include="..\src\DeviceSimulator.cpp" />
     <ClCompile Include="..\src\librealsense\src\context.cpp" />

@@ -8,6 +8,7 @@ uint32_t getKinect1Count();
 uint32_t getKinect2Count();
 uint32_t getRealSenseCount();
 uint32_t getSimulatorCount();
+uint32_t getOpenNICount();
 
 uint32_t Device::getDeviceCount(DeviceType type)
 {
@@ -17,6 +18,8 @@ uint32_t Device::getDeviceCount(DeviceType type)
         return getKinect2Count();
     if (type == RealSense)
         return getRealSenseCount();
+    if (type == OpenNI)
+        return getOpenNICount();
     return getSimulatorCount();
 }
 
@@ -24,6 +27,7 @@ DeviceRef createKinect1(Device::Option option);
 DeviceRef createKinect2(Device::Option option);
 DeviceRef createRealSense(Device::Option option);
 DeviceRef createSimulator(Device::Option option);
+DeviceRef createOpenNI(Device::Option option);
 
 DeviceRef Device::create(DeviceType type, Option option)
 {
@@ -33,5 +37,7 @@ DeviceRef Device::create(DeviceType type, Option option)
         return createKinect2(option);
     if (type == RealSense)
         return createRealSense(option);
+    if (type == OpenNI)
+        return createOpenNI(option);
     return createSimulator(option);
 }
