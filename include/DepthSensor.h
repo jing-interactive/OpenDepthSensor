@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace Kinect
+namespace ds
 {
     typedef std::shared_ptr<struct Device> DeviceRef;
 
@@ -73,19 +73,21 @@ namespace Kinect
         Count,
     };
 
+    struct Option
+    {
+        int deviceId = 0;
+        bool enableColor = false;
+        bool enableDepth = true;
+        bool enablePointCloud = false;
+        bool enableBody = false;
+        bool enableBodyIndex = false;
+        bool enableInfrared = false;
+        bool enableAudio = false;
+        bool enableFace = false;
+    };
+
     struct Device
     {
-        struct Option
-        {
-            int deviceId = 0;
-            bool enableColor = false;
-            bool enableDepth = true;
-            bool enableBody = false;
-            bool enableBodyIndex = false;
-            bool enableInfrared = false;
-            bool enableAudio = false;
-            bool enableFace = false;
-        };
         Option option;
 
         static uint32_t getDeviceCount(DeviceType type);
@@ -99,6 +101,8 @@ namespace Kinect
         }
 
         ci::Channel16u depthChannel;
+        std::vector<ci::vec3> pointCloudXYZ;
+        std::vector<ci::vec2> pointCloudUV;
         ci::signals::Signal<void()> signalDepthDirty;
 
         struct

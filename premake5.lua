@@ -81,9 +81,3 @@ solution "Cinder-DepthSensor"
             "src/librealsense/src/libuvc/*",
         }
 
-        links {
-            "OpenNI2.lib",
-            "Kinect10.lib",
-            "Kinect20.lib",
-            "Kinect20.Face.lib",
-        }
