@@ -942,6 +942,11 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   frame->width = frame_desc->wWidth;
   frame->height = frame_desc->wHeight;
   
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmultichar"
+#ifdef __APPLE__
+#pragma GCC diagnostic ignored "-Wfour-char-constants"
+#endif
   switch (frame->fourcc) {
   case '2YUY': /* YUY2 */
     frame->step = frame->width * 2;
@@ -950,6 +955,7 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
     frame->step = 0;
     break;
   }
+#pragma GCC diagnostic pop
   
   /* copy the image data from the hold buffer to the frame (unnecessary extra buf?) */
   if (frame->data_bytes < strmh->hold_bytes) {

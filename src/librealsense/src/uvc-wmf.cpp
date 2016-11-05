@@ -1,5 +1,8 @@
 // License: Apache 2.0. See LICENSE file in root directory.
 // Copyright(c) 2015 Intel Corporation. All Rights Reserved.
+#include <chrono>
+#include <iostream>
+
 
 #ifdef RS_USE_WMF_BACKEND
 
@@ -18,6 +21,7 @@
 #include <mfidl.h>          // For MF_DEVSOURCE_*, etc.
 #include <mfreadwrite.h>    // MFCreateSourceReaderFromMediaSource
 #include <mferror.h>
+#include "hw-monitor.h"
 
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "mf.lib")
@@ -40,6 +44,7 @@
 #include <SetupAPI.h>
 #include <WinUsb.h>
 
+#include <functional>
 #include <thread>
 #include <chrono>
 #include <algorithm>
@@ -51,12 +56,18 @@
 DEFINE_GUID(GUID_DEVINTERFACE_USB_DEVICE, 0xA5DCBF10L, 0x6530, 0x11D2, 0x90, 0x1F, 0x00, \
     0xC0, 0x4F, 0xB9, 0x51, 0xED);
 DEFINE_GUID(GUID_DEVINTERFACE_IMAGE, 0x6bdd1fc6L, 0x810f, 0x11d0, 0xbe, 0xc7, 0x08, 0x00, \
-	0x2b, 0xe2, 0x09, 0x2f);
+    0x2b, 0xe2, 0x09, 0x2f);
 
 namespace rsimpl
 {
     namespace uvc
     {
+        const auto FISHEYE_HWMONITOR_INTERFACE = 2;
+        const uvc::guid FISHEYE_WIN_USB_DEVICE_GUID = { 0xC0B55A29, 0xD7B6, 0x436E, { 0xA6, 0xEF, 0x2E, 0x76, 0xED, 0x0A, 0xBC, 0xA5 } };
+        // Translation of user-provided fourcc code into device supported one:           Note the Big-Endian notation
+        const std::map<uint32_t, uint32_t> fourcc_map = { { 0x47524559, 0x59382020 },       /* 'GREY' => 'Y8  '. */
+                                                          { 0x70524141, 0x52573130 } };    /* 'RW10' => 'pRAA'. */
+
         static std::string win_to_utf(const WCHAR * s)
         {
             int len = WideCharToMultiByte(CP_UTF8, 0, s, -1, nullptr, 0, NULL, NULL);
@@ -164,44 +175,44 @@ namespace rsimpl
             return true;
         }
 
-		bool parse_usb_path_from_device_id(int & vid, int & pid, int & mi, std::string & unique_id, const std::string & device_id)
-		{
-			auto name = device_id;
-			std::transform(begin(name), end(name), begin(name), ::tolower);
-			auto tokens = tokenize(name, '\\');
-			if (tokens.size() < 1 || tokens[0] != R"(usb)") return false; // Not a USB device
+        bool parse_usb_path_from_device_id(int & vid, int & pid, int & mi, std::string & unique_id, const std::string & device_id)
+        {
+            auto name = device_id;
+            std::transform(begin(name), end(name), begin(name), ::tolower);
+            auto tokens = tokenize(name, '\\');
+            if (tokens.size() < 1 || tokens[0] != R"(usb)") return false; // Not a USB device
 
-			auto ids = tokenize(tokens[1], '&');
-			if (ids[0].size() != 8 || ids[0].substr(0, 4) != "vid_" || !(std::istringstream(ids[0].substr(4, 4)) >> std::hex >> vid))
-			{
-				LOG_ERROR("malformed vid string: " << tokens[1]);
-				return false;
-			}
+            auto ids = tokenize(tokens[1], '&');
+            if (ids[0].size() != 8 || ids[0].substr(0, 4) != "vid_" || !(std::istringstream(ids[0].substr(4, 4)) >> std::hex >> vid))
+            {
+                LOG_ERROR("malformed vid string: " << tokens[1]);
+                return false;
+            }
 
-			if (ids[1].size() != 8 || ids[1].substr(0, 4) != "pid_" || !(std::istringstream(ids[1].substr(4, 4)) >> std::hex >> pid))
-			{
-				LOG_ERROR("malformed pid string: " << tokens[1]);
-				return false;
-			}
+            if (ids[1].size() != 8 || ids[1].substr(0, 4) != "pid_" || !(std::istringstream(ids[1].substr(4, 4)) >> std::hex >> pid))
+            {
+                LOG_ERROR("malformed pid string: " << tokens[1]);
+                return false;
+            }
 
-			if (ids[2].size() != 5 || ids[2].substr(0, 3) != "mi_" || !(std::istringstream(ids[2].substr(3, 2)) >> mi))
-			{
-				LOG_ERROR("malformed mi string: " << tokens[1]);
-				return false;
-			}
+            if (ids[2].size() != 5 || ids[2].substr(0, 3) != "mi_" || !(std::istringstream(ids[2].substr(3, 2)) >> mi))
+            {
+                LOG_ERROR("malformed mi string: " << tokens[1]);
+                return false;
+            }
 
-			ids = tokenize(tokens[2], '&');
-			if (ids.size() < 2)
-			{
-				LOG_ERROR("malformed id string: " << tokens[2]);
-				return false;
-			}
-			unique_id = ids[1];
-			return true;
-		}
+            ids = tokenize(tokens[2], '&');
+            if (ids.size() < 2)
+            {
+                LOG_ERROR("malformed id string: " << tokens[2]);
+                return false;
+            }
+            unique_id = ids[1];
+            return true;
+        }
 
 
-		struct context
+        struct context
         {
             context()
             {
@@ -228,12 +239,16 @@ namespace rsimpl
             bool is_streaming() const { return streaming; }
             void on_start() { streaming = true; }
 
+#pragma warning( push )
+#pragma warning( disable: 4838 )
             // Implement IUnknown
             HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppvObject) override 
             {
                 static const QITAB table[] = {QITABENT(reader_callback, IUnknown), QITABENT(reader_callback, IMFSourceReaderCallback), {0}};
                 return QISearch(this, table, riid, ppvObject);
             }
+#pragma warning( pop )
+
             ULONG STDMETHODCALLTYPE AddRef() override { return InterlockedIncrement(&ref_count); }
             ULONG STDMETHODCALLTYPE Release() override 
             { 
@@ -254,22 +269,149 @@ namespace rsimpl
             com_ptr<IMFActivate> mf_activate;
             com_ptr<IMFMediaSource> mf_media_source;
             com_ptr<IAMCameraControl> am_camera_control;
-            com_ptr<IAMVideoProcAmp> am_video_proc_amp;            
+            com_ptr<IAMVideoProcAmp> am_video_proc_amp;
             std::map<int, com_ptr<IKsControl>> ks_controls;
             com_ptr<IMFSourceReader> mf_source_reader;
-            std::function<void(const void * frame)> callback;
+            video_channel_callback callback = nullptr;
+            data_channel_callback  channel_data_callback = nullptr;
+            int vid, pid;
+
+            void set_data_channel_cfg(data_channel_callback callback)
+            {
+                this->channel_data_callback = callback;
+            }
 
             com_ptr<IMFMediaSource> get_media_source()
             {
                 if(!mf_media_source)
                 {
                     check("IMFActivate::ActivateObject", mf_activate->ActivateObject(__uuidof(IMFMediaSource), (void **)&mf_media_source));
-                    check("IMFMediaSource::QueryInterface", mf_media_source->QueryInterface(__uuidof(IAMCameraControl), (void **)&am_camera_control));
-                    if(SUCCEEDED(mf_media_source->QueryInterface(__uuidof(IAMVideoProcAmp), (void **)&am_video_proc_amp))) LOG_DEBUG("obtained IAMVideoProcAmp");                    
+                    if (mf_media_source)
+                    {
+                        check("IMFMediaSource::QueryInterface", mf_media_source->QueryInterface(__uuidof(IAMCameraControl), (void **)&am_camera_control));
+                        if (SUCCEEDED(mf_media_source->QueryInterface(__uuidof(IAMVideoProcAmp), (void **)&am_video_proc_amp))) LOG_DEBUG("obtained IAMVideoProcAmp");
+                    }
+                    else throw std::runtime_error(to_string() << "Invalid media source");
                 }
                 return mf_media_source;
 
+            }
 
+            static bool wait_for_async_operation(WINUSB_INTERFACE_HANDLE interfaceHandle, OVERLAPPED &hOvl, ULONG &lengthTransferred, USHORT timeout)
+            {
+                if (GetOverlappedResult(interfaceHandle, &hOvl, &lengthTransferred, FALSE))
+                    return true;
+
+                auto lastResult = GetLastError();
+                if (lastResult == ERROR_IO_PENDING || lastResult == ERROR_IO_INCOMPLETE)
+                {
+                    WaitForSingleObject(hOvl.hEvent, timeout);
+                    auto res = GetOverlappedResult(interfaceHandle, &hOvl, &lengthTransferred, FALSE);
+                    if (res != 1)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    lengthTransferred = 0;
+                    WinUsb_ResetPipe(interfaceHandle, 0x84);
+                    return false;
+                }
+
+                return true;
+            }
+
+            class safe_handle
+            {
+            public:
+                safe_handle(HANDLE handle) :_handle(handle)
+                {
+
+                }
+
+                ~safe_handle()
+                {
+                    if (_handle != nullptr)
+                    {
+                        CloseHandle(_handle);
+                        _handle = nullptr;
+                    }
+                }
+
+                bool Set()
+                {
+                    if (_handle == nullptr) return false;
+                    SetEvent(_handle);
+                    return true;
+                }
+
+                bool Wait(DWORD timeout) const
+                {
+                    if (_handle == nullptr) return false;
+
+                    return WaitForSingleObject(_handle, timeout) == WAIT_OBJECT_0; // Return true only if object was signaled
+                }
+
+
+                HANDLE GetHandle() const { return _handle; }
+            private:
+                safe_handle() = delete;
+
+                // Disallow copy:
+                safe_handle(const safe_handle&) = delete;
+                safe_handle& operator=(const safe_handle&) = delete;
+
+                HANDLE _handle;
+            };
+
+            static void poll_interrupts(HANDLE *handle, const std::vector<subdevice *> & subdevices,uint16_t timeout)
+            {
+                static const unsigned short interrupt_buf_size = 0x400;
+                uint8_t buffer[interrupt_buf_size];                         /* 64 byte transfer buffer  - dedicated channel*/
+                ULONG num_bytes = 0;                                        /* Actual bytes transferred. */
+                OVERLAPPED hOvl;
+                safe_handle sh(CreateEvent(nullptr, false, false, nullptr));
+                hOvl.hEvent = sh.GetHandle();
+                // TODO - replace hard-coded values : 0x82 and 1000
+                int res = WinUsb_ReadPipe(*handle, 0x84, buffer, interrupt_buf_size, &num_bytes, &hOvl);
+                if (0 == res)
+                {
+                    auto lastError = GetLastError();
+                    if (lastError == ERROR_IO_PENDING)
+                    {
+                        auto sts = wait_for_async_operation(*handle, hOvl, num_bytes, timeout);
+                        lastError = GetLastError();
+                        if (lastError == ERROR_OPERATION_ABORTED)
+                        {
+                            perror("receiving interrupt_ep bytes failed");
+                            fprintf(stderr, "Error receiving message.\n");
+                        }
+                        if (!sts)
+                            return;
+                    }
+                    else
+                    {
+                        WinUsb_ResetPipe(*handle, 0x84);
+                        perror("receiving interrupt_ep bytes failed");
+                        fprintf(stderr, "Error receiving message.\n");
+                        return;
+                    }
+
+                    if (num_bytes == 0)
+                        return;
+
+                    // Propagate the data to device layer
+                    for(auto & sub : subdevices)
+                        if (sub->channel_data_callback)
+                            sub->channel_data_callback(buffer, (unsigned long)num_bytes);
+                }
+                else
+                {
+                    // todo exception
+                    perror("receiving interrupt_ep bytes failed");
+                    fprintf(stderr, "Error receiving message.\n");
+                }
             }
 
             IKsControl * get_ks_control(const uvc::extension_unit & xu)
@@ -309,16 +451,56 @@ namespace rsimpl
             HANDLE usb_file_handle = INVALID_HANDLE_VALUE;
             WINUSB_INTERFACE_HANDLE usb_interface_handle = INVALID_HANDLE_VALUE;
 
-            device(std::shared_ptr<context> parent, int vid, int pid, std::string unique_id) : parent(move(parent)), vid(vid), pid(pid), unique_id(move(unique_id))
-            {
+            std::vector<int> claimed_interfaces;
 
+            int aux_vid, aux_pid;
+            std::string aux_unique_id;
+            std::thread data_channel_thread;
+            volatile bool data_stop;
+
+            device(std::shared_ptr<context> parent, int vid, int pid, std::string unique_id) : parent(move(parent)), vid(vid), pid(pid), unique_id(move(unique_id)), aux_pid(0), aux_vid(0), data_stop(false)
+            {
             }
 
-            ~device() { stop_streaming(); close_win_usb(); }
+            ~device() { stop_streaming(); stop_data_acquisition(); close_win_usb(); }
 
             IKsControl * get_ks_control(const uvc::extension_unit & xu)
             {
                 return subdevices[xu.subdevice].get_ks_control(xu);
+            }
+
+            void start_data_acquisition()
+            {
+                std::vector<subdevice *> data_channel_subs;
+                for (auto & sub : subdevices)
+                {
+                    if (sub.channel_data_callback)
+                    {
+                        data_channel_subs.push_back(&sub);
+                    }
+                }
+
+                if (claimed_interfaces.size())
+                {
+                    data_channel_thread = std::thread([this, data_channel_subs]()
+                    {
+                        // Polling
+                        while (!data_stop)
+                        {
+                            subdevice::poll_interrupts(&usb_interface_handle, data_channel_subs, 100);
+                        }
+                    });
+                }
+            }
+
+            void stop_data_acquisition()
+            {
+                if (data_channel_thread.joinable())
+                {
+                    data_stop = true;
+                    data_channel_thread.join();
+                    data_stop = false;
+                }
             }
 
             void start_streaming()
@@ -368,7 +550,7 @@ namespace rsimpl
                 return subdevices[subdevice_index].get_media_source();
             }           
 
-            void open_win_usb(const guid & interface_guid, int interface_number) try
+            void open_win_usb(int vid, int pid, std::string unique_id, const guid & interface_guid, int interface_number) try
             {    
                 static_assert(sizeof(guid) == sizeof(GUID), "struct packing error");
                 HDEVINFO device_info = SetupDiGetClassDevs((const GUID *)&interface_guid, nullptr, nullptr, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
@@ -405,16 +587,21 @@ namespace rsimpl
                         continue;
                     }
                     if (detail_data->DevicePath == nullptr) continue;
-
                     // Check if this is our device
                     int usb_vid, usb_pid, usb_mi; std::string usb_unique_id;
                     if(!parse_usb_path(usb_vid, usb_pid, usb_mi, usb_unique_id, win_to_utf(detail_data->DevicePath))) continue;
                     if(usb_vid != vid || usb_pid != pid || usb_mi != interface_number || usb_unique_id != unique_id) continue;                    
-                        
-                    usb_file_handle = CreateFile(detail_data->DevicePath, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr);
-                    if (usb_file_handle == INVALID_HANDLE_VALUE) throw std::runtime_error("CreateFile(...) failed");
 
-                    if(!WinUsb_Initialize(usb_file_handle, &usb_interface_handle))
+                    HANDLE* file_handle = nullptr;
+                    WINUSB_INTERFACE_HANDLE* usb_handle = nullptr;
+
+                    file_handle = &usb_file_handle;
+                    usb_handle = &usb_interface_handle;
+
+                    *file_handle = CreateFile(detail_data->DevicePath, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr);
+                    if (*file_handle == INVALID_HANDLE_VALUE) throw std::runtime_error("CreateFile(...) failed");
+
+                    if (!WinUsb_Initialize(*file_handle, usb_handle))
                     {
                         LOG_ERROR("Last Error: " << GetLastError());
                         throw std::runtime_error("could not initialize winusb");
@@ -505,24 +692,31 @@ namespace rsimpl
                         BYTE * byte_buffer; DWORD max_length, current_length;
                         if(SUCCEEDED(buffer->Lock(&byte_buffer, &max_length, &current_length)))
                         {
-                            owner_ptr->subdevices[subdevice_index].callback(byte_buffer);
-                            HRESULT hr = buffer->Unlock();
+                            auto continuation = [buffer, this]()
+                            {
+                                buffer->Unlock();
+                            };
+
+                            owner_ptr->subdevices[subdevice_index].callback(byte_buffer, continuation);
                         }
                     }
                 }
 
-                HRESULT hr = owner_ptr->subdevices[subdevice_index].mf_source_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, NULL, NULL, NULL, NULL);
-                switch(hr)
+                if (auto owner_ptr_new = owner.lock())
                 {
-                case S_OK: break;
-                case MF_E_INVALIDREQUEST: LOG_ERROR("ReadSample returned MF_E_INVALIDREQUEST"); break;
-                case MF_E_INVALIDSTREAMNUMBER: LOG_ERROR("ReadSample returned MF_E_INVALIDSTREAMNUMBER"); break;
-                case MF_E_NOTACCEPTING: LOG_ERROR("ReadSample returned MF_E_NOTACCEPTING"); break;
-                case E_INVALIDARG: LOG_ERROR("ReadSample returned E_INVALIDARG"); break;
-                case MF_E_VIDEO_RECORDING_DEVICE_INVALIDATED: LOG_ERROR("ReadSample returned MF_E_VIDEO_RECORDING_DEVICE_INVALIDATED"); break;
-                default: LOG_ERROR("ReadSample returned HRESULT " << std::hex << (uint32_t)hr); break;
+                    auto hr = owner_ptr_new->subdevices[subdevice_index].mf_source_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, NULL, NULL, NULL, NULL);
+                    switch (hr)
+                    {
+                    case S_OK: break;
+                    case MF_E_INVALIDREQUEST: LOG_ERROR("ReadSample returned MF_E_INVALIDREQUEST"); break;
+                    case MF_E_INVALIDSTREAMNUMBER: LOG_ERROR("ReadSample returned MF_E_INVALIDSTREAMNUMBER"); break;
+                    case MF_E_NOTACCEPTING: LOG_ERROR("ReadSample returned MF_E_NOTACCEPTING"); break;
+                    case E_INVALIDARG: LOG_ERROR("ReadSample returned E_INVALIDARG"); break;
+                    case MF_E_VIDEO_RECORDING_DEVICE_INVALIDATED: LOG_ERROR("ReadSample returned MF_E_VIDEO_RECORDING_DEVICE_INVALIDATED"); break;
+                    default: LOG_ERROR("ReadSample returned HRESULT " << std::hex << (uint32_t)hr); break;
+                    }
+                    if (hr != S_OK) streaming = false;
                 }
-                if(hr != S_OK) streaming = false;
             }
             return S_OK; 
         }
@@ -561,16 +755,24 @@ namespace rsimpl
             node.Property.Flags = KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_TOPOLOGY;
             node.NodeId = xu.node;
                 
-            check("IKsControl::KsProperty", ks_control->KsProperty((PKSPROPERTY)&node, sizeof(KSP_NODE), data, len, nullptr));
+            ULONG bytes_received = 0;
+            check("IKsControl::KsProperty", ks_control->KsProperty((PKSPROPERTY)&node, sizeof(KSP_NODE), data, len, &bytes_received));
         }
 
         void claim_interface(device & device, const guid & interface_guid, int interface_number)
         {
-            device.open_win_usb(interface_guid, interface_number);
+            device.open_win_usb(device.vid, device.pid, device.unique_id, interface_guid, interface_number);
+            device.claimed_interfaces.push_back(interface_number);
+        }
+
+        void claim_aux_interface(device & device, const guid & interface_guid, int interface_number)
+        {
+            device.open_win_usb(device.aux_vid, device.aux_pid, device.aux_unique_id, interface_guid, interface_number);
+            device.claimed_interfaces.push_back(interface_number);
         }
 
         void bulk_transfer(device & device, uint8_t endpoint, void * data, int length, int *actual_length, unsigned int timeout)
-        {       
+        {
             if(USB_ENDPOINT_DIRECTION_OUT(endpoint))
             {
                 device.usb_synchronous_write(endpoint, data, length, timeout);
@@ -578,12 +780,11 @@ namespace rsimpl
             
             if(USB_ENDPOINT_DIRECTION_IN(endpoint))
             {
-                auto actualLen = ULONG(actual_length);
                 device.usb_synchronous_read(endpoint, data, length, actual_length, timeout);
             }
         }
 
-        void set_subdevice_mode(device & device, int subdevice_index, int width, int height, uint32_t fourcc, int fps, std::function<void(const void * frame)> callback)
+        void set_subdevice_mode(device & device, int subdevice_index, int width, int height, uint32_t fourcc, int fps, video_channel_callback callback)
         {
             auto & sub = device.subdevices[subdevice_index];
             
@@ -594,6 +795,8 @@ namespace rsimpl
                 check("IMFAttributes::SetUnknown", pAttributes->SetUnknown(MF_SOURCE_READER_ASYNC_CALLBACK, static_cast<IUnknown *>(sub.reader_callback)));
                 check("MFCreateSourceReaderFromMediaSource", MFCreateSourceReaderFromMediaSource(sub.get_media_source(), pAttributes, &sub.mf_source_reader));
             }
+
+            if (fourcc_map.count(fourcc))   fourcc = fourcc_map.at(fourcc);
 
             for (DWORD j = 0; ; j++)
             {
@@ -618,11 +821,26 @@ namespace rsimpl
                 sub.callback = callback;
                 return;
             }
-            throw std::runtime_error("no matching media type");
+            throw std::runtime_error(to_string() << "no matching media type for  pixel format " << std::hex << fourcc);
+        }
+
+        void set_subdevice_data_channel_handler(device & device, int subdevice_index, data_channel_callback callback)
+        {           
+            device.subdevices[subdevice_index].set_data_channel_cfg(callback);
         }
 
         void start_streaming(device & device, int num_transfer_bufs) { device.start_streaming(); }
         void stop_streaming(device & device) { device.stop_streaming(); }
+
+        void start_data_acquisition(device & device)
+        {
+            device.start_data_acquisition();
+        }
+
+        void stop_data_acquisition(device & device)
+        {
+            device.stop_data_acquisition();
+        }
 
         struct pu_control { rs_option option; long property; bool enable_auto; };
         static const pu_control pu_controls[] = {
@@ -636,15 +854,16 @@ namespace rsimpl
             {RS_OPTION_COLOR_SHARPNESS, VideoProcAmp_Sharpness},
             {RS_OPTION_COLOR_WHITE_BALANCE, VideoProcAmp_WhiteBalance},
             {RS_OPTION_COLOR_ENABLE_AUTO_WHITE_BALANCE, VideoProcAmp_WhiteBalance, true},
+            {RS_OPTION_FISHEYE_GAIN, VideoProcAmp_Gain}
         };
 
         void set_pu_control(device & device, int subdevice, rs_option option, int value)
         {
             auto & sub = device.subdevices[subdevice];
             sub.get_media_source();
-            if(option == RS_OPTION_COLOR_EXPOSURE)
+            if (option == RS_OPTION_COLOR_EXPOSURE)
             {
-                check("IAMCameraControl::Set", sub.am_camera_control->Set(CameraControl_Exposure, static_cast<int>(std::round(log2(static_cast<double>(value) / 10000))), CameraControl_Flags_Manual));
+                check("IAMCameraControl::Set", sub.am_camera_control->Set(CameraControl_Exposure, static_cast<int>(value), CameraControl_Flags_Manual));
                 return;
             }
             if(option == RS_OPTION_COLOR_ENABLE_AUTO_EXPOSURE)
@@ -679,25 +898,27 @@ namespace rsimpl
             throw std::runtime_error("unsupported control");
         }
 
-        int win_to_uvc_exposure(int value) { return static_cast<int>(std::round(exp2(static_cast<double>(value)) * 10000)); }
-
-        void get_pu_control_range(const device & device, int subdevice, rs_option option, int * min, int * max)
+        void get_pu_control_range(const device & device, int subdevice, rs_option option, int * min, int * max, int * step, int * def)
         {
             if(option >= RS_OPTION_COLOR_ENABLE_AUTO_EXPOSURE && option <= RS_OPTION_COLOR_ENABLE_AUTO_WHITE_BALANCE)
             {
-                if(min) *min = 0;
-                if(max) *max = 1;
+                if(min)  *min  = 0;
+                if(max)  *max  = 1;
+                if(step) *step = 1;
+                if(def)  *def  = 1;
                 return;
             }
 
             auto & sub = device.subdevices[subdevice];
             const_cast<uvc::subdevice &>(sub).get_media_source();
             long minVal=0, maxVal=0, steppingDelta=0, defVal=0, capsFlag=0;
-            if(option == RS_OPTION_COLOR_EXPOSURE)
+            if (option == RS_OPTION_COLOR_EXPOSURE)
             {
                 check("IAMCameraControl::Get", sub.am_camera_control->GetRange(CameraControl_Exposure, &minVal, &maxVal, &steppingDelta, &defVal, &capsFlag));
-                if(min) *min = win_to_uvc_exposure(minVal);
-                if(max) *max = win_to_uvc_exposure(maxVal);
+                if (min)  *min = minVal;
+                if (max)  *max = maxVal;
+                if (step) *step = steppingDelta;
+                if (def)  *def = defVal;
                 return;
             }
             for(auto & pu : pu_controls)
@@ -705,22 +926,102 @@ namespace rsimpl
                 if(option == pu.option)
                 {
                     check("IAMVideoProcAmp::GetRange", sub.am_video_proc_amp->GetRange(pu.property, &minVal, &maxVal, &steppingDelta, &defVal, &capsFlag));
-                    if(min) *min = static_cast<int>(minVal);
-                    if(max) *max = static_cast<int>(maxVal);
+                    if(min)  *min  = static_cast<int>(minVal);
+                    if(max)  *max  = static_cast<int>(maxVal);
+                    if(step) *step = static_cast<int>(steppingDelta);
+                    if(def)  *def  = static_cast<int>(defVal);
                     return;
                 }
             }
             throw std::runtime_error("unsupported control");
         }
 
+        void get_extension_control_range(const device & device, const extension_unit & xu, char control , int * min, int * max, int * step, int * def)
+        {
+            auto ks_control = const_cast<uvc::device &>(device).get_ks_control(xu);
+
+            /* get step, min and max values*/
+            KSP_NODE node;
+            memset(&node, 0, sizeof(KSP_NODE));
+            node.Property.Set = reinterpret_cast<const GUID &>(xu.id);
+            node.Property.Id = control;
+            node.Property.Flags = KSPROPERTY_TYPE_BASICSUPPORT | KSPROPERTY_TYPE_TOPOLOGY;
+            node.NodeId = xu.node;
+
+            KSPROPERTY_DESCRIPTION description;
+            unsigned long bytes_received = 0;
+            check("IKsControl::KsProperty", ks_control->KsProperty(
+                (PKSPROPERTY)&node,
+                sizeof(node),
+                &description,
+                sizeof(KSPROPERTY_DESCRIPTION),
+                &bytes_received));
+
+            unsigned long size = description.DescriptionSize;
+            std::vector<BYTE> buffer((long)size);
+
+            check("IKsControl::KsProperty", ks_control->KsProperty(
+                (PKSPROPERTY)&node,
+                sizeof(node),
+                buffer.data(),
+                size,
+                &bytes_received));
+
+            if (bytes_received != size) { throw  std::runtime_error("wrong data"); }
+
+            BYTE * pRangeValues = buffer.data() + sizeof(KSPROPERTY_MEMBERSHEADER) + sizeof(KSPROPERTY_DESCRIPTION);
+
+            *step = (int)*pRangeValues;
+            pRangeValues++;
+            *min = (int)*pRangeValues;
+            pRangeValues++;
+            *max = (int)*pRangeValues;
+
+
+            /* get def value*/
+            memset(&node, 0, sizeof(KSP_NODE));
+            node.Property.Set = reinterpret_cast<const GUID &>(xu.id);
+            node.Property.Id = control;
+            node.Property.Flags = KSPROPERTY_TYPE_DEFAULTVALUES | KSPROPERTY_TYPE_TOPOLOGY;
+            node.NodeId = xu.node;
+
+            bytes_received = 0;
+            check("IKsControl::KsProperty", ks_control->KsProperty(
+                (PKSPROPERTY)&node,
+                sizeof(node),
+                &description,
+                sizeof(KSPROPERTY_DESCRIPTION),
+                &bytes_received));
+
+            size = description.DescriptionSize;
+            buffer.clear();
+            buffer.resize(size);
+
+            check("IKsControl::KsProperty", ks_control->KsProperty(
+                (PKSPROPERTY)&node,
+                sizeof(node),
+                buffer.data(),
+                size,
+                &bytes_received));
+
+            if (bytes_received != size) { throw  std::runtime_error("wrong data"); }
+
+            pRangeValues = buffer.data() + sizeof(KSPROPERTY_MEMBERSHEADER) + sizeof(KSPROPERTY_DESCRIPTION);
+
+            *def = (int)*pRangeValues;
+        }
+
         int get_pu_control(const device & device, int subdevice, rs_option option)
         {
             auto & sub = device.subdevices[subdevice];
+            // first call to get_media_source is also initializing the am_camera_control pointer, required for this method
+            const_cast<uvc::subdevice &>(sub).get_media_source(); // initialize am_camera_control
             long value=0, flags=0;
-            if(option == RS_OPTION_COLOR_EXPOSURE)
+            if (option == RS_OPTION_COLOR_EXPOSURE)
             {
+                // am_camera_control != null, because get_media_source was called at least once
                 check("IAMCameraControl::Get", sub.am_camera_control->Get(CameraControl_Exposure, &value, &flags));
-                return win_to_uvc_exposure(value);
+                return value;
             }
             if(option == RS_OPTION_COLOR_ENABLE_AUTO_EXPOSURE)
             {
@@ -746,6 +1047,17 @@ namespace rsimpl
         std::shared_ptr<context> create_context()
         {
             return std::make_shared<context>();
+        }
+
+        bool is_device_connected(device & device, int vid, int pid)
+        {
+            for(auto& dev : device.subdevices)
+            {
+                if(dev.vid == vid && dev.pid == pid)
+                    return true;
+            }
+
+            return false;
         }
 
         std::vector<std::shared_ptr<device>> query_devices(std::shared_ptr<context> context)
@@ -791,7 +1103,32 @@ namespace rsimpl
 
                 dev->subdevices[subdevice_index].reader_callback = new reader_callback(dev, static_cast<int>(subdevice_index));
                 dev->subdevices[subdevice_index].mf_activate = pDevice;                
+                dev->subdevices[subdevice_index].vid = vid;
+                dev->subdevices[subdevice_index].pid = pid;
             }
+
+            for(auto& devA : devices) // Look for CX3 Fisheye camera
+            {
+               if(devA->vid == VID_INTEL_CAMERA && devA->pid == ZR300_FISHEYE_PID)
+               {
+                    for(auto& devB : devices) // Look for DS ZR300 camera
+                    {
+                        if(devB->vid == VID_INTEL_CAMERA && devB->pid == ZR300_CX3_PID)
+                        {
+                            devB->subdevices.resize(4);
+                            devB->subdevices[3].reader_callback = new reader_callback(devB, static_cast<int>(3));
+                            devB->subdevices[3].mf_activate = devA->subdevices[0].mf_activate;
+                            devB->subdevices[3].vid = devB->aux_vid = VID_INTEL_CAMERA;
+                            devB->subdevices[3].pid = devB->aux_pid = ZR300_FISHEYE_PID;
+                            devB->aux_unique_id = devA->unique_id;
+                            devices.erase(std::remove(devices.begin(), devices.end(), devA), devices.end());
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
             CoTaskMemFree(ppDevices);
             return devices;
         }
@@ -866,20 +1203,14 @@ namespace rsimpl
             // for each port on the hub
             for (ULONG i = 1; i <= info.u.HubInformation.HubDescriptor.bNumberOfPorts; ++i)
             {
-                // allocate something or other (commented out parts exist in virtualbox source but appear unused
-                char buf[sizeof(USB_NODE_CONNECTION_INFORMATION_EX) /* + (sizeof(USB_PIPE_INFO) * 20) */] = { 0 };
+                // allocate something or other
+                char buf[sizeof(USB_NODE_CONNECTION_INFORMATION_EX)] = { 0 };
                 PUSB_NODE_CONNECTION_INFORMATION_EX pConInfo = (PUSB_NODE_CONNECTION_INFORMATION_EX)buf;
-                /* PUSB_PIPE_INFO paPipeInfo = (PUSB_PIPE_INFO)(buf + sizeof(PUSB_NODE_CONNECTION_INFORMATION_EX)); */
 
                 // get info about port i
                 pConInfo->ConnectionIndex = i;
                 if (!DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX, pConInfo, sizeof(buf), pConInfo, sizeof(buf), nullptr, nullptr))
                 {
-                    // virtual box makes a distinction, but said distinction is buried deeper than I could follow in their error logging macros
-                    if (GetLastError() != ERROR_DEVICE_NOT_CONNECTED) {
-                        continue;
-                    }
-                    // i guess the difference could be if the user happens to disconnect the device at this exact second?
                     continue;
                 }
 
@@ -907,46 +1238,46 @@ namespace rsimpl
 
         std::string get_usb_port_id(const device & device) // Not implemented for Windows at this point
         {
-			SP_DEVINFO_DATA devInfo = { sizeof(SP_DEVINFO_DATA) };
+            SP_DEVINFO_DATA devInfo = { sizeof(SP_DEVINFO_DATA) };
             static_assert(sizeof(guid) == sizeof(GUID), "struct packing error"); // not sure this is needed. maybe because the original function gets the guid object from outside?
 
-			// build a device info represent all imaging devices.
+            // build a device info represent all imaging devices.
             HDEVINFO device_info = SetupDiGetClassDevsEx((const GUID *)&GUID_DEVINTERFACE_IMAGE,
-				nullptr, 
-				nullptr, 
-				DIGCF_PRESENT,
-				nullptr,
-				nullptr,
-				nullptr);
+                nullptr, 
+                nullptr, 
+                DIGCF_PRESENT,
+                nullptr,
+                nullptr,
+                nullptr);
             if (device_info == INVALID_HANDLE_VALUE) throw std::runtime_error("SetupDiGetClassDevs");
             auto di = std::shared_ptr<void>(device_info, SetupDiDestroyDeviceInfoList);
 
-			// enumerate all imaging devices.
+            // enumerate all imaging devices.
             for (int member_index = 0; ; ++member_index)
             {
-				SP_DEVICE_INTERFACE_DATA interfaceData = { sizeof(SP_DEVICE_INTERFACE_DATA) };
-				unsigned long buf_size = 0;
+                SP_DEVICE_INTERFACE_DATA interfaceData = { sizeof(SP_DEVICE_INTERFACE_DATA) };
+                unsigned long buf_size = 0;
 
-				if (SetupDiEnumDeviceInfo(device_info, member_index, &devInfo) == FALSE)
-				{
-					if (GetLastError() == ERROR_NO_MORE_ITEMS) break; // stop when none left
-					continue; // silently ignore other errors
-				}
+                if (SetupDiEnumDeviceInfo(device_info, member_index, &devInfo) == FALSE)
+                {
+                    if (GetLastError() == ERROR_NO_MORE_ITEMS) break; // stop when none left
+                    continue; // silently ignore other errors
+                }
 
-				// get the device ID of current device.
-				if (CM_Get_Device_ID_Size(&buf_size, devInfo.DevInst, 0) != CR_SUCCESS)
-				{
-					LOG_ERROR("CM_Get_Device_ID_Size failed");
-					return "";
-				}
-				
-				auto alloc = std::malloc(buf_size * sizeof(WCHAR) + sizeof(WCHAR));
-				if (!alloc) throw std::bad_alloc();
-				auto pInstID = std::shared_ptr<WCHAR>(reinterpret_cast<WCHAR *>(alloc), std::free);
-				if (CM_Get_Device_ID(devInfo.DevInst, pInstID.get(), buf_size * sizeof(WCHAR) + sizeof(WCHAR), 0) != CR_SUCCESS) {
-					LOG_ERROR("CM_Get_Device_ID failed");
-					return "";
-				}
+                // get the device ID of current device.
+                if (CM_Get_Device_ID_Size(&buf_size, devInfo.DevInst, 0) != CR_SUCCESS)
+                {
+                    LOG_ERROR("CM_Get_Device_ID_Size failed");
+                    return "";
+                }
+                
+                auto alloc = std::malloc(buf_size * sizeof(WCHAR) + sizeof(WCHAR));
+                if (!alloc) throw std::bad_alloc();
+                auto pInstID = std::shared_ptr<WCHAR>(reinterpret_cast<WCHAR *>(alloc), std::free);
+                if (CM_Get_Device_ID(devInfo.DevInst, pInstID.get(), buf_size * sizeof(WCHAR) + sizeof(WCHAR), 0) != CR_SUCCESS) {
+                    LOG_ERROR("CM_Get_Device_ID failed");
+                    return "";
+                }
 
                 if (pInstID == nullptr) continue;
 
@@ -1034,7 +1365,7 @@ namespace rsimpl
                 // recursively check all hubs, searching for composite device
                 std::wstringstream buf;
                 for (int i = 0;; i++)
-                { // VBox thinks 10 is enough
+                { 
                     buf << "\\\\.\\HCD" << i;
                     std::wstring hcd = buf.str();
 
@@ -1071,12 +1402,9 @@ namespace rsimpl
                         std::string ret = handleHub(targetKey, std::wstring(pName->RootHubName));
                         if (ret != "") return ret;
                     }
-
                 }
-
-                throw std::exception("could not find camera in windows device tree");
             }
-            throw std::exception("Not Implemented");
+            throw std::exception("could not find camera in windows device tree");
         }
     }
 }

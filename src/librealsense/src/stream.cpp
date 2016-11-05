@@ -9,8 +9,14 @@
 
 using namespace rsimpl;
 
-rs_extrinsics stream_interface::get_extrinsics_to(const stream_interface & r) const
+rs_extrinsics stream_interface::get_extrinsics_to(const rs_stream_interface & other) const
 {
+    if (!validator.validate_extrinsics(stream, other.get_stream_type()))
+    {
+        throw std::runtime_error(to_string() << "The extrinsic from " << get_stream_type() << " to " << other.get_stream_type() << " is not valid");
+    }
+    
+    auto& r = dynamic_cast<const stream_interface&>(other);
     auto from = get_pose(), to = r.get_pose();
     if(from == to) return {{1,0,0,0,1,0,0,0,1},{0,0,0}};
     auto transform = inverse(from) * to;
@@ -20,7 +26,7 @@ rs_extrinsics stream_interface::get_extrinsics_to(const stream_interface & r) co
     return extrin;
 }
 
-native_stream::native_stream(device_config & config, rs_stream stream) : config(config), stream(stream) 
+native_stream::native_stream(device_config & config, rs_stream stream, calibration_validator in_validator) : stream_interface(in_validator, stream), config(config)
 {
     for(auto & subdevice_mode : config.info.subdevice_modes)
     {
@@ -28,7 +34,7 @@ native_stream::native_stream(device_config & config, rs_stream stream) : config(
         {
             for(auto & unpacker : subdevice_mode.pf.unpackers)
             {
-                auto selection = subdevice_mode_selection(subdevice_mode, pad_crop, &unpacker - subdevice_mode.pf.unpackers.data());
+                auto selection = subdevice_mode_selection(subdevice_mode, pad_crop, (int)(&unpacker - subdevice_mode.pf.unpackers.data()));
                 if(selection.provides_stream(stream)) modes.push_back(selection);
             }
         }
@@ -36,7 +42,7 @@ native_stream::native_stream(device_config & config, rs_stream stream) : config(
 
     auto get_tuple = [stream](const subdevice_mode_selection & selection)
     {     
-        return std::make_tuple(-selection.get_width(), -selection.get_height(), -selection.get_framerate(stream), selection.get_format(stream));
+        return std::make_tuple(-selection.get_width(), -selection.get_height(), -selection.get_framerate(), selection.get_format(stream));
     };
 
     std::sort(begin(modes), end(modes), [get_tuple](const subdevice_mode_selection & a, const subdevice_mode_selection & b) { return get_tuple(a) < get_tuple(b); });
@@ -50,7 +56,7 @@ void native_stream::get_mode(int mode, int * w, int * h, rs_format * f, int * fp
     if(w) *w = selection.get_width();
     if(h) *h = selection.get_height();
     if(f) *f = selection.get_format(stream);
-    if(fps) *fps = selection.get_framerate(stream);
+    if(fps) *fps = selection.get_framerate();
 }
 
 bool native_stream::is_enabled() const
@@ -74,30 +80,82 @@ subdevice_mode_selection native_stream::get_mode() const
 
 rs_intrinsics native_stream::get_intrinsics() const 
 {
+    if (!validator.validate_intrinsics(stream))
+    {
+        LOG_ERROR("The intrinsic of " << get_stream_type() << " is not valid");
+    }
     const auto m = get_mode();
     return pad_crop_intrinsics(m.mode.native_intrinsics, m.pad_crop);
 }
 
 rs_intrinsics native_stream::get_rectified_intrinsics() const
 {
+    if (!validator.validate_intrinsics(stream))
+    {
+        throw std::runtime_error(to_string() << "The intrinsic of " << get_stream_type() << " is not valid");
+    }
     const auto m = get_mode();
     if(m.mode.rect_modes.empty()) return get_intrinsics();
     return pad_crop_intrinsics(m.mode.rect_modes[0], m.pad_crop);
 }
 
-int native_stream::get_frame_number() const 
+double native_stream::get_frame_metadata(rs_frame_metadata frame_metadata) const
+{
+    if (!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
+    return archive->get_frame_metadata(stream, frame_metadata);
+}
+
+bool native_stream::supports_frame_metadata(rs_frame_metadata frame_metadata) const
+{
+    if (!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
+    return archive->supports_frame_metadata(stream, frame_metadata);
+}
+
+unsigned long long native_stream::get_frame_number() const
 { 
-    if(!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
+    return archive->get_frame_number(stream);
+}
+
+double native_stream::get_frame_timestamp() const
+{
+    if (!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
     return archive->get_frame_timestamp(stream);
 }
 
-const byte * native_stream::get_frame_data() const
+long long native_stream::get_frame_system_time() const
 {
-    if(!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
-    return archive->get_frame_data(stream);
+    if (!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
+    return archive->get_frame_system_time(stream);
 }
 
-const rsimpl::byte * point_stream::get_frame_data() const
+const uint8_t * native_stream::get_frame_data() const
+{
+    if(!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
+    return (const uint8_t *) archive->get_frame_data(stream);
+}
+
+int native_stream::get_frame_stride() const
+{
+    if (!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
+    return archive->get_frame_stride(stream);
+}
+
+int native_stream::get_frame_bpp() const
+{
+    if (!is_enabled()) throw std::runtime_error(to_string() << "stream not enabled: " << stream);
+    if (!archive) throw  std::runtime_error(to_string() << "streaming not started!");
+    return archive->get_frame_bpp(stream);
+}
+
+const uint8_t * point_stream::get_frame_data() const
 {
     if(image.empty() || number != get_frame_number())
     {
@@ -118,7 +176,7 @@ const rsimpl::byte * point_stream::get_frame_data() const
     return image.data();
 }
 
-const rsimpl::byte * rectified_stream::get_frame_data() const
+const uint8_t * rectified_stream::get_frame_data() const
 {
     // If source image is already rectified, just return it without doing any work
     if(get_pose() == source.get_pose() && get_intrinsics() == source.get_intrinsics()) return source.get_frame_data();
@@ -133,7 +191,7 @@ const rsimpl::byte * rectified_stream::get_frame_data() const
     return image.data();
 }
 
-const rsimpl::byte * aligned_stream::get_frame_data() const
+const uint8_t * aligned_stream::get_frame_data() const
 {
     if(image.empty() || number != get_frame_number())
     {

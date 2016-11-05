@@ -26,3 +26,7 @@
 *.exe
 *.out
 *.app
+
+# solution folders
+vs20*/
+xcode*/

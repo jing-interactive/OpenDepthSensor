@@ -60,7 +60,7 @@ solution "Cinder-DepthSensor"
         kind "StaticLib"
 
         includedirs {
-			"include",
+            "include",
             "../../include",
             "src/librealsense/include",
             "src/v1/sdk/inc",
@@ -69,7 +69,7 @@ solution "Cinder-DepthSensor"
         }
 
         files {
-			"include/*",
+            "include/*",
             "src/**",
         }
 

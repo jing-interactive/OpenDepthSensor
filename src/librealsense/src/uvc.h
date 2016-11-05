@@ -11,6 +11,10 @@
 #include <functional>   // For function
 #include <thread>       // For this_thread::sleep_for
 
+const uint16_t VID_INTEL_CAMERA     = 0x8086;
+const uint16_t ZR300_CX3_PID        = 0x0acb;
+const uint16_t ZR300_FISHEYE_PID    = 0x0ad0;
+
 namespace rsimpl
 {
     namespace uvc
@@ -19,11 +23,14 @@ namespace rsimpl
         struct extension_unit { int subdevice, unit, node; guid id; };
 
         struct context; // Opaque type representing access to the underlying UVC implementation
-        struct device; // Opaque type representing access to a specific UVC device
+        struct device;  // Opaque type representing access to a specific UVC device
 
         // Enumerate devices
         std::shared_ptr<context> create_context();
         std::vector<std::shared_ptr<device>> query_devices(std::shared_ptr<context> context);
+
+        // Check for connected device
+        bool is_device_connected(device & device, int vid, int pid);
 
         // Static device properties
         int get_vendor_id(const device & device);
@@ -32,11 +39,13 @@ namespace rsimpl
 
         // Direct USB controls
         void claim_interface(device & device, const guid & interface_guid, int interface_number);
+        void claim_aux_interface(device & device, const guid & interface_guid, int interface_number);
         void bulk_transfer(device & device, unsigned char endpoint, void * data, int length, int *actual_length, unsigned int timeout);
 
-        // Access CT and PU controls
-        inline bool is_pu_control(rs_option option) { return option >= RS_OPTION_COLOR_BACKLIGHT_COMPENSATION && option <= RS_OPTION_COLOR_ENABLE_AUTO_WHITE_BALANCE; }
-        void get_pu_control_range(const device & device, int subdevice, rs_option option, int * min, int * max);
+        // Access CT (Camera Terminal) and PU (Processing Units) controls
+        inline bool is_pu_control(rs_option option) { return option <= RS_OPTION_COLOR_ENABLE_AUTO_WHITE_BALANCE; }
+        void get_pu_control_range(const device & device, int subdevice, rs_option option, int * min, int * max, int * step, int * def);
+        void get_extension_control_range(const device & device, const extension_unit & xu, char control, int * min, int * max, int * step, int * def);
         void set_pu_control(device & device, int subdevice, rs_option option, int value);
         int get_pu_control(const device & device, int subdevice, rs_option option);
 
@@ -44,8 +53,17 @@ namespace rsimpl
         void set_control(device & device, const extension_unit & xu, uint8_t ctrl, void * data, int len);
         void get_control(const device & device, const extension_unit & xu, uint8_t ctrl, void * data, int len);
 
+        // Control data channels
+        typedef std::function<void(const unsigned char * data, const int size)> data_channel_callback;
+
+        void set_subdevice_data_channel_handler(device & device, int subdevice_index, data_channel_callback callback);
+        void start_data_acquisition(device & device);
+        void stop_data_acquisition(device & device);
+
         // Control streaming
-        void set_subdevice_mode(device & device, int subdevice_index, int width, int height, uint32_t fourcc, int fps, std::function<void(const void * frame)> callback);
+        typedef std::function<void(const void * frame, std::function<void()> continuation)> video_channel_callback;
+
+        void set_subdevice_mode(device & device, int subdevice_index, int width, int height, uint32_t fourcc, int fps, video_channel_callback callback);
         void start_streaming(device & device, int num_transfer_bufs);
         void stop_streaming(device & device);
         
