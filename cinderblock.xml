@@ -5,7 +5,7 @@
 	id="org.vnm.depthsensor"
 	author="Vinjn Zhang"
 	license="MIT"
-	summary="Supports depth sensor including Kinect v1 and v2, RealSense"
+	summary="Supports depth sensor including Kinect v1 and v2, OpenNI-compatible devices and RealSense devices"
 	core="false"
 	>
 	<headerPattern>include/*.h</headerPattern>

@@ -152,8 +152,7 @@ namespace ds
             if (option.enableInfrared)
             {
                 auto data = (uint16_t*)dev->get_frame_data(rs::stream::infrared);
-                infraredChannel.is16bit = true;
-                infraredChannel.u16 = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
+                infraredChannel = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
                 signalInfraredDirty.emit();
             }
 

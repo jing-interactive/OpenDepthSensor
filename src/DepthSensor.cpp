@@ -10,6 +10,7 @@ namespace ds
     uint32_t getRealSenseCount();
     uint32_t getSimulatorCount();
     uint32_t getOpenNICount();
+    uint32_t getRgbCameraCount();
 
     uint32_t Device::getDeviceCount(DeviceType type)
     {
@@ -21,6 +22,8 @@ namespace ds
             return getRealSenseCount();
         if (type == OpenNI)
             return getOpenNICount();
+        if (type == RgbCamera)
+            return getRgbCameraCount();
         return getSimulatorCount();
     }
 
@@ -29,6 +32,7 @@ namespace ds
     DeviceRef createRealSense(Option option);
     DeviceRef createSimulator(Option option);
     DeviceRef createOpenNI(Option option);
+    DeviceRef createRgbCamera(Option option);
 
     DeviceRef Device::create(DeviceType type, Option option)
     {
@@ -43,6 +47,8 @@ namespace ds
             return createRealSense(option);
         if (type == OpenNI)
             return createOpenNI(option);
+        if (type == RgbCamera)
+            return createRgbCamera(option);
         return createSimulator(option);
     }
 }

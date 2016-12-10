@@ -146,8 +146,7 @@ namespace ds
                 auto data = (uint16_t*)frame.getData();
                 int w = frame.getWidth();
                 int h = frame.getHeight();
-                infraredChannel.is16bit = true;
-                infraredChannel.u16 = Channel16u(w, h, sizeof(uint16_t) * w, 1, data);
+                infraredChannel = Channel16u(w, h, sizeof(uint16_t) * w, 1, data);
                 signalInfraredDirty.emit();
             }
 

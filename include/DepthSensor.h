@@ -10,6 +10,18 @@ namespace ds
 {
     typedef std::shared_ptr<struct Device> DeviceRef;
 
+    enum DeviceType
+    {
+        Kinect1 = 0,
+        Kinect2 = 1,
+        RealSense = 2,
+        Simulator = 3,
+        OpenNI = 4,
+        RgbCamera = 5,
+
+        Count,
+    };
+
     struct Body
     {
         uint64_t id;
@@ -63,16 +75,6 @@ namespace ds
         static std::vector<uint32_t> indices; // shared by each face
     };
 
-    enum DeviceType
-    {
-        Kinect1,
-        Kinect2,
-        RealSense,
-        Simulator,
-        OpenNI,
-        Count,
-    };
-
     struct Option
     {
         int deviceId = 0;
@@ -105,12 +107,7 @@ namespace ds
         std::vector<ci::vec2> pointCloudUV;
         ci::signals::Signal<void()> signalDepthDirty;
 
-        struct
-        {
-            bool is16bit = true;
-            ci::Channel16u u16;
-            ci::Channel8u u8;
-        } infraredChannel;
+        ci::Channel16u infraredChannel;
         ci::signals::Signal<void()> signalInfraredDirty;
 
         ci::Surface8u colorSurface;

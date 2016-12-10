@@ -175,8 +175,7 @@ namespace ds
                 if (SUCCEEDED(hr))
                 {
                     hr = KCBCreateInfraredFrame(infraredDesc, &infraredFrame);
-                    infraredChannel.is16bit = true;
-                    infraredChannel.u16 = Channel16u(infraredDesc.width, infraredDesc.height,
+                    infraredChannel = Channel16u(infraredDesc.width, infraredDesc.height,
                         infraredDesc.bytesPerPixel * infraredDesc.width, 1, infraredFrame->Buffer);
                 }
                 if (FAILED(hr)) CI_LOG_E("KCBCreateInfraredFrame() fails.");
