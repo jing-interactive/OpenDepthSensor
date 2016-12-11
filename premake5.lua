@@ -62,22 +62,29 @@ solution "Cinder-DepthSensor"
         includedirs {
             "include",
             "../../include",
-            "src/librealsense/include",
-            "src/v1/sdk/inc",
-            "src/v2/sdk/inc",
-            "src/openni2/include",
+            "3rdparty",
+            "3rdparty/librealsense/include",
+            "3rdparty/v1/sdk/inc",
+            "3rdparty/v2/sdk/inc",
+            "3rdparty/openni2/include",
         }
 
         files {
             "include/*",
-            "src/**",
+            "src/*",
+            "3rdparty/v1/**",
+            "3rdparty/v2/**",
+            "3rdparty/openni2/**",
+            "3rdparty/librealsense/include/**",
+            "3rdparty/librealsense/src/*",
         }
 
         defines {
             "RS_USE_WMF_BACKEND",
         }
 
-        removefiles {
-            "src/librealsense/src/libuvc/*",
-        }
+        -- configuration "vs*"
+        --     removefiles {
+        --         "3rdparty/librealsense/src/libuvc/*",
+        --     }
 
