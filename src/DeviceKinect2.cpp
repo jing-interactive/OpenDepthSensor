@@ -50,13 +50,13 @@ namespace ds
     struct DeviceKinect2 : public Device
     {
         KCBDepthFrame* depthFrame = nullptr;
-        KCBFrameDescription depthDesc;
+        KCBFrameDescription depthDesc = {};
 
         KCBInfraredFrame* infraredFrame = nullptr;
-        KCBFrameDescription infraredDesc;
+        KCBFrameDescription infraredDesc = {};
 
         KCBColorFrame* colorFrame = nullptr;
-        KCBFrameDescription colorDesc;
+        KCBFrameDescription colorDesc = {};
 
         ICoordinateMapper* coordMapper = nullptr;
         int sensor = KCB_INVALID_HANDLE;
@@ -188,7 +188,7 @@ namespace ds
                 {
                     hr = KCBCreateColorFrame(ColorImageFormat_Bgra, colorDesc, &colorFrame);
                     colorSurface = Surface8u(colorFrame->Buffer, colorDesc.width, colorDesc.height,
-                        infraredDesc.bytesPerPixel * infraredDesc.width, SurfaceChannelOrder::BGRX);
+                        colorDesc.bytesPerPixel * colorDesc.width, SurfaceChannelOrder::BGRX);
                 }
                 if (FAILED(hr)) CI_LOG_E("KCBCreateColorFrame() fails.");
             }
