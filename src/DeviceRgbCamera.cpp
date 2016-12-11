@@ -3,7 +3,6 @@
 #include "cinder/app/app.h"
 #include "cinder/Log.h"
 #include "cinder/Capture.h"
-#include "../../Cinder-OpenCV3/include/CinderOpenCV.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -40,10 +39,10 @@ namespace ds
                 CI_LOG_EXCEPTION("Failed to init capture ", exc);
             }
 
-            //if (option.enableDepth)
-            //{
-            //    depthChannel = Channel16u(kWidth, kHeight);
-            //}
+            if (option.enableDepth)
+            {
+                depthChannel = Channel16u(kWidth, kHeight);
+            }
 
             App::get()->getSignalUpdate().connect(std::bind(&DeviceRgbCamera::update, this));
         }
@@ -61,10 +60,20 @@ namespace ds
                 }
                 if (option.enableDepth)
                 {
+#if 0
                     cv::Mat im = toOcv(colorSurface);
                     cv::cvtColor(im, im, cv::COLOR_BGR2GRAY);  // 3 to 1 chan
                     im.convertTo(im, CV_16U, 255); // 8bit to 16
                     depthChannel = fromOcv(im);
+#else
+                    for (int x = 0; x < kWidth; x++)
+                        for (int y = 0; y < kHeight; y++)
+                        {
+                            uint16_t* dest = depthChannel.getData({ x, y });
+                            uint8_t* src = colorSurface.getData({ x, y });
+                            *dest = (src[0] + src[1] + src[2]) * 4; // 4 is magic number
+                        }
+#endif
 
                     signalDepthDirty.emit();
                 }
