@@ -121,6 +121,11 @@ namespace ds
             return{ depthDesc.width, depthDesc.height };
         }
 
+        ivec2 getColorSize() const
+        {
+            return{ colorDesc.width, colorDesc.height };
+        }
+
         bool isValid() const
         {
             return sensor != KCB_INVALID_HANDLE;
@@ -262,6 +267,32 @@ namespace ds
                 if (SUCCEEDED(KCBGetDepthFrame(sensor, depthFrame)))
                 {
                     signalDepthDirty.emit();
+                }
+
+                if (depthToCameraTable.getWidth() == 0)
+                {
+                    PointF* table = nullptr;
+                    uint32_t count = 0;
+                    HRESULT hr = GetDepthFrameToCameraSpaceTable(sensor, &count, &table);
+                    if (SUCCEEDED(hr))
+                    {
+                        depthToCameraTable = Surface32f(depthDesc.width, depthDesc.height, false, SurfaceChannelOrder::RGB);
+
+                        Surface32f::Iter iter = depthToCameraTable.getIter();
+
+                        size_t i = 0;
+                        while (iter.line())
+                        {
+                            while (iter.pixel())
+                            {
+                                iter.r() = table[i].X;
+                                iter.g() = table[i].Y;
+                                iter.b() = 0.0f;
+                                ++i;
+                            }
+                        }
+                        signaldepthToCameraTableDirty.emit();
+                    }
                 }
             }
 

@@ -20,6 +20,7 @@ namespace ds
 
         float depthScale;
         ivec2 depthSize;
+        ivec2 colorSize;
 
         static uint32_t getDeviceCount()
         {
@@ -42,6 +43,11 @@ namespace ds
         ivec2 getDepthSize() const
         {
             return depthSize;
+        }
+
+        ivec2 getColorSize() const
+        {
+            return colorSize;
         }
 
         bool isValid() const
@@ -154,9 +160,9 @@ namespace ds
             {
                 auto frame = grabVideoFrame(&colorStream);
                 auto data = (uint8_t*)frame.getData();
-                int w = frame.getWidth();
-                int h = frame.getHeight();
-                colorSurface = Surface8u(data, w, h, sizeof(uint8_t) * 3 * w, SurfaceChannelOrder::RGB);
+                colorSize.x = frame.getWidth();
+                colorSize.y = frame.getHeight();
+                colorSurface = Surface8u(data, colorSize.x, colorSize.y, sizeof(uint8_t) * 3 * colorSize.x, SurfaceChannelOrder::RGB);
                 signalColorDirty.emit();
             }
         }

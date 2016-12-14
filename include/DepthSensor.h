@@ -97,6 +97,7 @@ namespace ds
 
         virtual bool isValid() const = 0;
         virtual ci::ivec2 getDepthSize() const = 0;
+        virtual ci::ivec2 getColorSize() const = 0;
         virtual float getDepthToMmScale()
         {
             return 1.0f;
@@ -118,5 +119,9 @@ namespace ds
 
         std::vector<Face> faces;
         ci::signals::Signal<void()> signalFaceDirty;
+
+        ci::signals::Signal<void()> signaldepthToCameraTableDirty;
+        ci::Surface32f depthToCameraTable;
+        ci::Surface32f depthToColorTable;
     };
 }

@@ -69,6 +69,11 @@ namespace ds
             return{ depthDesc.dwWidth, depthDesc.dwHeight };
         }
 
+        ivec2 getColorSize() const
+        {
+            return{ colorDesc.dwWidth, colorDesc.dwHeight };
+        }
+
         bool isValid() const
         {
             return sensor != KCB_INVALID_HANDLE;

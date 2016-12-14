@@ -24,7 +24,12 @@ namespace ds
 
         ivec2 getDepthSize() const
         {
-            return depthChannel.getSize();
+            return{ kWidth, kHeight };
+        }
+
+        ivec2 getColorSize() const
+        {
+            return{ kWidth, kHeight };
         }
 
         DeviceRgbCamera(Option option)

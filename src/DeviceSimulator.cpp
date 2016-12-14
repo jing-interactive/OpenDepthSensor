@@ -22,6 +22,11 @@ namespace ds
             return depthChannel.getSize();
         }
 
+        ivec2 getColorSize() const
+        {
+            return depthChannel.getSize();
+        }
+
         DeviceSimulator(Option option)
         {
             this->option = option;

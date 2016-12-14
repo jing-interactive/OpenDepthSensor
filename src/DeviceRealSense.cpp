@@ -44,6 +44,11 @@ namespace ds
             return{ kWidth, kHeight };
         }
 
+        ivec2 getColorSize() const
+        {
+            return{ kWidth, kHeight };
+        }
+
         bool isValid() const
         {
             return dev != nullptr;;
