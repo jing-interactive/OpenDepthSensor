@@ -1,5 +1,5 @@
 #include "DepthSensor.h"
-#include "librealsense/rs.hpp"
+#include "librealsense/include/librealsense/rs.hpp"
 
 #include "cinder/app/app.h"
 #include "cinder/Log.h"
