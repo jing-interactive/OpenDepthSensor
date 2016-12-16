@@ -75,6 +75,8 @@ namespace ds
         };
         HDFaceInternal hdFaces[BODY_COUNT] = {};
 
+        vector<ColorSpacePoint> depthToColorArray;
+
         static uint32_t getDeviceCount()
         {
             return 1;
@@ -134,8 +136,6 @@ namespace ds
         DeviceKinect2(Option option)
         {
             this->option = option;
-            depthDesc.width = 512;
-            depthDesc.height = 424;
 
             if (this->option.enableFace)
             {
@@ -172,7 +172,7 @@ namespace ds
                         depthDesc.bytesPerPixel * depthDesc.width, 1, depthFrame->Buffer);
                 }
                 if (FAILED(hr)) CI_LOG_E("KCBCreateDepthFrame() fails.");
-            }
+            }    
 
             if (option.enableInfrared)
             {
@@ -196,6 +196,12 @@ namespace ds
                         colorDesc.bytesPerPixel * colorDesc.width, SurfaceChannelOrder::BGRX);
                 }
                 if (FAILED(hr)) CI_LOG_E("KCBCreateColorFrame() fails.");
+            }
+
+            if (option.enablePointCloud && option.enableColor)
+            {
+                depthToColorArray.resize(depthDesc.width * depthDesc.height);
+                depthToColorTable = Surface32f(depthDesc.width, depthDesc.height, false, SurfaceChannelOrder::RGB);
             }
 
             if (option.enableFace)
@@ -264,11 +270,31 @@ namespace ds
         {
             if (option.enableDepth && KCBIsFrameReady(sensor, FrameSourceTypes_Depth))
             {
+                // signalDepthDirty
                 if (SUCCEEDED(KCBGetDepthFrame(sensor, depthFrame)))
                 {
                     signalDepthDirty.emit();
+
+                    // signalDepthToColorTable
+                    if (option.enablePointCloud && option.enableColor)
+                    {
+                        auto depthPointCount = depthDesc.width * depthDesc.height;
+                        HRESULT hr = KCBMapDepthFrameToColorSpace(sensor, depthPointCount, depthChannel.getData(), depthPointCount, depthToColorArray.data());
+                        if (SUCCEEDED(hr))
+                        {
+                            ColorSpacePoint* src = depthToColorArray.data();
+                            vec3* dst = (vec3*)depthToColorTable.getData();
+                            for (int i = 0; i < depthPointCount; i++)
+                            {
+                                dst[i].x = src[i].X / colorDesc.width;
+                                dst[i].y = src[i].Y / colorDesc.height;
+                            }
+                            signalDepthToColorTableDirty.emit();
+                        }
+                    }
                 }
 
+                // signaldepthToCameraTableDirty
                 if (depthToCameraTable.getWidth() == 0)
                 {
                     PointF* table = nullptr;
@@ -296,6 +322,7 @@ namespace ds
                 }
             }
 
+            // signalInfraredDirty
             if (option.enableInfrared && KCBIsFrameReady(sensor, FrameSourceTypes_Infrared))
             {
                 if (SUCCEEDED(KCBGetInfraredFrame(sensor, infraredFrame)))
@@ -304,6 +331,7 @@ namespace ds
                 }
             }
 
+            // signalColorDirty
             if (option.enableColor && KCBIsFrameReady(sensor, FrameSourceTypes_Color))
             {
                 if (SUCCEEDED(KCBGetColorFrame(sensor, colorFrame)))

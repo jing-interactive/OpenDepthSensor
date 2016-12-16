@@ -122,6 +122,8 @@ namespace ds
 
         ci::signals::Signal<void()> signaldepthToCameraTableDirty;
         ci::Surface32f depthToCameraTable;
+
+        ci::signals::Signal<void()> signalDepthToColorTableDirty;
         ci::Surface32f depthToColorTable;
     };
 }
