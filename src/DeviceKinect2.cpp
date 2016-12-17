@@ -294,7 +294,7 @@ namespace ds
                     }
                 }
 
-                // signaldepthToCameraTableDirty
+                // signalDepthToCameraTableDirty
                 if (depthToCameraTable.getWidth() == 0)
                 {
                     PointF* table = nullptr;
@@ -317,7 +317,7 @@ namespace ds
                                 ++i;
                             }
                         }
-                        signaldepthToCameraTableDirty.emit();
+                        signalDepthToCameraTableDirty.emit();
                     }
                 }
             }

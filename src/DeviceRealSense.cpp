@@ -20,8 +20,8 @@ namespace ds
         rs::extrinsics depth_to_color;
         rs::intrinsics color_intrin;
 
-        const int32_t kWidth = 640;
-        const int32_t kHeight = 480;
+        ivec2 kDepthSize = { 640, 480 };
+        ivec2 kColorSize = { 640, 480 };
 
         static uint32_t getDeviceCount()
         {
@@ -41,12 +41,12 @@ namespace ds
         // TODO:
         ivec2 getDepthSize() const
         {
-            return{ kWidth, kHeight };
+            return kDepthSize;
         }
 
         ivec2 getColorSize() const
         {
-            return{ kWidth, kHeight };
+            return kColorSize;
         }
 
         bool isValid() const
@@ -73,24 +73,23 @@ namespace ds
 
             if (option.enableDepth)
             {
-                dev->enable_stream(rs::stream::depth, kWidth, kHeight, rs::format::z16, 60);
+                dev->enable_stream(rs::stream::depth, kDepthSize.x, kDepthSize.y, rs::format::z16, 60);
                 depthScale = dev->get_depth_scale() * 1000;
             }
 
-            //if (option.enablePointCloud)
-            //{
-            //    pointCloudXYZ.resize(kWidth * kHeight);
-            //    pointCloudUV.resize(kWidth * kHeight);
-            //}
+            if (option.enablePointCloud && option.enableColor)
+            {
+                depthToColorTable = Surface32f(kDepthSize.x, kDepthSize.y, false, SurfaceChannelOrder::RGB);
+            }
 
             if (option.enableColor)
             {
-                dev->enable_stream(rs::stream::color, kWidth, kHeight, rs::format::rgb8, 60);
+                dev->enable_stream(rs::stream::color, kColorSize.x, kColorSize.y, rs::format::rgb8, 60);
             }
 
             if (option.enableInfrared)
             {
-                dev->enable_stream(rs::stream::infrared, kWidth, kHeight, rs::format::y16, 60);
+                dev->enable_stream(rs::stream::infrared, kDepthSize.x, kDepthSize.y, rs::format::y16, 60);
             }
 
             dev->start();
@@ -120,51 +119,79 @@ namespace ds
             if (option.enableDepth)
             {
                 auto depth_image = (uint16_t*)dev->get_frame_data(rs::stream::depth);
-                depthChannel = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, depth_image);
+                for (int i = 0; i < kDepthSize.x*kDepthSize.y; i++)
+                {
+                    depth_image[i] = depth_image[i] * 0.1f;
+                }
+                depthChannel = Channel16u(kDepthSize.x, kDepthSize.y, sizeof(uint16_t) * kDepthSize.x, 1, depth_image);
+                signalDepthDirty.emit();
 
                 if (option.enablePointCloud)
                 {
-                    pointCloudXYZ.clear();
-                    pointCloudUV.clear();
                     auto depthToMeter = dev->get_depth_scale();
 
+                    vec3* dst = (vec3*)depthToColorTable.getData();
                     for (int dy = 0; dy < depth_intrin.height; ++dy)
                     {
                         for (int dx = 0; dx < depth_intrin.width; ++dx)
                         {
                             // Retrieve the 16-bit depth value and map it into a depth in meters
                             uint16_t depth_value = depth_image[dy * depth_intrin.width + dx];
-                            float depth_in_meters = depth_value * depthToMeter;
+                            if (depth_value == 0)
+                            {
+                                dst->x = 0;
+                                dst->y = 0;
+                            }
+                            else
+                            {
+                                float depth_in_meters = depth_value * depthToMeter;
 
-                            // Skip over pixels with a depth value of zero, which is used to indicate no data
-                            if (depth_value == 0) continue;
+                                // Map from pixel coordinates in the depth image to pixel coordinates in the color image
+                                rs::float2 depth_pixel = { (float)dx, (float)dy };
+                                rs::float3 depth_point = depth_intrin.deproject(depth_pixel, depth_in_meters);
+                                rs::float3 color_point = depth_to_color.transform(depth_point);
+                                rs::float2 color_texcoord = color_intrin.project_to_texcoord(color_point);
 
-                            // Map from pixel coordinates in the depth image to pixel coordinates in the color image
-                            rs::float2 depth_pixel = { (float)dx, (float)dy };
-                            rs::float3 depth_point = depth_intrin.deproject(depth_pixel, depth_in_meters);
-                            rs::float3 color_point = depth_to_color.transform(depth_point);
-                            rs::float2 color_texcoord = color_intrin.project_to_texcoord(color_point);
+                                dst->x = color_texcoord.x;
+                                dst->y = color_texcoord.y;
+                            }
 
-                            pointCloudXYZ.push_back({ depth_point.x, depth_point.y, depth_point.z });
-                            pointCloudUV.push_back({ color_texcoord.x, 1.0f - color_texcoord.y });
+                            dst++;
                         }
                     }
+                    signalDepthToColorTableDirty.emit();
                 }
 
-                signalDepthDirty.emit();
+                // signalDepthToCameraTableDirty
+                if (depthToCameraTable.getWidth() == 0)
+                {
+                    depthToCameraTable = Surface32f(kDepthSize.x, kDepthSize.y, false, SurfaceChannelOrder::RGB);
+
+                    for (int y = 0; y < kDepthSize.y; y++)
+                        for (int x = 0; x < kDepthSize.x; x++)
+                        {
+                            // Map from pixel coordinates in the depth image to pixel coordinates in the color image
+                            rs::float2 depth_pixel = { (float)x, (float)y };
+                            rs::float3 depth_point = depth_intrin.deproject(depth_pixel, 1);
+                            vec3* dst = (vec3*)depthToCameraTable.getData({ x, y });
+                            dst->x = depth_point.x;
+                            dst->y = depth_point.y;
+                        }
+                    signalDepthToCameraTableDirty.emit();
+                }
             }
 
             if (option.enableInfrared)
             {
                 auto data = (uint16_t*)dev->get_frame_data(rs::stream::infrared);
-                infraredChannel = Channel16u(kWidth, kHeight, sizeof(uint16_t) * kWidth, 1, data);
+                infraredChannel = Channel16u(kDepthSize.x, kDepthSize.y, sizeof(uint16_t) * kDepthSize.x, 1, data);
                 signalInfraredDirty.emit();
             }
 
             if (option.enableColor)
             {
                 uint8_t* data = (uint8_t*)dev->get_frame_data(rs::stream::color);
-                colorSurface = Surface8u(data, kWidth, kHeight, sizeof(uint8_t) * 3 * kWidth, SurfaceChannelOrder::RGB);
+                colorSurface = Surface8u(data, kDepthSize.x, kDepthSize.y, sizeof(uint8_t) * 3 * kColorSize.x, SurfaceChannelOrder::RGB);
                 signalColorDirty.emit();
             }
         }

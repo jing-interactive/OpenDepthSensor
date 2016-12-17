@@ -48,6 +48,8 @@ namespace ds
         NUI_SKELETON_FRAME skeletonFrame;
         int sensor = KCB_INVALID_HANDLE;
 
+        vector<NUI_COLOR_IMAGE_POINT> depthToColorArray;
+
         static uint32_t getDeviceCount()
         {
             int count = 0;
@@ -82,8 +84,6 @@ namespace ds
         DeviceKinect1(Option option)
         {
             this->option = option;
-            depthDesc.dwWidth = 320;
-            depthDesc.dwHeight = 240;
 
             if (getDeviceCount() == 0)
             {
@@ -140,6 +140,17 @@ namespace ds
                 KinectStopColorStream(sensor);
             }
 
+            if (option.enablePointCloud && option.enableColor)
+            {
+                depthToColorArray.resize(depthDesc.dwWidth * depthDesc.dwHeight);
+                depthToColorTable = Surface32f(depthDesc.dwWidth, depthDesc.dwHeight, false, SurfaceChannelOrder::RGB);
+            }
+
+            if (option.enableBody && option.enableBodyIndex)
+            {
+                KinectStartSkeletonStream(sensor);
+            }
+
             App::get()->getSignalUpdate().connect(std::bind(&DeviceKinect1::update, this));
         }
 
@@ -154,7 +165,74 @@ namespace ds
             {
                 if (SUCCEEDED(KinectGetDepthFrame(sensor, depthDesc.cbBufferSize, depthBuffer.get(), nullptr)))
                 {
+                    auto depthPointCount = depthDesc.dwWidth * depthDesc.dwHeight;
+                    //
+                    // signalDepthToColorTable
+                    //
+                    if (option.enablePointCloud && option.enableColor)
+                    {
+                        vector<NUI_DEPTH_IMAGE_POINT> depthPoints(depthPointCount);
+                        auto* dst = depthPoints.data();
+                        uint16_t* src = (uint16_t*)depthBuffer.get();
+                        for (int y = 0; y < depthDesc.dwHeight; y++)
+                            for (int x = 0; x < depthDesc.dwWidth; x++)
+                            {
+                                dst->x = x;
+                                dst->y = y;
+                                //dst->depth = NuiDepthPixelToDepth(*src);
+                                dst->depth = *src;
+                                dst++;
+                                src++;
+                            }
+  
+                        HRESULT hr = KinectMapDepthPointToColorPoint(sensor,
+                            NUI_IMAGE_RESOLUTION_640x480, depthPoints.data(),
+                            NUI_IMAGE_TYPE_COLOR_INFRARED, NUI_IMAGE_RESOLUTION_640x480, depthToColorArray.data());
+                        if (SUCCEEDED(hr))
+                        {
+                            auto* src = depthToColorArray.data();
+                            vec3* dst = (vec3*)depthToColorTable.getData();
+                            for (int i = 0; i < depthPointCount; i++)
+                            {
+                                dst[i].x = src[i].x / (float)colorDesc.dwWidth;
+                                dst[i].y = src[i].y / (float)colorDesc.dwHeight;
+                            }
+                            signalDepthToColorTableDirty.emit();
+                        }
+                    }
+
+                    //
+                    // signalDepthDirty
+                    //
+                    uint16_t* src = (uint16_t*)depthBuffer.get();
+                    for (int i = 0; i < depthPointCount; i++)
+                    {
+                        *src = NuiDepthPixelToDepth(*src);
+                        src++;
+                    }
+
                     signalDepthDirty.emit();
+                }
+
+                // signalDepthToCameraTableDirty
+                if (depthToCameraTable.getWidth() == 0)
+                {
+                    depthToCameraTable = Surface32f(depthDesc.dwWidth, depthDesc.dwHeight, false, SurfaceChannelOrder::RGB);
+                    //
+                    // Center of depth sensor is at (0,0,0) in skeleton space, and
+                    // and (width/2,height/2) in depth image coordinates.  Note that positive Y
+                    // is up in skeleton space and down in image coordinates.
+                    //
+                    for (int y = 0; y < depthDesc.dwHeight; y++)
+                        for (int x = 0; x < depthDesc.dwWidth; x++)
+                        {
+                            float fSkeletonX = (x - depthDesc.dwWidth / 2.0f) * (320.0f / depthDesc.dwWidth) * NUI_CAMERA_DEPTH_IMAGE_TO_SKELETON_MULTIPLIER_320x240;
+                            float fSkeletonY = -(y - depthDesc.dwHeight / 2.0f) * (240.0f / depthDesc.dwHeight) * NUI_CAMERA_DEPTH_IMAGE_TO_SKELETON_MULTIPLIER_320x240;
+                            vec3* dst = (vec3*)depthToCameraTable.getData({ x, y });
+                            dst->x = fSkeletonX;
+                            dst->y = fSkeletonY;
+                        }
+                    signalDepthToCameraTableDirty.emit();
                 }
             }
 

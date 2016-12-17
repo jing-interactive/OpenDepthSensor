@@ -104,8 +104,6 @@ namespace ds
         }
 
         ci::Channel16u depthChannel;
-        std::vector<ci::vec3> pointCloudXYZ;
-        std::vector<ci::vec2> pointCloudUV;
         ci::signals::Signal<void()> signalDepthDirty;
 
         ci::Channel16u infraredChannel;
@@ -120,7 +118,8 @@ namespace ds
         std::vector<Face> faces;
         ci::signals::Signal<void()> signalFaceDirty;
 
-        ci::signals::Signal<void()> signaldepthToCameraTableDirty;
+        // pointcloud
+        ci::signals::Signal<void()> signalDepthToCameraTableDirty;
         ci::Surface32f depthToCameraTable;
 
         ci::signals::Signal<void()> signalDepthToColorTableDirty;
