@@ -179,7 +179,9 @@ extern "C"
     KINECT_CB KCBHANDLE /*APIENTRY*/ KinectOpenSensor( _In_z_ const WCHAR* wcPortID );
 
     // determine if the handle is valid
-    KINECT_CB bool /*APIENTRY*/ KinectIsHandleValid( KCBHANDLE kcbHandle );
+    KINECT_CB bool /*APIENTRY*/ KinectIsHandleValid(KCBHANDLE kcbHandle);
+
+    KINECT_CB INuiSensor* /*APIENTRY*/ KinectGetNuiSensor(KCBHANDLE kcbHandle);
 
     // close down resources for the sensor
     // handle will still be valid, but you will have to call "Open" again

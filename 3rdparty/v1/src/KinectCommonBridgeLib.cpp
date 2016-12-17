@@ -24,6 +24,17 @@ KINECT_CB bool /*APIENTRY*/ KinectIsHandleValid( KCBHANDLE kcbHandle )
 	return KCB_INVALID_HANDLE != kcbHandle;
 }
 
+KINECT_CB INuiSensor* /*APIENTRY*/ KinectGetNuiSensor(KCBHANDLE kcbHandle)
+{
+    std::shared_ptr<KinectSensor> pSensor = nullptr;
+    if (SensorManager::GetInstance()->GetKinectSensor(kcbHandle, pSensor))
+    {
+        return pSensor->GetNuiSensor();
+    }
+
+    return nullptr;
+}
+
 // for enumerating sensors
 KINECT_CB UINT /*APIENTRY*/ KinectGetPortIDCount()
 {

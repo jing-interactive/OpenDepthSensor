@@ -172,26 +172,41 @@ namespace ds
                     if (option.enablePointCloud && option.enableColor)
                     {
                         vector<NUI_DEPTH_IMAGE_POINT> depthPoints(depthPointCount);
-                        auto* dst = depthPoints.data();
-                        uint16_t* src = (uint16_t*)depthBuffer.get();
-                        for (int y = 0; y < depthDesc.dwHeight; y++)
-                            for (int x = 0; x < depthDesc.dwWidth; x++)
-                            {
-                                dst->x = x;
-                                dst->y = y;
-                                //dst->depth = NuiDepthPixelToDepth(*src);
-                                dst->depth = *src;
-                                dst++;
-                                src++;
-                            }
+                        {
+                            auto* dst = depthPoints.data();
+                            auto* src = (uint16_t*)depthBuffer.get();
+                            for (int y = 0; y < depthDesc.dwHeight; y++)
+                                for (int x = 0; x < depthDesc.dwWidth; x++)
+                                {
+                                    dst->x = x;
+                                    dst->y = y;
+                                    //dst->depth = NuiDepthPixelToDepth(*src);
+                                    dst->depth = *src;
+                                    dst++;
+                                    src++;
+                                }
+                        }
   
+#if 1
+                        static auto nuiSensor = KinectGetNuiSensor(sensor);
+
+                        HRESULT hr = nuiSensor->NuiImageGetColorPixelCoordinateFrameFromDepthPixelFrameAtResolution(
+                            NUI_IMAGE_RESOLUTION_640x480,
+                            NUI_IMAGE_RESOLUTION_640x480,
+                            depthPointCount,
+                            (uint16_t*)depthBuffer.get(),
+                            depthPointCount * 2,
+                            (LONG*)depthToColorArray.data()
+                            );
+#else
                         HRESULT hr = KinectMapDepthPointToColorPoint(sensor,
                             NUI_IMAGE_RESOLUTION_640x480, depthPoints.data(),
                             NUI_IMAGE_TYPE_COLOR_INFRARED, NUI_IMAGE_RESOLUTION_640x480, depthToColorArray.data());
+#endif
                         if (SUCCEEDED(hr))
                         {
                             auto* src = depthToColorArray.data();
-                            vec3* dst = (vec3*)depthToColorTable.getData();
+                            auto* dst = (vec3*)depthToColorTable.getData();
                             for (int i = 0; i < depthPointCount; i++)
                             {
                                 dst[i].x = src[i].x / (float)colorDesc.dwWidth;

@@ -122,6 +122,7 @@ public: // getters
     const WCHAR* GetPortID() const { return m_wsPortID.c_str(); }
     KINECT_SENSOR_STATUS GetKinectSensorStatus() { return m_eStatus; }
     CoordinateMapper& GetCoordinateMapper() { return *m_pCoordinateMapper.get(); }
+    INuiSensor* GetNuiSensor() const{ return m_pNuiSensor; }
 
 protected:
     // for sensor interaction with the object
