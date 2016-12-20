@@ -18,7 +18,6 @@ namespace ds
         openni::Device device;
         openni::VideoStream infraredStream, depthStream, colorStream;
 
-        float depthScale;
         ivec2 depthSize;
         ivec2 colorSize;
 
@@ -26,11 +25,6 @@ namespace ds
         {
             // TODO:
             return 1;
-        }
-
-        virtual float getDepthToMmScale()
-        {
-            return depthScale;
         }
 
         ~DeviceOpenNI()
