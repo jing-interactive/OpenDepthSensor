@@ -180,6 +180,11 @@ namespace ds
                 if (SUCCEEDED(hr))
                 {
                     hr = KCBCreateInfraredFrame(infraredDesc, &infraredFrame);
+                    if (!option.enableDepth)
+                    {
+                        // WAR infrared only mode
+                        depthDesc = infraredDesc;
+                    }
                     infraredChannel = Channel16u(infraredDesc.width, infraredDesc.height,
                         infraredDesc.bytesPerPixel * infraredDesc.width, 1, infraredFrame->Buffer);
                 }
