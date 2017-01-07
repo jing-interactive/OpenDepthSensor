@@ -56,14 +56,14 @@ namespace ds
             openni::Status rc = openni::OpenNI::initialize();
             if (rc != openni::STATUS_OK)
             {
-                CI_LOG_E("Initialize failed\n%s\n", openni::OpenNI::getExtendedError());
+                CI_LOG_E("Initialize failed " << openni::OpenNI::getExtendedError());
                 return;
             }
 
             rc = device.open(openni::ANY_DEVICE);
             if (rc != openni::STATUS_OK)
             {
-                CI_LOG_E("Couldn't open device\n%s\n", openni::OpenNI::getExtendedError());
+                CI_LOG_E("Couldn't open device" << openni::OpenNI::getExtendedError());
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace ds
                     rc = streams[i]->create(device, type);
                     if (rc != openni::STATUS_OK)
                     {
-                        CI_LOG_E("Couldn't create stream %d\n%s\n", i, openni::OpenNI::getExtendedError());
+                        CI_LOG_E("Couldn't create stream " << i << "\n" << openni::OpenNI::getExtendedError());
                         return;
                     }
                 }
@@ -99,7 +99,7 @@ namespace ds
                 rc = streams[i]->start();
                 if (rc != openni::STATUS_OK)
                 {
-                    CI_LOG_E("Couldn't start stream %d\n%s\n", i, openni::OpenNI::getExtendedError());
+                    CI_LOG_E("Couldn't start stream " << i << "\n" << openni::OpenNI::getExtendedError());
                     return;
                 }
             }
@@ -116,13 +116,13 @@ namespace ds
             openni::Status rc = openni::OpenNI::waitForAnyStream(&pStream, 1, &changedStreamDummy, SAMPLE_READ_WAIT_TIMEOUT);
             if (rc != openni::STATUS_OK)
             {
-                CI_LOG_E("Wait failed! (timeout is %d ms)\n%s\n", openni::SAMPLE_READ_WAIT_TIMEOUT, openni::OpenNI::getExtendedError());
+                CI_LOG_E("Wait timeout " << SAMPLE_READ_WAIT_TIMEOUT << " ms " <<openni::OpenNI::getExtendedError());
             }
 
             rc = pStream->readFrame(&frame);
             if (rc != openni::STATUS_OK)
             {
-                CI_LOG_E("Read failed!\n%s\n", OpenNI::getExtendedError());
+                CI_LOG_E("Read failed!\n" << openni::OpenNI::getExtendedError());
             }
 
             return frame;

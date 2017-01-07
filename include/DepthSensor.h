@@ -12,15 +12,14 @@ namespace ds
 
     enum DeviceType
     {
-        Kinect1 = 0,
-        Kinect2 = 1,
-        RealSense = 2,
-        Simulator = 3,
-        OpenNI = 4,
-        RgbCamera = 5,
+#define ITEM(name, id) name = id,
+#include "Sensors.inl"
+#undef ITEM
 
         Count,
     };
+
+    const char* strFromType(DeviceType type);
 
     struct Body
     {
