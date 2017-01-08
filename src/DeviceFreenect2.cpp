@@ -58,6 +58,8 @@ namespace ds
         unique_ptr<libfreenect2::SyncMultiFrameListener> listener;
 
         unique_ptr<uint16_t[]> depthBuffer;
+        unique_ptr<uint16_t[]> infraredBuffer;
+
         ivec2 kDepthSize = { 512, 424 };
         ivec2 kColorSize = { 1920, 1080 };
 
@@ -113,7 +115,6 @@ namespace ds
             //CI_LOG_I("device serial : " << dev->getSerialNumber());
             //CI_LOG_I("device firmware : " << dev->getFirmwareVersion());
 
-            /// listeners
             int types = 0;
             if (option.enableColor)
             {
@@ -124,6 +125,12 @@ namespace ds
                 types |= libfreenect2::Frame::Ir | libfreenect2::Frame::Depth;
                 depthBuffer.reset(new uint16_t[kDepthSize.x * kDepthSize.y]);
                 depthChannel = Channel16u(kDepthSize.x, kDepthSize.y, sizeof(uint16_t) * kDepthSize.x, 1, depthBuffer.get());
+            }
+            if (option.enableInfrared)
+            {
+                types |= libfreenect2::Frame::Ir;
+                infraredBuffer.reset(new uint16_t[kDepthSize.x * kDepthSize.y]);
+                infraredChannel = Channel16u(kDepthSize.x, kDepthSize.y, sizeof(uint16_t) * kDepthSize.x, 1, infraredBuffer.get());
             }
             listener = make_unique<libfreenect2::SyncMultiFrameListener>(types);
 
@@ -184,7 +191,22 @@ namespace ds
 
             if (rgb && option.enableColor)
             {
+                assert(kColorSize.x == rgb->width);
+                assert(sizeof(uint8_t) * 4 == rgb->bytes_per_pixel);
+                colorSurface = Surface8u(rgb->data, kColorSize.x, kColorSize.y, sizeof(uint8_t) * 4 * kColorSize.x, SurfaceChannelOrder::BGRX);
                 signalColorDirty.emit();
+            }
+
+            if (ir && option.enableInfrared)
+            {
+                assert(kDepthSize.x == ir->width);
+                assert(sizeof(float) == ir->bytes_per_pixel);
+                const float* src = (const float*)ir->data;
+                for (int i = 0; i < kDepthSize.x*kDepthSize.y; i++)
+                {
+                    infraredBuffer[i] = src[i];
+                }
+                signalInfraredDirty.emit();
             }
 
             if (option.enablePointCloud)
