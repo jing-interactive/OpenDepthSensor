@@ -10,6 +10,6 @@ Supported sensor list:
 
 # How to build
 * Fetch submodules in 3rdparty/
-* Generate project file w/ premake5
-    * e.g. `premake4 vs2013`
-    * or `premake4 xcode4`
+* Generate project file w/ premake5, e.g.
+    * `premake5 vs2013`
+    * `premake5 xcode4`
