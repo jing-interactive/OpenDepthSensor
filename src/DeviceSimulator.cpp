@@ -1,5 +1,7 @@
 #include "DepthSensor.h"
 
+#ifdef Simulator_Enabled
+
 #include "cinder/app/app.h"
 #include "cinder/Log.h"
 #include "cinder/ImageIo.h"
@@ -57,3 +59,5 @@ namespace ds
         return DeviceRef(new DeviceSimulator(option));
     }
 }
+
+#endif

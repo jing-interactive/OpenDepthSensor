@@ -6,6 +6,17 @@
 
 #include <vector>
 
+#define Simulator_Enabled
+#define RgbCamera_Enabled
+
+#ifdef CINDER_MSW_DESKTOP
+#define Kinect1_Enabled
+#define Kinect2_Enabled
+#define RealSense_Enabled
+//#define OpenNI_Enabled
+//#define Freenect2_Enabled
+#endif
+
 namespace ds
 {
     typedef std::shared_ptr<struct Device> DeviceRef;
@@ -123,5 +134,7 @@ namespace ds
 
         ci::signals::Signal<void()> signalDepthToColorTableDirty;
         ci::Surface32f depthToColorTable;
+
+        ci::vec2 focalLength;
     };
 }

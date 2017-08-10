@@ -1,6 +1,10 @@
 #include "DepthSensor.h"
+
+#ifdef Kinect2_Enabled
+
 #include "v2/src/KCBv2Lib.h"
 #include "Kinect.Face.h"
+#include "NuiKinectFusionApi.h"
 
 #include "cinder/app/app.h"
 #include "cinder/Log.h"
@@ -61,6 +65,8 @@ namespace ds
         ICoordinateMapper* coordMapper = nullptr;
         int sensor = KCB_INVALID_HANDLE;
         IKinectSensor*  rawSensor = nullptr;
+
+        CameraIntrinsics cameraIntrinsics;
 
         struct HDFaceInternal
         {
@@ -161,6 +167,10 @@ namespace ds
 
             hr = KCBGetICoordinateMapper(sensor, &coordMapper);
             if (FAILED(hr)) CI_LOG_E("KCBGetICoordinateMapper() fails.");
+            coordMapper->GetDepthCameraIntrinsics(&cameraIntrinsics);
+            if (FAILED(hr)) CI_LOG_E("GetDepthCameraIntrinsics() fails.");
+            focalLength.x = NUI_DEPTH_RAW_WIDTH * NUI_KINECT_DEPTH_NORM_FOCAL_LENGTH_X;
+            focalLength.y = NUI_DEPTH_RAW_HEIGHT * NUI_KINECT_DEPTH_NORM_FOCAL_LENGTH_Y;
 
             if (option.enableDepth)
             {
@@ -509,3 +519,5 @@ namespace ds
         return DeviceRef(new DeviceKinect2(option));
     }
 }
+
+#endif

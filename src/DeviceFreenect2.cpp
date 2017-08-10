@@ -1,5 +1,7 @@
 #include "DepthSensor.h"
 
+#ifdef Freenect2_Enabled
+
 #include "libfreenect2/libfreenect2.hpp"
 #include "libfreenect2/logger.h"
 #include "libfreenect2/frame_listener_impl.h"
@@ -234,3 +236,5 @@ namespace ds
         return DeviceRef(new DeviceFreenect2(option));
     }
 }
+
+#endif

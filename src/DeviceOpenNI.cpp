@@ -1,4 +1,7 @@
 #include "DepthSensor.h"
+
+#ifdef OpenNI_Enabled
+
 #include "OpenNI.h"
 
 #include "cinder/app/app.h"
@@ -172,3 +175,5 @@ namespace ds
         return DeviceRef(new DeviceOpenNI(option));
     }
 }
+
+#endif

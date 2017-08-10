@@ -1,4 +1,6 @@
 #include "DepthSensor.h"
+
+#ifdef Kinect1_Enabled
 #include "v1/src/KinectCommonBridgeLib.h"
 
 #include "cinder/app/app.h"
@@ -304,3 +306,5 @@ namespace ds
         return DeviceRef(new DeviceKinect1(option));
     }
 }
+
+#endif

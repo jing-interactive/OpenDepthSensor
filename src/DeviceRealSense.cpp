@@ -1,4 +1,7 @@
 #include "DepthSensor.h"
+
+#ifdef RealSense_Enabled
+
 #include "librealsense/include/librealsense/rs.hpp"
 
 #include "cinder/app/app.h"
@@ -207,3 +210,5 @@ namespace ds
         return DeviceRef(new DeviceRealSense(option));
     }
 }
+
+#endif

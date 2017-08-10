@@ -1,5 +1,7 @@
 #include "DepthSensor.h"
 
+#ifdef RgbCamera_Enabled
+
 #include "cinder/app/app.h"
 #include "cinder/Log.h"
 #include "cinder/Capture.h"
@@ -98,3 +100,5 @@ namespace ds
         return DeviceRef(new DeviceRgbCamera(option));
     }
 }
+
+#endif
