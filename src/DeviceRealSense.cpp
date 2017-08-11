@@ -70,7 +70,7 @@ namespace ds
             }
 
             dev = ctx.get_device(option.deviceId);
-            printf("\nUsing device %s, an %s\n", option.deviceId, dev->get_name());
+            printf("\nUsing device %d, an %s\n", option.deviceId, dev->get_name());
             printf("    Serial number: %s\n", dev->get_serial());
             printf("    Firmware version: %s\n", dev->get_firmware_version());
 
