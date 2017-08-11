@@ -14,7 +14,7 @@
     #define Kinect2_Enabled
     #define RealSense_Enabled
     #define OpenNI_Enabled
-    #define Freenect2_Enabled
+    //#define Freenect2_Enabled
 #endif
 
 #ifdef CINDER_MAC
