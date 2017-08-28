@@ -37,15 +37,24 @@ solution "Cinder-DepthSensor"
             targetdir ("lib/msw/x64")
 
     configuration "macosx"
-        -- sysincludedirs {
+        sysincludedirs {
+            "include",
+            "../../include",
+            "3rdparty",
+            "3rdparty/librealsense/include",
+            "3rdparty/v1/sdk/inc",
+            "3rdparty/v2/sdk/inc",
+            "3rdparty/openni2/include",
+        }
 
-        -- }
         includedirs {
         }
 
     flags {
         "MultiProcessorCompile"
     }
+
+    cppdialect "C++11"
 
     configuration "Debug"
         defines { "DEBUG" }
