@@ -88,12 +88,13 @@ solution "Cinder-DepthSensor"
             "3rdparty/librealsense/src/*",
         }
 
-        defines {
-            "RS_USE_WMF_BACKEND",
-        }
+        configuration "vs*"
+            defines {
+                "RS_USE_WMF_BACKEND",
+            }
 
-        -- configuration "vs*"
-        --     removefiles {
-        --         "3rdparty/librealsense/src/libuvc/*",
-        --     }
+        configuration "macosx"
+            defines {
+                "RS_USE_LIBUVC_BACKEND",
+            }
 
