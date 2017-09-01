@@ -14,6 +14,8 @@ solution "Cinder-DepthSensor"
             "_CRT_SECURE_NO_DEPRECATE",
         }
 
+        cppdialect "C++11"
+
         disablewarnings {
             "4244",
             "4305",
@@ -37,33 +39,30 @@ solution "Cinder-DepthSensor"
             targetdir ("lib/msw/x64")
 
     configuration "macosx"
+
+        cppdialect "gnu++11"
+
         sysincludedirs {
             "include",
+            "/usr/local/include/libusb-1.0",
             "../../include",
             "3rdparty",
             "3rdparty/librealsense/include",
-            "3rdparty/v1/sdk/inc",
-            "3rdparty/v2/sdk/inc",
             "3rdparty/openni2/include",
-        }
-
-        includedirs {
         }
 
     flags {
         "MultiProcessorCompile"
     }
 
-    cppdialect "C++11"
-
     configuration "Debug"
         defines { "DEBUG" }
-        flags { "Symbols"}
+        symbols "On"
         targetsuffix "-d"
 
     configuration "Release"
         defines { "NDEBUG" }
-        flags { "Optimize"}
+        optimize "On"
 
     project "Cinder-DepthSensor"
         kind "StaticLib"
@@ -81,8 +80,6 @@ solution "Cinder-DepthSensor"
         files {
             "include/*",
             "src/*",
-            "3rdparty/v1/**",
-            "3rdparty/v2/**",
             "3rdparty/openni2/**",
             "3rdparty/librealsense/include/**",
             "3rdparty/librealsense/src/*",
@@ -93,8 +90,12 @@ solution "Cinder-DepthSensor"
                 "RS_USE_WMF_BACKEND",
             }
 
+            files {
+                "3rdparty/v1/**",
+                "3rdparty/v2/**",
+            }
+
         configuration "macosx"
             defines {
                 "RS_USE_LIBUVC_BACKEND",
             }
-
