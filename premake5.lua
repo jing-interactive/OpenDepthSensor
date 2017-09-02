@@ -5,10 +5,10 @@ local action = _ACTION or ""
 solution "Cinder-DepthSensor"
     location (action)
     configurations { "Debug", "Release" }
-    platforms {"x64", "x86"}
     language "C++"
 
     configuration "vs*"
+        platforms {"x64", "x86"}
         defines {
             "_CRT_SECURE_NO_WARNINGS",
             "_CRT_SECURE_NO_DEPRECATE",
@@ -39,7 +39,7 @@ solution "Cinder-DepthSensor"
             targetdir ("lib/msw/x64")
 
     configuration "macosx"
-
+        platforms {"x64"}
         cppdialect "gnu++11"
 
         sysincludedirs {
