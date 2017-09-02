@@ -104,3 +104,7 @@ solution "Cinder-DepthSensor"
             defines {
                 "RS_USE_LIBUVC_BACKEND",
             }
+
+            files {
+                "3rdparty/librealsense/src/libuvc/*",
+            }
