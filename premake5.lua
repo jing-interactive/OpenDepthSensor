@@ -51,6 +51,11 @@ solution "Cinder-DepthSensor"
             "3rdparty/openni2/include",
         }
 
+        libdirs {
+            "lib/macosx",
+        }
+        targetdir ("lib/macosx")
+
     flags {
         "MultiProcessorCompile"
     }

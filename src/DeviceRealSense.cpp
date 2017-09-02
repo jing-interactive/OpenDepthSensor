@@ -4,7 +4,7 @@
 
 #include "librealsense/include/librealsense/rs.hpp"
 
-#include "cinder/app/app.h"
+#include "cinder/app/App.h"
 #include "cinder/Log.h"
 
 using namespace ci;

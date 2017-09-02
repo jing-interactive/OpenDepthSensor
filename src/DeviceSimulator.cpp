@@ -2,7 +2,7 @@
 
 #ifdef Simulator_Enabled
 
-#include "cinder/app/app.h"
+#include "cinder/app/App.h"
 #include "cinder/Log.h"
 #include "cinder/ImageIo.h"
 
