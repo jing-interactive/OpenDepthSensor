@@ -319,6 +319,7 @@ namespace ds
                     {
                         depthToCameraTable = Surface32f(depthDesc.width, depthDesc.height, false, SurfaceChannelOrder::RGB);
 
+                        // optimize
                         Surface32f::Iter iter = depthToCameraTable.getIter();
 
                         size_t i = 0;

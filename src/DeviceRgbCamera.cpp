@@ -60,6 +60,22 @@ namespace ds
 
             if (mCapture->checkNewFrame())
             {
+                if (option.enablePointCloud && option.enableColor && depthToColorTable.getWidth() == 0)
+                {
+                    depthToColorTable = Surface32f(kWidth, kHeight, false, SurfaceChannelOrder::RGB);
+                    
+                    for (int y = 0; y < kHeight; y++)
+                    {
+                        for (int x = 0; x < kWidth; x++)
+                        {
+                            float* data = depthToColorTable.getData({x,y});
+                            data[0] = x / (float)kWidth;
+                            data[1] = y / (float)kHeight;
+                        }
+                    }
+                    signalDepthToColorTableDirty.emit();
+                }
+                
                 colorSurface = *mCapture->getSurface();
                 if (option.enableColor)
                 {
