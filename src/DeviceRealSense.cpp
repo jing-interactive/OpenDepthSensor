@@ -70,9 +70,9 @@ namespace ds
             }
 
             dev = ctx.get_device(option.deviceId);
-            printf("\nUsing device %d, an %s\n", option.deviceId, dev->get_name());
-            printf("    Serial number: %s\n", dev->get_serial());
-            printf("    Firmware version: %s\n", dev->get_firmware_version());
+            CI_LOG_I("Using device " << option.deviceId << ", an " << dev->get_name());
+            CI_LOG_I("    Serial number: " << dev->get_serial());
+            CI_LOG_I("    Firmware version: " << dev->get_firmware_version());
 
             if (option.enableDepth)
             {
