@@ -8,7 +8,6 @@
 
 #define Simulator_Enabled
 #define RgbCamera_Enabled
-#define Rplidar_Enabled
 
 #ifdef CINDER_MSW_DESKTOP
     #define Kinect1_Enabled

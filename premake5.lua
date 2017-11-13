@@ -49,7 +49,6 @@ solution "Cinder-DepthSensor"
             "3rdparty",
             "3rdparty/librealsense/include",
             "3rdparty/openni2/include",
-            "3rdparty/rplidar/include",
         }
 
         libdirs {
@@ -81,7 +80,6 @@ solution "Cinder-DepthSensor"
             "3rdparty/v1/sdk/inc",
             "3rdparty/v2/sdk/inc",
             "3rdparty/openni2/include",
-            "3rdparty/rplidar/include",
         }
 
         files {
@@ -90,8 +88,6 @@ solution "Cinder-DepthSensor"
             "3rdparty/openni2/**",
             "3rdparty/librealsense/include/**",
             "3rdparty/librealsense/src/*",
-            "3rdparty/rplidar/src/*",
-            "3rdparty/rplidar/src/hal/*",
         }
 
         configuration "vs*"
@@ -102,7 +98,6 @@ solution "Cinder-DepthSensor"
             files {
                 "3rdparty/v1/**",
                 "3rdparty/v2/**",
-                "3rdparty/rplidar/src/arch/win32/*",
             }
 
         configuration "macosx"
@@ -112,5 +107,4 @@ solution "Cinder-DepthSensor"
 
             files {
                 "3rdparty/librealsense/src/libuvc/*",
-                "3rdparty/rplidar/src/arch/macOS/*",
             }

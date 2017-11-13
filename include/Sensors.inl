@@ -19,6 +19,3 @@ ITEM(RgbCamera,	5)
 #ifdef Freenect2_Enabled
 ITEM(Freenect2,	6)
 #endif
-#ifdef Rplidar_Enabled
-ITEM(Rplidar, 7)
-#endif
