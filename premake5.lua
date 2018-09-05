@@ -8,7 +8,7 @@ solution "Cinder-DepthSensor"
     language "C++"
 
     configuration "vs*"
-        platforms {"x64", "x86"}
+        platforms {"x64"}
         defines {
             "_CRT_SECURE_NO_WARNINGS",
             "_CRT_SECURE_NO_DEPRECATE",
@@ -25,12 +25,6 @@ solution "Cinder-DepthSensor"
         flags {
             "StaticRuntime",   
         }
-
-        configuration "x86"
-            libdirs {
-                "lib/msw/x86",
-            }
-            targetdir ("lib/msw/x86")
 
         configuration "x64"
             libdirs {
@@ -76,6 +70,7 @@ solution "Cinder-DepthSensor"
             "include",
             "../../include",
             "3rdparty",
+            "3rdparty/ImiSDK",
             "3rdparty/librealsense/include",
             "3rdparty/v1/sdk/inc",
             "3rdparty/v2/sdk/inc",

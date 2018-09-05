@@ -19,3 +19,6 @@ ITEM(RgbCamera,	5)
 #ifdef Freenect2_Enabled
 ITEM(Freenect2,	6)
 #endif
+#ifdef Imi_Enabled
+ITEM(Imi, 6)
+#endif

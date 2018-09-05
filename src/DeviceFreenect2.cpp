@@ -2,18 +2,18 @@
 
 #ifdef Freenect2_Enabled
 
+#include "libfreenect2/frame_listener_impl.h"
 #include "libfreenect2/libfreenect2.hpp"
 #include "libfreenect2/logger.h"
-#include "libfreenect2/frame_listener_impl.h"
 #include "libfreenect2/registration.h"
 
-#include "cinder/app/app.h"
 #include "cinder/Log.h"
+#include "cinder/app/app.h"
 
 #ifdef _DEBUG
-#pragma comment (lib, "freenect2d.lib")
+#pragma comment(lib, "freenect2d.lib")
 #else
-#pragma comment (lib, "freenect2.lib")
+#pragma comment(lib, "freenect2.lib")
 #endif
 
 using namespace ci;
@@ -24,26 +24,24 @@ namespace ds
 {
     struct MyFileLogger : public libfreenect2::Logger
     {
-    public:
-        MyFileLogger()
-        {
-            level_ = Debug;
-        }
+      public:
+        MyFileLogger() { level_ = Debug; }
 
-        bool good()
-        {
-            return true;
-        }
+        bool good() { return true; }
 
-        virtual void log(Level level, const std::string &message)
+        virtual void log(Level level, const std::string& message)
         {
             ci::log::Level ciLevel = ci::log::LEVEL_INFO;
             switch (level)
             {
-            case Error:     ciLevel = ci::log::LEVEL_ERROR;
-            case Warning:   ciLevel = ci::log::LEVEL_WARNING;
-            case Debug:     ciLevel = ci::log::LEVEL_DEBUG;
-            default:        break;
+            case Error:
+                ciLevel = ci::log::LEVEL_ERROR;
+            case Warning:
+                ciLevel = ci::log::LEVEL_WARNING;
+            case Debug:
+                ciLevel = ci::log::LEVEL_DEBUG;
+            default:
+                break;
             }
 
             CINDER_LOG_STREAM(ciLevel, message);
@@ -53,8 +51,8 @@ namespace ds
     struct DeviceFreenect2 : public Device
     {
         static libfreenect2::Freenect2 freenect2;
-        libfreenect2::Freenect2Device *dev = nullptr;
-        libfreenect2::PacketPipeline *pipeline = nullptr;
+        libfreenect2::Freenect2Device* dev = nullptr;
+        libfreenect2::PacketPipeline* pipeline = nullptr;
 
         unique_ptr<libfreenect2::Registration> registration;
         unique_ptr<libfreenect2::SyncMultiFrameListener> listener;
@@ -62,14 +60,11 @@ namespace ds
         unique_ptr<uint16_t[]> depthBuffer;
         unique_ptr<uint16_t[]> infraredBuffer;
 
-        ivec2 kDepthSize = { 512, 424 };
-        ivec2 kColorSize = { 1920, 1080 };
+        ivec2 kDepthSize = {512, 424};
+        ivec2 kColorSize = {1920, 1080};
 
-        virtual bool isValid() const
-        {
-            return dev != nullptr;
-        }
- 
+        virtual bool isValid() const { return dev != nullptr; }
+
         static uint32_t getDeviceCount()
         {
             static bool isLoggerCreated = false;
@@ -82,15 +77,9 @@ namespace ds
             return freenect2.enumerateDevices();
         }
 
-        ivec2 getDepthSize() const
-        {
-            return kDepthSize;
-        }
+        ivec2 getDepthSize() const { return kDepthSize; }
 
-        ivec2 getColorSize() const
-        {
-            return kColorSize;
-        }
+        ivec2 getColorSize() const { return kColorSize; }
 
         DeviceFreenect2(Option option)
         {
@@ -114,8 +103,8 @@ namespace ds
                 pipeline = new libfreenect2::CpuPacketPipeline();
 
             dev = freenect2.openDevice(option.deviceId, pipeline);
-            //CI_LOG_I("device serial : " << dev->getSerialNumber());
-            //CI_LOG_I("device firmware : " << dev->getFirmwareVersion());
+            // CI_LOG_I("device serial : " << dev->getSerialNumber());
+            // CI_LOG_I("device firmware : " << dev->getFirmwareVersion());
 
             int types = 0;
             if (option.enableColor)
@@ -126,13 +115,16 @@ namespace ds
             {
                 types |= libfreenect2::Frame::Ir | libfreenect2::Frame::Depth;
                 depthBuffer.reset(new uint16_t[kDepthSize.x * kDepthSize.y]);
-                depthChannel = Channel16u(kDepthSize.x, kDepthSize.y, sizeof(uint16_t) * kDepthSize.x, 1, depthBuffer.get());
+                depthChannel = Channel16u(kDepthSize.x, kDepthSize.y,
+                                          sizeof(uint16_t) * kDepthSize.x, 1, depthBuffer.get());
             }
             if (option.enableInfrared)
             {
                 types |= libfreenect2::Frame::Ir;
                 infraredBuffer.reset(new uint16_t[kDepthSize.x * kDepthSize.y]);
-                infraredChannel = Channel16u(kDepthSize.x, kDepthSize.y, sizeof(uint16_t) * kDepthSize.x, 1, infraredBuffer.get());
+                infraredChannel =
+                    Channel16u(kDepthSize.x, kDepthSize.y, sizeof(uint16_t) * kDepthSize.x, 1,
+                               infraredBuffer.get());
             }
             listener = make_unique<libfreenect2::SyncMultiFrameListener>(types);
 
@@ -148,7 +140,8 @@ namespace ds
 
             if (option.enablePointCloud)
             {
-                registration = make_unique<libfreenect2::Registration>(dev->getIrCameraParams(), dev->getColorCameraParams());
+                registration = make_unique<libfreenect2::Registration>(dev->getIrCameraParams(),
+                                                                       dev->getColorCameraParams());
             }
 
             App::get()->getSignalUpdate().connect(std::bind(&DeviceFreenect2::update, this));
@@ -165,7 +158,8 @@ namespace ds
 
         void update()
         {
-            if (!listener->hasNewFrame()) return;
+            if (!listener->hasNewFrame())
+                return;
 
             libfreenect2::FrameMap frames;
 
@@ -175,16 +169,16 @@ namespace ds
                 return;
             }
 
-            libfreenect2::Frame *rgb = frames[libfreenect2::Frame::Color];
-            libfreenect2::Frame *ir = frames[libfreenect2::Frame::Ir];
-            libfreenect2::Frame *depth = frames[libfreenect2::Frame::Depth];
+            libfreenect2::Frame* rgb = frames[libfreenect2::Frame::Color];
+            libfreenect2::Frame* ir = frames[libfreenect2::Frame::Ir];
+            libfreenect2::Frame* depth = frames[libfreenect2::Frame::Depth];
 
             if (depth && option.enableDepth)
             {
                 assert(kDepthSize.x == depth->width);
                 assert(sizeof(float) == depth->bytes_per_pixel);
                 const float* src = (const float*)depth->data;
-                for (int i = 0; i < kDepthSize.x*kDepthSize.y; i++)
+                for (int i = 0; i < kDepthSize.x * kDepthSize.y; i++)
                 {
                     depthBuffer[i] = src[i];
                 }
@@ -195,7 +189,9 @@ namespace ds
             {
                 assert(kColorSize.x == rgb->width);
                 assert(sizeof(uint8_t) * 4 == rgb->bytes_per_pixel);
-                colorSurface = Surface8u(rgb->data, kColorSize.x, kColorSize.y, sizeof(uint8_t) * 4 * kColorSize.x, SurfaceChannelOrder::BGRX);
+                colorSurface =
+                    Surface8u(rgb->data, kColorSize.x, kColorSize.y,
+                              sizeof(uint8_t) * 4 * kColorSize.x, SurfaceChannelOrder::BGRX);
                 signalColorDirty.emit();
             }
 
@@ -204,7 +200,7 @@ namespace ds
                 assert(kDepthSize.x == ir->width);
                 assert(sizeof(float) == ir->bytes_per_pixel);
                 const float* src = (const float*)ir->data;
-                for (int i = 0; i < kDepthSize.x*kDepthSize.y; i++)
+                for (int i = 0; i < kDepthSize.x * kDepthSize.y; i++)
                 {
                     infraredBuffer[i] = src[i];
                 }
@@ -226,15 +222,9 @@ namespace ds
 
     libfreenect2::Freenect2 DeviceFreenect2::freenect2;
 
-    uint32_t getFreenect2Count()
-    {
-        return DeviceFreenect2::getDeviceCount();
-    }
+    uint32_t getFreenect2Count() { return DeviceFreenect2::getDeviceCount(); }
 
-    DeviceRef createFreenect2(Option option)
-    {
-        return DeviceRef(new DeviceFreenect2(option));
-    }
-}
+    DeviceRef createFreenect2(Option option) { return DeviceRef(new DeviceFreenect2(option)); }
+} // namespace ds
 
 #endif

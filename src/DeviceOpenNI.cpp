@@ -4,10 +4,10 @@
 
 #include "OpenNI.h"
 
-#include "cinder/app/app.h"
 #include "cinder/Log.h"
+#include "cinder/app/app.h"
 
-#pragma comment (lib, "OpenNI2.lib")
+#pragma comment(lib, "OpenNI2.lib")
 
 using namespace ci;
 using namespace ci::app;
@@ -37,20 +37,11 @@ namespace ds
         }
 
         // TODO:
-        ivec2 getDepthSize() const
-        {
-            return depthSize;
-        }
+        ivec2 getDepthSize() const { return depthSize; }
 
-        ivec2 getColorSize() const
-        {
-            return colorSize;
-        }
+        ivec2 getColorSize() const { return colorSize; }
 
-        bool isValid() const
-        {
-            return device.isValid();
-        }
+        bool isValid() const { return device.isValid(); }
 
         DeviceOpenNI(Option option)
         {
@@ -70,15 +61,9 @@ namespace ds
                 return;
             }
 
-            bool streamEnabled[] =
-            {
-                option.enableInfrared,
-                option.enableColor,
-                option.enableDepth
-            };
+            bool streamEnabled[] = {option.enableInfrared, option.enableColor, option.enableDepth};
 
-            openni::VideoStream* streams[] =
-            {
+            openni::VideoStream* streams[] = {
                 &infraredStream,
                 &colorStream,
                 &depthStream,
@@ -86,7 +71,8 @@ namespace ds
 
             for (int i = 0; i < OpenNiSensorTypeCount; i++)
             {
-                if (!streamEnabled[i]) continue;
+                if (!streamEnabled[i])
+                    continue;
 
                 auto type = openni::SensorType(i + 1);
                 if (device.getSensorInfo(type) != NULL)
@@ -94,7 +80,8 @@ namespace ds
                     rc = streams[i]->create(device, type);
                     if (rc != openni::STATUS_OK)
                     {
-                        CI_LOG_E("Couldn't create stream " << i << "\n" << openni::OpenNI::getExtendedError());
+                        CI_LOG_E("Couldn't create stream " << i << "\n"
+                                                           << openni::OpenNI::getExtendedError());
                         return;
                     }
                 }
@@ -102,7 +89,8 @@ namespace ds
                 rc = streams[i]->start();
                 if (rc != openni::STATUS_OK)
                 {
-                    CI_LOG_E("Couldn't start stream " << i << "\n" << openni::OpenNI::getExtendedError());
+                    CI_LOG_E("Couldn't start stream " << i << "\n"
+                                                      << openni::OpenNI::getExtendedError());
                     return;
                 }
             }
@@ -116,10 +104,12 @@ namespace ds
             openni::VideoFrameRef frame;
 
             int changedStreamDummy;
-            openni::Status rc = openni::OpenNI::waitForAnyStream(&pStream, 1, &changedStreamDummy, SAMPLE_READ_WAIT_TIMEOUT);
+            openni::Status rc = openni::OpenNI::waitForAnyStream(&pStream, 1, &changedStreamDummy,
+                                                                 SAMPLE_READ_WAIT_TIMEOUT);
             if (rc != openni::STATUS_OK)
             {
-                CI_LOG_E("Wait timeout " << SAMPLE_READ_WAIT_TIMEOUT << " ms " <<openni::OpenNI::getExtendedError());
+                CI_LOG_E("Wait timeout " << SAMPLE_READ_WAIT_TIMEOUT << " ms "
+                                         << openni::OpenNI::getExtendedError());
             }
 
             rc = pStream->readFrame(&frame);
@@ -139,7 +129,8 @@ namespace ds
                 depthSize.x = frame.getWidth();
                 depthSize.y = frame.getHeight();
                 auto data = (uint16_t*)frame.getData();
-                depthChannel = Channel16u(depthSize.x, depthSize.y, sizeof(uint16_t) * depthSize.x, 1, data);
+                depthChannel =
+                    Channel16u(depthSize.x, depthSize.y, sizeof(uint16_t) * depthSize.x, 1, data);
                 signalDepthDirty.emit();
             }
 
@@ -159,21 +150,17 @@ namespace ds
                 auto data = (uint8_t*)frame.getData();
                 colorSize.x = frame.getWidth();
                 colorSize.y = frame.getHeight();
-                colorSurface = Surface8u(data, colorSize.x, colorSize.y, sizeof(uint8_t) * 3 * colorSize.x, SurfaceChannelOrder::RGB);
+                colorSurface =
+                    Surface8u(data, colorSize.x, colorSize.y, sizeof(uint8_t) * 3 * colorSize.x,
+                              SurfaceChannelOrder::RGB);
                 signalColorDirty.emit();
             }
         }
     };
 
-    uint32_t getOpenNICount()
-    {
-        return DeviceOpenNI::getDeviceCount();
-    }
+    uint32_t getOpenNICount() { return DeviceOpenNI::getDeviceCount(); }
 
-    DeviceRef createOpenNI(Option option)
-    {
-        return DeviceRef(new DeviceOpenNI(option));
-    }
-}
+    DeviceRef createOpenNI(Option option) { return DeviceRef(new DeviceOpenNI(option)); }
+} // namespace ds
 
 #endif

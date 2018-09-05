@@ -2,9 +2,9 @@
 
 #ifdef Simulator_Enabled
 
-#include "cinder/app/App.h"
-#include "cinder/Log.h"
 #include "cinder/ImageIo.h"
+#include "cinder/Log.h"
+#include "cinder/app/App.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -14,20 +14,11 @@ namespace ds
 {
     struct DeviceSimulator : public Device
     {
-        virtual bool isValid() const
-        {
-            return true;
-        }
+        virtual bool isValid() const { return true; }
 
-        ivec2 getDepthSize() const
-        {
-            return depthChannel.getSize();
-        }
+        ivec2 getDepthSize() const { return depthChannel.getSize(); }
 
-        ivec2 getColorSize() const
-        {
-            return depthChannel.getSize();
-        }
+        ivec2 getColorSize() const { return depthChannel.getSize(); }
 
         DeviceSimulator(Option option)
         {
@@ -49,15 +40,9 @@ namespace ds
         int width, height;
     };
 
-    uint32_t getSimulatorCount()
-    {
-        return 1;
-    }
+    uint32_t getSimulatorCount() { return 1; }
 
-    DeviceRef createSimulator(Option option)
-    {
-        return DeviceRef(new DeviceSimulator(option));
-    }
-}
+    DeviceRef createSimulator(Option option) { return DeviceRef(new DeviceSimulator(option)); }
+} // namespace ds
 
 #endif

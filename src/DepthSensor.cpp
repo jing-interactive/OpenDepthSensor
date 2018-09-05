@@ -9,7 +9,9 @@ namespace ds
     {
         switch (type)
         {
-#define ITEM(name, id) case name: return #name;
+#define ITEM(name, id)                                                                             \
+    case name:                                                                                     \
+        return #name;
 #include "Sensors.inl"
 #undef ITEM
         }
@@ -25,7 +27,9 @@ namespace ds
     {
         switch (type)
         {
-#define ITEM(name, id) case name: return get##name##Count();
+#define ITEM(name, id)                                                                             \
+    case name:                                                                                     \
+        return get##name##Count();
 #include "Sensors.inl"
 #undef ITEM
         }
@@ -44,11 +48,13 @@ namespace ds
 
         switch (type)
         {
-#define ITEM(name, id) case name: return create##name(option);
+#define ITEM(name, id)                                                                             \
+    case name:                                                                                     \
+        return create##name(option);
 #include "Sensors.inl"
 #undef ITEM
         }
 
         return DeviceRef(nullptr);
     }
-}
+} // namespace ds

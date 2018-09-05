@@ -2,9 +2,9 @@
 
 #ifdef RgbCamera_Enabled
 
-#include "cinder/app/App.h"
-#include "cinder/Log.h"
 #include "cinder/Capture.h"
+#include "cinder/Log.h"
+#include "cinder/app/App.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -16,33 +16,26 @@ namespace ds
     {
         CaptureRef mCapture;
 
-        virtual bool isValid() const
-        {
-            return mCapture != nullptr;
-        }
+        virtual bool isValid() const { return mCapture != nullptr; }
 
         const int32_t kWidth = 640;
         const int32_t kHeight = 480;
 
-        ivec2 getDepthSize() const
-        {
-            return{ kWidth, kHeight };
-        }
+        ivec2 getDepthSize() const { return {kWidth, kHeight}; }
 
-        ivec2 getColorSize() const
-        {
-            return{ kWidth, kHeight };
-        }
+        ivec2 getColorSize() const { return {kWidth, kHeight}; }
 
         DeviceRgbCamera(Option option)
         {
             this->option = option;
 
-            try {
+            try
+            {
                 mCapture = Capture::create(kWidth, kHeight, Capture::getDevices()[option.deviceId]);
                 mCapture->start();
             }
-            catch (ci::Exception &exc) {
+            catch (ci::Exception& exc)
+            {
                 CI_LOG_EXCEPTION("Failed to init capture ", exc);
             }
 
@@ -56,26 +49,29 @@ namespace ds
 
         void update()
         {
-            if (!isValid()) return;
+            if (!isValid())
+                return;
 
             if (mCapture->checkNewFrame())
             {
-                if (option.enablePointCloud && option.enableColor && depthToColorTable.getWidth() == 0)
+                if (option.enablePointCloud && option.enableColor &&
+                    depthToColorTable.getWidth() == 0)
                 {
-                    depthToColorTable = Surface32f(kWidth, kHeight, false, SurfaceChannelOrder::RGB);
-                    
+                    depthToColorTable =
+                        Surface32f(kWidth, kHeight, false, SurfaceChannelOrder::RGB);
+
                     for (int y = 0; y < kHeight; y++)
                     {
                         for (int x = 0; x < kWidth; x++)
                         {
-                            float* data = depthToColorTable.getData({x,y});
+                            float* data = depthToColorTable.getData({x, y});
                             data[0] = x / (float)kWidth;
                             data[1] = y / (float)kHeight;
                         }
                     }
                     signalDepthToColorTableDirty.emit();
                 }
-                
+
                 colorSurface = *mCapture->getSurface();
                 if (option.enableColor)
                 {
@@ -92,8 +88,8 @@ namespace ds
                     for (int x = 0; x < kWidth; x++)
                         for (int y = 0; y < kHeight; y++)
                         {
-                            uint16_t* dest = depthChannel.getData({ x, y });
-                            uint8_t* src = colorSurface.getData({ x, y });
+                            uint16_t* dest = depthChannel.getData({x, y});
+                            uint8_t* src = colorSurface.getData({x, y});
                             *dest = (src[0] + src[1] + src[2]) * 4; // 4 is magic number
                         }
 #endif
@@ -106,15 +102,9 @@ namespace ds
         int width, height;
     };
 
-    uint32_t getRgbCameraCount()
-    {
-        return Capture::getDevices().size();
-    }
+    uint32_t getRgbCameraCount() { return Capture::getDevices().size(); }
 
-    DeviceRef createRgbCamera(Option option)
-    {
-        return DeviceRef(new DeviceRgbCamera(option));
-    }
-}
+    DeviceRef createRgbCamera(Option option) { return DeviceRef(new DeviceRgbCamera(option)); }
+} // namespace ds
 
 #endif
