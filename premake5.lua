@@ -22,9 +22,7 @@ solution "Cinder-DepthSensor"
             "4996",
         }
 
-        flags {
-            "StaticRuntime",   
-        }
+        staticruntime "On"
 
         configuration "x64"
             libdirs {
@@ -75,6 +73,7 @@ solution "Cinder-DepthSensor"
             "3rdparty/v1/sdk/inc",
             "3rdparty/v2/sdk/inc",
             "3rdparty/openni2/include",
+            "3rdparty/k4a",
         }
 
         files {
@@ -83,6 +82,7 @@ solution "Cinder-DepthSensor"
             "3rdparty/openni2/**",
             "3rdparty/librealsense/include/**",
             "3rdparty/librealsense/src/*",
+            "3rdparty/k4a/*",
         }
 
         configuration "vs*"

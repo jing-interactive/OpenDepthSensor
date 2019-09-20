@@ -22,3 +22,6 @@ ITEM(Freenect2,	6)
 #ifdef Imi_Enabled
 ITEM(Imi, 6)
 #endif
+#ifdef KinectAzure_Enabled
+ITEM(KinectAzure, 7)
+#endif
