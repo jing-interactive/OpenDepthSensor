@@ -2,7 +2,7 @@
 
 local action = _ACTION or ""
 
-solution "Cinder-DepthSensor"
+solution "OpenDepthSensor"
     location (action)
     configurations { "Debug", "Release" }
     language "C++"
@@ -61,7 +61,7 @@ solution "Cinder-DepthSensor"
         defines { "NDEBUG" }
         optimize "On"
 
-    project "Cinder-DepthSensor"
+    project "OpenDepthSensor"
         kind "StaticLib"
 
         includedirs {
