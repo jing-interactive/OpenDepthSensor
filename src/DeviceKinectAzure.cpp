@@ -44,7 +44,7 @@ namespace ds
 
             if (option.enableDepth)
             {
-                conf.depth_mode = K4A_DEPTH_MODE_WFOV_UNBINNED;
+                conf.depth_mode = K4A_DEPTH_MODE_WFOV_2X2BINNED;
             }
             conf.camera_fps = K4A_FRAMES_PER_SECOND_30;
             conf.wired_sync_mode = K4A_WIRED_SYNC_MODE_STANDALONE;
