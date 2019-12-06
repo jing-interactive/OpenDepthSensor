@@ -5,8 +5,8 @@
 #ifndef K4ABT_H
 #define K4ABT_H
 
-#include <k4abtversion.h>
-#include <k4abttypes.h>
+#include "k4abtversion.h"
+#include "k4abttypes.h"
 
 #ifdef K4ABT_STATIC_DEFINE
 #  define K4ABT_EXPORT
