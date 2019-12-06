@@ -88,7 +88,7 @@ namespace ds
                 return;
             }
             CI_ASSERT(deviceCount == 1);
-            CI_LOG_I("Get %d Connected Imidevice.", deviceCount);
+            CI_LOG_I("Get %d Connected Imidevice." << deviceCount);
 
             // 3.imiOpenDevice()
             if (imiOpenDevice(pDeviceAttr[0].uri, &pImiDevice, 0))
@@ -153,8 +153,7 @@ namespace ds
             /*CI_LOG_E("channel index : %d", avStreamIndex);*/
             if ((avStreamIndex < 0) || ((uint32_t)avStreamIndex >= g_streamNum))
             {
-                CI_LOG_E("imiWaitForStream returns 0, but channel index abnormal: %d",
-                         avStreamIndex);
+                CI_LOG_E("imiWaitForStream returns 0, but channel index abnormal: " << avStreamIndex);
                 return;
             }
 
@@ -164,7 +163,7 @@ namespace ds
                 // frame coming, read.
                 if (imiReadNextFrame(g_streams[avStreamIndex], &pFrame, 0))
                 {
-                    CI_LOG_E("imiReadNextFrame Failed, channel index : ") << avStreamIndex;
+                    CI_LOG_E("imiReadNextFrame Failed, channel index : " << avStreamIndex);
                     return;
                 }
                 auto data = (uint16_t*)pFrame->pData;

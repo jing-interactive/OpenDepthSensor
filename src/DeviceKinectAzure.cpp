@@ -32,7 +32,7 @@ namespace ds
                 return;
 
             k4a_device_configuration_t conf = {};
-            //if (option.enableColor)
+            if (option.enableColor)
             {
                 conf.color_format = K4A_IMAGE_FORMAT_COLOR_BGRA32;
                 conf.color_resolution = K4A_COLOR_RESOLUTION_1080P;
@@ -67,6 +67,9 @@ namespace ds
 
         void update()
         {
+            if (device_handle == 0)
+                return;
+
             const int32_t TIMEOUT_IN_MS = 1000;
 
             k4a_capture_t capture_handle;
@@ -77,45 +80,59 @@ namespace ds
             if (option.enableColor)
             {
                 auto image = k4a_capture_get_color_image(capture_handle);
-                if (colorSize.x == 0 || colorSize .y == 0)
+                if (image != 0)
                 {
-                    colorSize.x = k4a_image_get_width_pixels(image);
-                    colorSize.y = k4a_image_get_height_pixels(image);
-                    colorSize.z = k4a_image_get_stride_bytes(image);
+                    if (colorSize.x == 0 || colorSize.y == 0)
+                    {
+                        colorSize.x = k4a_image_get_width_pixels(image);
+                        colorSize.y = k4a_image_get_height_pixels(image);
+                        colorSize.z = k4a_image_get_stride_bytes(image);
+                    }
+                    uint8_t* ptr = k4a_image_get_buffer(image);
+                    colorSurface = Surface8u(ptr, colorSize.x, colorSize.y, colorSize.z, SurfaceChannelOrder::BGRX);
+                    signalColorDirty.emit();
+                    k4a_image_release(image);
                 }
-                uint8_t* ptr = k4a_image_get_buffer(image);
-                colorSurface = Surface8u(ptr, colorSize.x, colorSize.y, colorSize.z, SurfaceChannelOrder::BGRX);
-                signalColorDirty.emit();
             }
 
             if (option.enableDepth)
             {
                 auto image = k4a_capture_get_depth_image(capture_handle);
-                if (depthSize.x == 0 || depthSize.y == 0)
+                if (image != 0)
                 {
-                    depthSize.x = k4a_image_get_width_pixels(image);
-                    depthSize.y = k4a_image_get_height_pixels(image);
-                    depthSize.z = k4a_image_get_stride_bytes(image);
+                    if (depthSize.x == 0 || depthSize.y == 0)
+                    {
+                        depthSize.x = k4a_image_get_width_pixels(image);
+                        depthSize.y = k4a_image_get_height_pixels(image);
+                        depthSize.z = k4a_image_get_stride_bytes(image);
+                    }
+                    uint16_t* ptr = (uint16_t*)k4a_image_get_buffer(image);
+                    if (ptr != nullptr)
+                    {
+                        depthChannel = Channel16u(depthSize.x, depthSize.y, depthSize.z, 1, ptr);
+                        signalDepthDirty.emit();
+                    }
+                    k4a_image_release(image);
                 }
-                uint16_t* ptr = (uint16_t*)k4a_image_get_buffer(image);
-                depthChannel = Channel16u(depthSize.x, depthSize.y, depthSize.z, 1, ptr);
-
-                signalDepthDirty.emit();
             }
 
             if (option.enableInfrared)
             {
                 auto image = k4a_capture_get_ir_image(capture_handle);
-                if (depthSize.x == 0 || depthSize.y == 0)
+                if (image != 0)
                 {
-                    depthSize.x = k4a_image_get_width_pixels(image);
-                    depthSize.y = k4a_image_get_height_pixels(image);
-                    depthSize.z = k4a_image_get_stride_bytes(image);
-                }
-                uint16_t* ptr = (uint16_t*)k4a_image_get_buffer(image);
-                infraredChannel = Channel16u(depthSize.x, depthSize.y, depthSize.z, 1, ptr);
+                    if (depthSize.x == 0 || depthSize.y == 0)
+                    {
+                        depthSize.x = k4a_image_get_width_pixels(image);
+                        depthSize.y = k4a_image_get_height_pixels(image);
+                        depthSize.z = k4a_image_get_stride_bytes(image);
+                    }
+                    uint16_t* ptr = (uint16_t*)k4a_image_get_buffer(image);
+                    infraredChannel = Channel16u(depthSize.x, depthSize.y, depthSize.z, 1, ptr);
 
-                signalInfraredDirty.emit();
+                    signalInfraredDirty.emit();
+                    k4a_image_release(image);
+                }
             }
             k4a_capture_release(capture_handle);
         }
