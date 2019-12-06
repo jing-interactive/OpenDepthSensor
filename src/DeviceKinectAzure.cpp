@@ -7,8 +7,10 @@
 #include "cinder/app/App.h"
 
 #include "k4a/k4a.h"
+#include "k4a/k4abt.h"
 
 #pragma comment(lib, "k4a")
+#pragma comment(lib, "k4abt")
 
 using namespace ci;
 using namespace ci::app;
@@ -27,11 +29,11 @@ namespace ds
         DeviceKinectAzure(Option option)
         {
             this->option = option;
-            k4a_result_t openResult = k4a_device_open(option.deviceId, &device_handle);
-            if (openResult != K4A_RESULT_SUCCEEDED)
+            k4a_result_t result = k4a_device_open(option.deviceId, &device_handle);
+            if (result != K4A_RESULT_SUCCEEDED)
                 return;
 
-            k4a_device_configuration_t conf = {};
+            k4a_device_configuration_t conf = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
             if (option.enableColor)
             {
                 conf.color_format = K4A_IMAGE_FORMAT_COLOR_BGRA32;
@@ -41,10 +43,20 @@ namespace ds
             {
                 conf.depth_mode = K4A_DEPTH_MODE_PASSIVE_IR;
             }
-
             if (option.enableDepth)
             {
-                conf.depth_mode = K4A_DEPTH_MODE_WFOV_2X2BINNED;
+                conf.depth_mode = K4A_DEPTH_MODE_NFOV_UNBINNED;
+            }
+            if (option.enableBody || option.enableBodyIndex)
+            {
+                result =  k4a_device_get_calibration(device_handle,
+                    conf.depth_mode,
+                    conf.color_resolution,
+                    &calibration);
+                k4abt_tracker_configuration_t cfg = { K4ABT_SENSOR_ORIENTATION_DEFAULT, false };
+                result = k4abt_tracker_create(&calibration,
+                    cfg,
+                    &tracker);
             }
             conf.camera_fps = K4A_FRAMES_PER_SECOND_30;
             conf.wired_sync_mode = K4A_WIRED_SYNC_MODE_STANDALONE;
@@ -62,6 +74,10 @@ namespace ds
             {
                 k4a_device_stop_cameras(device_handle);
                 k4a_device_close(device_handle);
+            }
+            if (tracker)
+            {
+                k4abt_tracker_destroy(tracker);
             }
         }
 
@@ -116,6 +132,41 @@ namespace ds
                 }
             }
 
+            if (option.enableBody || option.enableBodyIndex)
+            {
+                k4a_wait_result_t result = k4abt_tracker_enqueue_capture(tracker,
+                    capture_handle,
+                    TIMEOUT_IN_MS);
+
+                if (result == K4A_WAIT_RESULT_SUCCEEDED)
+                {
+                    k4abt_frame_t body_frame_handle;
+                    result = k4abt_tracker_pop_result(tracker,
+                        &body_frame_handle,
+                        TIMEOUT_IN_MS);
+                    if (body_frame_handle != nullptr)
+                    {
+                        if (option.enableBody)
+                        {
+                            uint32_t num_bodies = k4abt_frame_get_num_bodies(body_frame_handle);
+                            CI_LOG_I(num_bodies << " bodies are detected");
+                            vector<k4abt_skeleton_t> skeletons;
+                            for (int i = 0; i < num_bodies; i++)
+                            {
+                                k4abt_skeleton_t skeleton;
+                                auto result = k4abt_frame_get_body_skeleton(body_frame_handle, i, &skeleton);
+                                skeletons.emplace_back(skeleton);
+                            }
+                        }
+                        if (option.enableBodyIndex)
+                        {
+                            k4a_image_t body_index = k4abt_frame_get_body_index_map(body_frame_handle);
+                        }
+                        k4abt_frame_release(body_frame_handle);
+                    }
+                }
+            }
+
             if (option.enableInfrared)
             {
                 auto image = k4a_capture_get_ir_image(capture_handle);
@@ -139,6 +190,8 @@ namespace ds
 
         k4a_device_t device_handle = 0;
         ivec3 colorSize, depthSize;
+        k4a_calibration_t calibration;
+        k4abt_tracker_t tracker;
     };
 
     uint32_t getKinectAzureCount() { return k4a_device_get_installed_count(); }
