@@ -1,3 +1,6 @@
+// https://docs.microsoft.com/bs-cyrl-ba/azure/Kinect-dk/use-calibration-functions
+// https://docs.microsoft.com/bs-cyrl-ba/azure/Kinect-dk/use-image-transformation
+// https://docs.microsoft.com/bs-cyrl-ba/azure/Kinect-dk/record-playback-api
 #include "DepthSensor.h"
 
 #ifdef KinectAzure_Enabled
@@ -183,6 +186,8 @@ namespace ds
 
             if (option.enableBody || option.enableBodyIndex)
             {
+                k4abt_frame_t body_frame_handle = nullptr;
+
                 [&] {
                     auto result = k4abt_tracker_enqueue_capture(tracker,
                         capture_handle,
@@ -191,7 +196,6 @@ namespace ds
                     if (result != K4A_WAIT_RESULT_SUCCEEDED)
                         return;
 
-                    k4abt_frame_t body_frame_handle;
                     result = k4abt_tracker_pop_result(tracker,
                         &body_frame_handle,
                         TIMEOUT_IN_MS);
@@ -201,6 +205,8 @@ namespace ds
                     if (option.enableBody)
                     {
                         uint32_t num_bodies = k4abt_frame_get_num_bodies(body_frame_handle);
+                        if (num_bodies == 0)
+                            return;
                         CI_LOG_I(num_bodies << " bodies are detected");
                         vector<Body> bodies;
                         for (int i = 0; i < num_bodies; i++)
@@ -213,11 +219,24 @@ namespace ds
                                 body.id = k4abt_frame_get_body_id(body_frame_handle, i);
                                 for (auto& mapping : mappingPairs)
                                 {
-                                    const k4a_float3_t& jointPosition = skeleton.joints[mapping.second].position;
-                                    const k4a_quaternion_t& jointOrientation = skeleton.joints[mapping.second].orientation;
-                                    body.joints[mapping.first].pos3d = toCi(jointPosition);
-                                    body.joints[mapping.first].orientation = toCi(jointOrientation);
-                                    body.joints[mapping.first].confidence = (Body::JointConfidence)skeleton.joints[mapping.second].confidence_level;
+                                    const auto& srcJoint = skeleton.joints[mapping.second];
+                                    auto& dstJoint = body.joints[mapping.first];
+                                    const k4a_float3_t& jointPosition = srcJoint.position;
+                                    const k4a_quaternion_t& jointOrientation = srcJoint.orientation;
+                                    dstJoint.pos3d = toCi(jointPosition);
+
+                                    int valid = 0;
+                                    k4a_float2_t pos2d;
+                                    auto calib_result = k4a_calibration_3d_to_2d(&calibration,
+                                        &jointPosition,
+                                        K4A_CALIBRATION_TYPE_DEPTH,
+                                        K4A_CALIBRATION_TYPE_COLOR,
+                                        &pos2d,
+                                        &valid);
+                                    dstJoint.pos2d = toCi(pos2d);
+
+                                    dstJoint.orientation = toCi(jointOrientation);
+                                    dstJoint.confidence = (Body::JointConfidence)srcJoint.confidence_level;
                                 }
                                 bodies.emplace_back(body);
                             }
@@ -243,9 +262,9 @@ namespace ds
                             k4a_image_release(image);
                         }
                     }
-
-                    k4abt_frame_release(body_frame_handle);
                 }();
+                if (body_frame_handle)
+                    k4abt_frame_release(body_frame_handle);
             }
 
             if (option.enableInfrared)
