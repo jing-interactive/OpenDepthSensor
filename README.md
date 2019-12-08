@@ -15,3 +15,7 @@ Supported depth sensor list:
 * Generate project file w/ premake5, e.g.
     * `premake5 vs2019`
     * `premake5 xcode4`
+
+
+# Doc
+* [k4a doc](https://eventmarketing.blob.core.windows.net/decode2019-after/decode19_PDF_CM04.pdf)

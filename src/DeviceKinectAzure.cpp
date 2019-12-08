@@ -18,6 +18,55 @@ using namespace std;
 
 namespace ds
 {
+
+    static std::pair<int, int> mappingPairs[] = {
+        {Body::HIP_CENTER, K4ABT_JOINT_PELVIS},
+        {Body::SPINE, K4ABT_JOINT_SPINE_CHEST},
+        // {Body::SHOULDER_CENTER, K4ABT_JOINT_SPINE_CHEST},
+        {Body::NECK, K4ABT_JOINT_NECK},
+        {Body::HEAD, K4ABT_JOINT_HEAD},
+        {Body::SHOULDER_LEFT, K4ABT_JOINT_SHOULDER_LEFT},
+        {Body::ELBOW_LEFT, K4ABT_JOINT_ELBOW_LEFT},
+        {Body::WRIST_LEFT, K4ABT_JOINT_WRIST_LEFT},
+        {Body::HAND_LEFT, K4ABT_JOINT_HAND_LEFT},
+        {Body::SHOULDER_RIGHT, K4ABT_JOINT_SHOULDER_RIGHT},
+        {Body::ELBOW_RIGHT, K4ABT_JOINT_ELBOW_RIGHT},
+        {Body::WRIST_RIGHT, K4ABT_JOINT_WRIST_RIGHT},
+        {Body::HAND_RIGHT, K4ABT_JOINT_HANDTIP_RIGHT},
+        {Body::HIP_LEFT, K4ABT_JOINT_HIP_LEFT},
+        {Body::KNEE_LEFT, K4ABT_JOINT_KNEE_LEFT},
+        {Body::ANKLE_LEFT, K4ABT_JOINT_ANKLE_LEFT},
+        {Body::FOOT_LEFT, K4ABT_JOINT_FOOT_LEFT},
+        {Body::HIP_RIGHT, K4ABT_JOINT_HIP_RIGHT},
+        {Body::KNEE_RIGHT, K4ABT_JOINT_KNEE_RIGHT},
+        {Body::ANKLE_RIGHT, K4ABT_JOINT_ANKLE_RIGHT},
+        {Body::FOOT_RIGHT, K4ABT_JOINT_FOOT_RIGHT},
+        {Body::HAND_TIP_LEFT, K4ABT_JOINT_HANDTIP_LEFT},
+        {Body::HAND_THUMB_LEFT, K4ABT_JOINT_THUMB_LEFT},
+        {Body::HAND_TIP_RIGHT, K4ABT_JOINT_HANDTIP_RIGHT},
+        {Body::HAND_THUMB_RIGHT, K4ABT_JOINT_THUMB_RIGHT},
+        {Body::NOSE, K4ABT_JOINT_NOSE},
+        {Body::EYE_LEFT, K4ABT_JOINT_EYE_LEFT},
+        {Body::EAR_LEFT, K4ABT_JOINT_EAR_LEFT},
+        {Body::EYE_RIGHT, K4ABT_JOINT_EYE_RIGHT},
+        {Body::EAR_RIGHT, K4ABT_JOINT_EAR_RIGHT} ,
+    };
+
+    vec2 toCi(const k4a_float2_t& float2)
+    {
+        return { float2.v[0], float2.v[1] };
+    }
+
+    vec3 toCi(const k4a_float3_t& float3)
+    { 
+        return { float3.v[0], float3.v[1],float3.v[2] };
+    }
+
+    quat toCi(const k4a_quaternion_t& oritention)
+    { 
+        return { oritention.v[0], oritention.v[1], oritention.v[2], oritention.v[3]};
+    }
+
     struct DeviceKinectAzure : public Device
     {
         virtual bool isValid() const { return true; }
@@ -104,7 +153,7 @@ namespace ds
                         colorSize.y = k4a_image_get_height_pixels(image);
                         colorSize.z = k4a_image_get_stride_bytes(image);
                     }
-                    uint8_t* ptr = k4a_image_get_buffer(image);
+                    auto ptr = k4a_image_get_buffer(image);
                     colorSurface = Surface8u(ptr, colorSize.x, colorSize.y, colorSize.z, SurfaceChannelOrder::BGRX);
                     signalColorDirty.emit();
                     k4a_image_release(image);
@@ -122,7 +171,7 @@ namespace ds
                         depthSize.y = k4a_image_get_height_pixels(image);
                         depthSize.z = k4a_image_get_stride_bytes(image);
                     }
-                    uint16_t* ptr = (uint16_t*)k4a_image_get_buffer(image);
+                    auto ptr = (uint16_t*)k4a_image_get_buffer(image);
                     if (ptr != nullptr)
                     {
                         depthChannel = Channel16u(depthSize.x, depthSize.y, depthSize.z, 1, ptr);
@@ -134,37 +183,69 @@ namespace ds
 
             if (option.enableBody || option.enableBodyIndex)
             {
-                k4a_wait_result_t result = k4abt_tracker_enqueue_capture(tracker,
-                    capture_handle,
-                    TIMEOUT_IN_MS);
+                [&] {
+                    auto result = k4abt_tracker_enqueue_capture(tracker,
+                        capture_handle,
+                        TIMEOUT_IN_MS);
 
-                if (result == K4A_WAIT_RESULT_SUCCEEDED)
-                {
+                    if (result != K4A_WAIT_RESULT_SUCCEEDED)
+                        return;
+
                     k4abt_frame_t body_frame_handle;
                     result = k4abt_tracker_pop_result(tracker,
                         &body_frame_handle,
                         TIMEOUT_IN_MS);
-                    if (body_frame_handle != nullptr)
+                    if (result != K4A_WAIT_RESULT_SUCCEEDED || body_frame_handle == nullptr)
+                        return;
+
+                    if (option.enableBody)
                     {
-                        if (option.enableBody)
+                        uint32_t num_bodies = k4abt_frame_get_num_bodies(body_frame_handle);
+                        CI_LOG_I(num_bodies << " bodies are detected");
+                        vector<Body> bodies;
+                        for (int i = 0; i < num_bodies; i++)
                         {
-                            uint32_t num_bodies = k4abt_frame_get_num_bodies(body_frame_handle);
-                            CI_LOG_I(num_bodies << " bodies are detected");
-                            vector<k4abt_skeleton_t> skeletons;
-                            for (int i = 0; i < num_bodies; i++)
+                            k4abt_skeleton_t skeleton;
+                            auto result = k4abt_frame_get_body_skeleton(body_frame_handle, i, &skeleton);
+                            if (result == K4A_RESULT_SUCCEEDED)
                             {
-                                k4abt_skeleton_t skeleton;
-                                auto result = k4abt_frame_get_body_skeleton(body_frame_handle, i, &skeleton);
-                                skeletons.emplace_back(skeleton);
+                                Body body;
+                                body.id = k4abt_frame_get_body_id(body_frame_handle, i);
+                                for (auto& mapping : mappingPairs)
+                                {
+                                    const k4a_float3_t& jointPosition = skeleton.joints[mapping.second].position;
+                                    const k4a_quaternion_t& jointOrientation = skeleton.joints[mapping.second].orientation;
+                                    body.joints[mapping.first].pos3d = toCi(jointPosition);
+                                    body.joints[mapping.first].orientation = toCi(jointOrientation);
+                                    body.joints[mapping.first].confidence = (Body::JointConfidence)skeleton.joints[mapping.second].confidence_level;
+                                }
+                                bodies.emplace_back(body);
                             }
                         }
-                        if (option.enableBodyIndex)
-                        {
-                            k4a_image_t body_index = k4abt_frame_get_body_index_map(body_frame_handle);
-                        }
-                        k4abt_frame_release(body_frame_handle);
                     }
-                }
+                    if (option.enableBodyIndex)
+                    {
+                        k4a_image_t image = k4abt_frame_get_body_index_map(body_frame_handle);
+                        if (image != 0)
+                        {
+                            if (bodyIndexSize.x == 0 || bodyIndexSize.y == 0)
+                            {
+                                bodyIndexSize.x = k4a_image_get_width_pixels(image);
+                                bodyIndexSize.y = k4a_image_get_height_pixels(image);
+                                bodyIndexSize.z = k4a_image_get_stride_bytes(image);
+                            }
+                            auto ptr = (uint8_t*)k4a_image_get_buffer(image);
+                            if (ptr != nullptr)
+                            {
+                                bodyIndexChannel = Channel8u(bodyIndexSize.x, bodyIndexSize.y, bodyIndexSize.z, 1, ptr);
+                                signalBodyIndexDirty.emit();
+                            }
+                            k4a_image_release(image);
+                        }
+                    }
+
+                    k4abt_frame_release(body_frame_handle);
+                }();
             }
 
             if (option.enableInfrared)
@@ -189,7 +270,7 @@ namespace ds
         }
 
         k4a_device_t device_handle = 0;
-        ivec3 colorSize, depthSize;
+        ivec3 colorSize, depthSize, bodyIndexSize;
         k4a_calibration_t calibration;
         k4abt_tracker_t tracker;
     };
