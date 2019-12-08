@@ -47,17 +47,6 @@ namespace ds
             {
                 conf.depth_mode = K4A_DEPTH_MODE_NFOV_UNBINNED;
             }
-            if (option.enableBody || option.enableBodyIndex)
-            {
-                result =  k4a_device_get_calibration(device_handle,
-                    conf.depth_mode,
-                    conf.color_resolution,
-                    &calibration);
-                k4abt_tracker_configuration_t cfg = { K4ABT_SENSOR_ORIENTATION_DEFAULT, false };
-                result = k4abt_tracker_create(&calibration,
-                    cfg,
-                    &tracker);
-            }
             conf.camera_fps = K4A_FRAMES_PER_SECOND_30;
             conf.wired_sync_mode = K4A_WIRED_SYNC_MODE_STANDALONE;
 
@@ -65,6 +54,17 @@ namespace ds
             if (startResult != K4A_RESULT_SUCCEEDED)
                 return;
 
+            if (option.enableBody || option.enableBodyIndex)
+            {
+                result = k4a_device_get_calibration(device_handle,
+                    conf.depth_mode,
+                    conf.color_resolution,
+                    &calibration);
+                k4abt_tracker_configuration_t cfg = K4ABT_TRACKER_CONFIG_DEFAULT;
+                result = k4abt_tracker_create(&calibration,
+                    cfg,
+                    &tracker);
+            }
             App::get()->getSignalUpdate().connect(std::bind(&DeviceKinectAzure::update, this));
         }
 
